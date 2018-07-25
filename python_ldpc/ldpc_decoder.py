@@ -1,3 +1,4 @@
+import numpy as np
 
 class ldpc_decoder:
     
@@ -58,7 +59,7 @@ class ldpc_decoder:
         return mlist, int(N), int(M)
         
 
-    def compute_syndrome(self, checknodes = self.checknodes, rx_codeword):
+    def compute_syndrome(self, rx_codeword):
         """Compute the Syndrome
         
         checknodes -- list, checknodes for the given LDPC code
@@ -70,7 +71,7 @@ class ldpc_decoder:
         """
         num_errors = 0
         
-        for i in checknodes:
+        for i in self.checknodes:
             indices = i
             xorsum = 0
             
@@ -83,7 +84,7 @@ class ldpc_decoder:
         
         return num_errors
         
-    def ldpc_tdmp(self, codeword, checknodes = self.checknodes, max_iter):
+    def ldpc_tdmp(self, codeword, max_iter):
         
         """Correct Errors using the Turbo-decoding Message-Passing
         (TDMP) algorithm
@@ -97,7 +98,7 @@ class ldpc_decoder:
         
         """
         
-        LMN = np.zeros((max_iter, len(checknodes), len(codeword)))
+        LMN = np.zeros((max_iter, len(self.checknodes), len(codeword)))
 
         result = np.zeros(len(codeword), dtype=np.uint8)
         float_in = np.zeros(len(codeword))
@@ -113,9 +114,9 @@ class ldpc_decoder:
         for i in range(max_iter):
             
             # loop through all checknodes
-            for m in range(len(checknodes)):
+            for m in range(len(self.checknodes)):
                 
-                nodes = checknodes[m]    
+                nodes = self.checknodes[m]    
 
                 nodes = [ int(x)-1 for x in nodes if x != '0' and x != '']
 

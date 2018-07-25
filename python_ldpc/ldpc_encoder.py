@@ -1,22 +1,24 @@
 
+import numpy as np
+
 class ldpc_encoder:
-""" LDPC Encoder 
+    """ LDPC Encoder 
    
     Initialize with the desired alist
     
     alist -- string, filename of alist
    
-"""
+    """
     
     def __init__(self, alist):
         
-        self.H, self.N, self.M = create_H_from_alist(alist)
+        self.H, self.N, self.M = self.create_H_from_alist(alist)
 
         # for codes found in the 802.16e standard, 24 is the base
         # H matrix size
         self.Z = self.N / 24
 
-        self.M1, self.M2, self.M3 = generate_encoding_matrices(self.H, self.M, self.Z)
+        self.M1, self.M2, self.M3 = self.generate_encoding_matrices(self.H, self.M, self.Z)
 
     def create_H_from_alist(self, alist):
 
@@ -110,24 +112,21 @@ class ldpc_encoder:
         
         return M1, M2, M3
 
-    def encode_data(self, infoword, M1, M2, M3):
+    def encode_data(self, infoword):
     
         """Encode inforword using the previously
         generated encoding matrices.
         
         inforword -- numpy array, incoming encode_data
-        M1 -- numpy array
-        M2 -- numpy array
-        M3 -- numpy array
         
         returns:
         
         numpy array (uint8), codeword
         
         """
-        p1 = np.dot(M1, infoword)%2
+        p1 = np.dot(self.M1, infoword)%2
         
-        p2 = (np.dot(M2, infoword)%2 + np.dot(M3, p1)%2)%2
+        p2 = (np.dot(self.M2, infoword)%2 + np.dot(self.M3, p1)%2)%2
         
         return np.array(np.concatenate((infoword, p1, p2), axis = 0), dtype=np.uint8)
 
