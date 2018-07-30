@@ -1,7 +1,11 @@
+import numpy as np
 
 
-""" All of the base matrices from the 802.16e standard are included here
+""" All of the base matrices from the 802.16e standard are included here.  If you want to make your own
+    base matrix you should include it here.  If it follows the same rules as the matrices in the 802.16e
+    standard, it will be added to the existing alists and C header/source files.
 """
+
 
 
 h_matrix_halfrate = [ -1,  94,  73,  -1,  -1,  -1,  -1,  -1,  55,  83,  -1,  -1,  7,  0,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1, 
@@ -66,7 +70,6 @@ h_matrix_56 = [
 51, 81, 83, 4,  67,  -1,  21,  -1,  31,  24,  91,  61,  81,  9,  86,  78,  60,  88,  67,  15,  -1,  -1,  0,  0, 
 50, -1, 50, 15,  -1,  36,  13,  10,  11,  20,  53,  90,  29,  92,  57,  30,  84,  92,  11,  66,  80,  -1,  -1, 0
 ]
-
 
 
 # Determine the shift size for the 1/2, 3/4 A&B, 2/3 B, and 5/6 code rates
@@ -217,4 +220,138 @@ def create_alist_file(matrix, filename, print_to_console = False):
         f.write('\n')
     
     f.close()
+
+
+# Create C header and source file for ldpc size and rate
+def create_c_matrix_file(matrix, matrix_name, filename):
+        
+    f = open(filename + ".cc", 'w')
+    header_file = open(filename + ".h", 'w')
+    
+    include_filename = filename.split('/')
+    include_filename = include_filename[len(include_filename)-1]
+    
+    # number of variable nodes
+    N = len(matrix[0])
+    # number of check nodes
+    M = len(matrix)
+    
+    mlist = []
+    row_weights = []
+    for row in matrix:
+        row_indices = []
+        for n in range(len(row)):
+            if row[n] == 1:
+                row_indices.append(n)
+        mlist.append(row_indices)  
+        row_weights.append(len(row_indices))
+        
+    nlist = []
+    column_weights = []
+    for n in range(len(matrix[0])):
+        column_indices = []
+        for m in range(len(matrix)):
+            if matrix[m][n] == 1:
+                column_indices.append(m)
+        nlist.append(column_indices)
+        column_weights.append(len(column_indices))
+        
+    max_col_weight = np.max(column_weights)
+    max_row_weight = np.max(row_weights)
+    
+    f.write("#include \"%s.h\"\n\n\n" % (include_filename))
+    f.write("uint16_t %s[%d][%d] = {\n" % (matrix_name, M, max_row_weight))
+            
+    for m in range(len(mlist)):
+        
+        f.write("    {")
+        
+        for n in range(max_row_weight):
+            if(n >= len(mlist[m])):
+                if (n == len(mlist[m])):
+                    f.write("%d" % -1)
+                else:
+                    f.write("%d, " % -1)
+            else:
+                if (n == max_row_weight-1):
+                    f.write("%d" % mlist[m][n])
+                else:
+                    f.write("%d, " % mlist[m][n])
+
+        if m == len(mlist)-1:
+            f.write("}\n")
+        else:
+            f.write('},\n')
+    
+    f.write("};")
+    f.close()
+    
+    header_file.write("#ifndef %s_H\n" % (include_filename.upper()))
+    
+    header_file.write("#define %s_H\n" % (include_filename.upper()))
+
+    header_file.write("\n#include <stdint.h>\n\n\n")
+    
+    header_file.write("uint16_t %s[%d][%d];\n\n\n" % (matrix_name, M, max_row_weight))
+    
+    header_file.write("#endif // %s_H\n" % (include_filename.upper()))
+    
+    header_file.close()
+    
+# Generate all of the Alists from the WIMAX standard
+# Generate C header and source files for all LDPC rates and Z factors
+def main():
+    
+    alist_dir = "../alist/"
+    # generate all of the alists
+    for i in range(24, 100, 4):
+
+        halfrate_filename = alist_dir + ("wimax_%d_0_5.alist" % ((i/96.0)*2304))
+        filename_23A = alist_dir + ("wimax_%d_0_66A.alist" % ((i/96.0)*2304))
+        filename_23B = alist_dir + ("wimax_%d_0_66B.alist" % ((i/96.0)*2304))
+        filename_34A = alist_dir + ("wimax_%d_0_75A.alist" % ((i/96.0)*2304))
+        filename_34B = alist_dir + ("wimax_%d_0_75B.alist" % ((i/96.0)*2304))
+        filename_56 = alist_dir + ("wimax_%d_0_83.alist" % ((i/96.0)*2304))
+
+        create_alist_file(expand_h_matrix(h_matrix_halfrate, i), halfrate_filename)
+        create_alist_file(expand_h_matrix(h_matrix_23A, i, case_23A_rate=True), filename_23A)
+        create_alist_file(expand_h_matrix(h_matrix_23B, i), filename_23B)
+        create_alist_file(expand_h_matrix(h_matrix_34A, i), filename_34A)
+        create_alist_file(expand_h_matrix(h_matrix_34B, i), filename_34B)
+        create_alist_file(expand_h_matrix(h_matrix_56, i), filename_56)
+        
+        
+    # generate all of the c files
+
+    cfiles_dir = "../lib/matrices/"
+    
+    for i in range(24, 100, 4):
+
+        halfrate_matrixname = ("wimax_%d_0_5" % ((i/96.0)*2304))
+        matrixname_23A = ("wimax_%d_0_66A" % ((i/96.0)*2304))
+        matrixname_23B = ("wimax_%d_0_66B" % ((i/96.0)*2304))
+        matrixname_34A = ("wimax_%d_0_75A" % ((i/96.0)*2304))
+        matrixname_34B = ("wimax_%d_0_75B" % ((i/96.0)*2304))
+        matrixname_56 = ("wimax_%d_0_83" % ((i/96.0)*2304))
+
+        halfrate_filename = cfiles_dir + halfrate_matrixname
+        filename_23A = cfiles_dir + matrixname_23A
+        filename_23B = cfiles_dir + matrixname_23B
+        filename_34A = cfiles_dir + matrixname_34A
+        filename_34B = cfiles_dir + matrixname_34B
+        filename_56 = cfiles_dir + matrixname_56
+
+        create_c_matrix_file(expand_h_matrix(h_matrix_halfrate, i), halfrate_matrixname, halfrate_filename)
+        create_c_matrix_file(expand_h_matrix(h_matrix_23A, i, case_23A_rate=True), matrixname_23A, filename_23A)
+        create_c_matrix_file(expand_h_matrix(h_matrix_23B, i), matrixname_23B, filename_23B)
+        create_c_matrix_file(expand_h_matrix(h_matrix_34A, i), matrixname_34A, filename_34A)
+        create_c_matrix_file(expand_h_matrix(h_matrix_34B, i), matrixname_34B, filename_34B)
+        create_c_matrix_file(expand_h_matrix(h_matrix_56, i), matrixname_56, filename_56)
+
+    
+if __name__ == '__main__':
+    
+    print("Generating Alists for all of the LDPC rates and sizes found in the 802.16 standard")
+    print("Generating C header and source files containing the check nodes for all LDPC rates and sizes from the 802.16e standard")
+    main()
 
