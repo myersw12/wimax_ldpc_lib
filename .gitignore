@@ -1,3 +1,4 @@
 *.pyc
 *.swp
 *.ipython-checkpoints
+/build
