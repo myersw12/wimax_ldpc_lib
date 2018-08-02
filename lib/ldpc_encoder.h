@@ -19,7 +19,7 @@ class ldpc_encoder
 
     private:
         
-        uint16_t*       m_checknode_array;
+        int16_t*       m_checknode_array;
         
         uint8_t*        m_M1;
         uint8_t*        m_M2;
@@ -27,6 +27,9 @@ class ldpc_encoder
         
         uint8_t*        m_P1;
         uint8_t*        m_P2;
+        
+        uint8_t*        m_encode_temp1;
+        uint8_t*        m_encode_temp2;
         
         unsigned int    m_N;
         unsigned int    m_M;
@@ -41,7 +44,7 @@ class ldpc_encoder
         void mult_matrices_mod2(uint8_t* A, uint8_t* B, uint8_t* C, unsigned int a_rows,
                                 unsigned int a_cols, unsigned int b_rows,
                                 unsigned int b_cols);
-        void generate_encoding_matrices(uint16_t* checknodes);
+        void generate_encoding_matrices(int16_t* checknodes);
 
     public:
         ldpc_encoder(coderate rate, unsigned int z_factor);

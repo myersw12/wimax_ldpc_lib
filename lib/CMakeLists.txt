@@ -2,7 +2,9 @@
 # Setup executable
 ########################################################################
 
+set(CMAKE_CXX_FLAGS "-O3 -std=c++11 -fopenmp")
 
+ 
 set(SOURCES 
     ${CMAKE_CURRENT_SOURCE_DIR}/ldpc_encoder.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/ldpc_decoder.cc
@@ -14,7 +16,7 @@ set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/matrices/wimax_576_0_75B.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/matrices/wimax_576_0_83.cc
     )
-
+ 
 
 add_executable(test_encoder ${SOURCES})
 

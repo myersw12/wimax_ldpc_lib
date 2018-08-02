@@ -18,7 +18,7 @@ class ldpc_encoder:
         # H matrix size
         self.Z = self.N / 24
 
-        self.M1, self.M2, self.M3 = self.generate_encoding_matrices(self.H, self.M, self.Z)
+        self.M1, self.M2, self.M3, self.T, self.A, self.B, self.C, self.E = self.generate_encoding_matrices(self.H, self.M, self.Z)
 
     def create_H_from_alist(self, alist):
 
@@ -110,7 +110,7 @@ class ldpc_encoder:
 
         M3 = np.dot(T, B)%2
         
-        return M1, M2, M3
+        return M1, M2, M3, T, A, B, C, E
 
     def encode_data(self, infoword):
     

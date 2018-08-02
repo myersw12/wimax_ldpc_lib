@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 
-uint16_t wimax_1536_0_66B[512][11];
+extern int16_t wimax_1536_0_66B[512][11];
 
 
 #endif // WIMAX_1536_0_66B_H

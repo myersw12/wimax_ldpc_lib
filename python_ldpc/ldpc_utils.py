@@ -260,7 +260,7 @@ def create_c_matrix_file(matrix, matrix_name, filename):
     max_row_weight = np.max(row_weights)
     
     f.write("#include \"%s.h\"\n\n\n" % (include_filename))
-    f.write("uint16_t %s[%d][%d] = {\n" % (matrix_name, M, max_row_weight))
+    f.write("int16_t %s[%d][%d] = {\n" % (matrix_name, M, max_row_weight))
             
     for m in range(len(mlist)):
         
@@ -292,7 +292,7 @@ def create_c_matrix_file(matrix, matrix_name, filename):
 
     header_file.write("\n#include <stdint.h>\n\n\n")
     
-    header_file.write("uint16_t %s[%d][%d];\n\n\n" % (matrix_name, M, max_row_weight))
+    header_file.write("extern int16_t %s[%d][%d];\n\n\n" % (matrix_name, M, max_row_weight))
     
     header_file.write("#endif // %s_H\n" % (include_filename.upper()))
     
