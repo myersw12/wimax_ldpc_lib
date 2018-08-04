@@ -6,6 +6,7 @@ set(CMAKE_CXX_FLAGS "-O3 -std=c++11 -fopenmp")
 
  
 set(SOURCES 
+    ${CMAKE_CURRENT_SOURCE_DIR}/ldpc.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/ldpc_encoder.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/ldpc_decoder.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/encode_example.cc
