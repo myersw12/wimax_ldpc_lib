@@ -18,8 +18,6 @@ ldpc_encoder::ldpc_encoder(coderate rate,
     m_M2 = (uint8_t*)calloc((m_M - m_z) * (m_N - m_M), sizeof(uint8_t));
     m_M3 = (uint8_t*)calloc((m_M - m_z) * m_z, sizeof(uint8_t));
     
-    printf("M3 size: %d\n", (m_M - m_z) * m_z);
-    
     m_P1 = (uint8_t*)calloc(m_z, sizeof(uint8_t));
     m_P2 = (uint8_t*)calloc(m_M - m_z, sizeof(uint8_t));
     
@@ -27,8 +25,6 @@ ldpc_encoder::ldpc_encoder(coderate rate,
     m_encode_temp2 = (uint8_t*)calloc(m_M - m_z, sizeof(uint8_t));
 
     generate_encoding_matrices(m_checknode_array);
-    
-    printf("encoder initialization complete\n");
     
 }
 

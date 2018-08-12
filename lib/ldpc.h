@@ -3,22 +3,39 @@
 
 #include <stdio.h>
 #include <chrono>
+#include <iostream>
 
 #include "enums.h"
-#include "matrices/wimax_576_0_5.h"
-#include "matrices/wimax_576_0_66A.h"
-#include "matrices/wimax_576_0_66B.h"
-#include "matrices/wimax_576_0_75A.h"
-#include "matrices/wimax_576_0_75B.h"
-#include "matrices/wimax_576_0_83.h"
+#include "matrices/matrices.h"
 
 #define BASE_LDPC_BLOCK_LEN 2304
+
+// Use this to enable/disable matrice switch statements
+#define Z_24
+#define Z_28
+#define Z_32
+#define Z_36
+#define Z_40
+#define Z_44
+#define Z_48
+#define Z_52
+#define Z_56
+#define Z_60
+#define Z_64
+#define Z_68
+#define Z_72
+#define Z_76
+#define Z_80
+#define Z_84
+#define Z_88
+#define Z_92
+#define Z_96
 
 class ldpc
 {
     
     private:
-        void set_checknode_array(coderate rate, unsigned int z_factor);
+        unsigned int set_checknode_array(coderate rate, unsigned int z_factor);
 
     protected:
         

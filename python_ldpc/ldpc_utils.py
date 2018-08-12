@@ -223,13 +223,11 @@ def create_alist_file(matrix, filename, print_to_console = False):
 
 
 # Create C header and source file for ldpc size and rate
-def create_c_matrix_file(matrix, matrix_name, filename):
+def create_c_matrix_file(matrix, matrix_name, filename, z, header_file):
         
     f = open(filename + ".cc", 'w')
-    header_file = open(filename + ".h", 'w')
+
     
-    include_filename = filename.split('/')
-    include_filename = include_filename[len(include_filename)-1]
     
     # number of variable nodes
     N = len(matrix[0])
@@ -259,9 +257,10 @@ def create_c_matrix_file(matrix, matrix_name, filename):
     max_col_weight = np.max(column_weights)
     max_row_weight = np.max(row_weights)
     
-    f.write("#include \"%s.h\"\n\n\n" % (include_filename))
+    f.write("#include \"matrices.h\"\n\n\n")
+    f.write("#ifdef Z_%d\n"%z)
     f.write("int16_t %s[%d][%d] = {\n" % (matrix_name, M, max_row_weight))
-            
+    
     for m in range(len(mlist)):
         
         f.write("    {")
@@ -283,20 +282,14 @@ def create_c_matrix_file(matrix, matrix_name, filename):
         else:
             f.write('},\n')
     
-    f.write("};")
+    f.write("};\n")
+    f.write("#endif")
     f.close()
-    
-    header_file.write("#ifndef %s_H\n" % (include_filename.upper()))
-    
-    header_file.write("#define %s_H\n" % (include_filename.upper()))
 
-    header_file.write("\n#include <stdint.h>\n\n\n")
+    header_file.write("#ifdef Z_%d\n"%z)
+    header_file.write("extern int16_t %s[%d][%d];\n" % (matrix_name, M, max_row_weight))
+    header_file.write("#endif\n\n")
     
-    header_file.write("extern int16_t %s[%d][%d];\n\n\n" % (matrix_name, M, max_row_weight))
-    
-    header_file.write("#endif // %s_H\n" % (include_filename.upper()))
-    
-    header_file.close()
     
 # Generate all of the Alists from the WIMAX standard
 # Generate C header and source files for all LDPC rates and Z factors
@@ -325,6 +318,19 @@ def main():
 
     cfiles_dir = "../lib/matrices/"
     
+    header_file = open(cfiles_dir + "matrices.h", 'w')
+    
+    include_filename = "matrices"
+    
+    header_file.write("#ifndef %s_H\n" % (include_filename.upper()))
+    header_file.write("#define %s_H\n" % (include_filename.upper()))
+    header_file.write("\n#include <stdint.h>\n\n")   
+    
+    for i in range(24, 100, 4):
+        header_file.write("#define Z_%d\n"%i)
+        
+    header_file.write("\n")
+    
     for i in range(24, 100, 4):
 
         halfrate_matrixname = ("wimax_%d_0_5" % ((i/96.0)*2304))
@@ -341,12 +347,15 @@ def main():
         filename_34B = cfiles_dir + matrixname_34B
         filename_56 = cfiles_dir + matrixname_56
 
-        create_c_matrix_file(expand_h_matrix(h_matrix_halfrate, i), halfrate_matrixname, halfrate_filename)
-        create_c_matrix_file(expand_h_matrix(h_matrix_23A, i, case_23A_rate=True), matrixname_23A, filename_23A)
-        create_c_matrix_file(expand_h_matrix(h_matrix_23B, i), matrixname_23B, filename_23B)
-        create_c_matrix_file(expand_h_matrix(h_matrix_34A, i), matrixname_34A, filename_34A)
-        create_c_matrix_file(expand_h_matrix(h_matrix_34B, i), matrixname_34B, filename_34B)
-        create_c_matrix_file(expand_h_matrix(h_matrix_56, i), matrixname_56, filename_56)
+        create_c_matrix_file(expand_h_matrix(h_matrix_halfrate, i), halfrate_matrixname, halfrate_filename, i, header_file)
+        create_c_matrix_file(expand_h_matrix(h_matrix_23A, i, case_23A_rate=True), matrixname_23A, filename_23A, i, header_file)
+        create_c_matrix_file(expand_h_matrix(h_matrix_23B, i), matrixname_23B, filename_23B, i, header_file)
+        create_c_matrix_file(expand_h_matrix(h_matrix_34A, i), matrixname_34A, filename_34A, i, header_file)
+        create_c_matrix_file(expand_h_matrix(h_matrix_34B, i), matrixname_34B, filename_34B, i, header_file)
+        create_c_matrix_file(expand_h_matrix(h_matrix_56, i), matrixname_56, filename_56, i, header_file)
+        
+    header_file.write("#endif // %s_H\n" % (include_filename.upper()))
+    header_file.close()
 
     
 if __name__ == '__main__':
