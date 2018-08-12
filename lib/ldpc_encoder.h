@@ -31,7 +31,7 @@ class ldpc_encoder : public ldpc
         void generate_encoding_matrices(int16_t* checknodes);
 
     public:
-        ldpc_encoder(coderate rate, unsigned int z_factor);
+        ldpc_encoder(coderate rate, unsigned int z_factor, unsigned int num_threads);
         ~ldpc_encoder();
         
         void encode_data(uint8_t* infoword, uint8_t* codeword);

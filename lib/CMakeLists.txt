@@ -2,14 +2,11 @@
 # Setup executable
 ########################################################################
 
-set(CMAKE_CXX_FLAGS "-O3 -std=c++11 -fopenmp")
+set(CMAKE_CXX_FLAGS "-Wall -O3 -std=c++11 -fopenmp")
 
  
 set(SOURCES 
     ${CMAKE_CURRENT_SOURCE_DIR}/ldpc.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/ldpc_encoder.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/ldpc_decoder.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/encode_example.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/matrices/wimax_576_0_5.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/matrices/wimax_576_0_66A.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/matrices/wimax_576_0_66B.cc
@@ -19,7 +16,8 @@ set(SOURCES
     )
  
 
-add_executable(test_encoder ${SOURCES})
+add_executable(test_encoder ${SOURCES} encode_example.cc ldpc_encoder.cc)
+add_executable(test_decoder ${SOURCES} decode_example.cc ldpc_decoder.cc)
 
 set_target_properties(test_encoder PROPERTIES LINKER_LANGUAGE CXX)
 

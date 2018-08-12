@@ -2,8 +2,9 @@
 
 #include "ldpc.h"
 
-ldpc::ldpc(coderate rate, unsigned int z_factor)
+ldpc::ldpc(coderate rate, unsigned int z_factor, unsigned int num_threads)
 {
+    m_num_threads = num_threads;
     
     m_z = z_factor;
     m_N = (m_z / 96.0) * BASE_LDPC_BLOCK_LEN;
@@ -110,4 +111,13 @@ void ldpc::set_checknode_array(coderate rate, unsigned int z_factor)
             break;
         }
     }
+}
+
+uint64_t ldpc::get_nanoseconds()
+{
+    uint64_t nanoseconds =
+    std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::
+                  now().time_since_epoch()).count();
+        
+    return nanoseconds;
 }

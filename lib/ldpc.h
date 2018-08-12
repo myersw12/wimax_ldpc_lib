@@ -2,6 +2,7 @@
 #define LDPC_H
 
 #include <stdio.h>
+#include <chrono>
 
 #include "enums.h"
 #include "matrices/wimax_576_0_5.h"
@@ -28,10 +29,13 @@ class ldpc
         unsigned int    m_z;
         unsigned int    m_col_size;
         unsigned int    m_row_size; 
+        unsigned int    m_num_threads;
         
     public:
-        ldpc(coderate rate, unsigned int z_factor);
+        ldpc(coderate rate, unsigned int z_factor, unsigned int num_threads);
         ~ldpc();
+        
+        uint64_t get_nanoseconds();
     
     
 };

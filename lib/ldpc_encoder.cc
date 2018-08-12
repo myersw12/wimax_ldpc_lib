@@ -7,7 +7,11 @@
 #include <gsl/gsl_linalg.h>
 
 
-ldpc_encoder::ldpc_encoder(coderate rate, unsigned int z_factor) : ldpc(rate, z_factor)
+ldpc_encoder::ldpc_encoder(coderate rate,
+                           unsigned int z_factor,
+                           unsigned int num_threads) : ldpc(rate,
+                                                            z_factor,
+                                                            num_threads)
 {
     
     m_M1 = (uint8_t*)calloc(z_factor * (m_N - m_M), sizeof(uint8_t));
@@ -31,8 +35,6 @@ ldpc_encoder::ldpc_encoder(coderate rate, unsigned int z_factor) : ldpc(rate, z_
 // Destructor
 ldpc_encoder::~ldpc_encoder()
 {
-    printf("deconstructor\n");
-    
     free(m_M1);
     free(m_M2);
     free(m_M3);
@@ -41,7 +43,6 @@ ldpc_encoder::~ldpc_encoder()
     
     free(m_encode_temp1);
     free(m_encode_temp2);
-    
 }
 
 void ldpc_encoder::generate_encoding_matrices(int16_t* checknodes)
@@ -69,8 +70,8 @@ void ldpc_encoder::generate_encoding_matrices(int16_t* checknodes)
     uint8_t* temp1 = (uint8_t*)calloc(m_z * (m_M - m_z), sizeof(uint8_t));
     uint8_t* temp2 = (uint8_t*)calloc(m_z * (m_N - m_M), sizeof(uint8_t));
     
-    unsigned int a_end = m_N - m_M;
-    unsigned int b_end = a_end + m_z;
+    int a_end = m_N - m_M;
+    int b_end = a_end + m_z;
     
     unsigned int vert_split = m_M - m_z;
     
@@ -147,7 +148,7 @@ void ldpc_encoder::generate_encoding_matrices(int16_t* checknodes)
 void ldpc_encoder::mult_matrices_mod2(uint8_t* A, uint8_t* B, uint8_t* C, unsigned int a_rows,
                                  unsigned int a_cols, unsigned int b_rows, unsigned int b_cols)
 {
-    //#pragma omp parallel for shared(A, B, C)
+    #pragma omp parallel for schedule(dynamic, a_rows/(m_num_threads*4)) shared(A, B, C) num_threads(m_num_threads)
     for(unsigned int i = 0; i < a_rows; i++)
     {
         for (unsigned int j = 0; j < b_cols; j++)
@@ -159,7 +160,7 @@ void ldpc_encoder::mult_matrices_mod2(uint8_t* A, uint8_t* B, uint8_t* C, unsign
             {   
                 sum += A[idx + k] * B[k * b_cols + j];
             }
-            C[i * b_cols + j] = sum % 2;
+            C[i * b_cols + j] = sum & 0x01;
         }
     }
 }
@@ -169,7 +170,7 @@ void ldpc_encoder::add_matrices_mod2(uint8_t* A, uint8_t* B, uint8_t* C, unsigne
 {
     for(unsigned int i = 0; i < rows * cols; i++)
     {
-        C[i] = (A[i] + B[i]) % 2;
+        C[i] = (A[i] + B[i]) & 0x01;
     }
 }
 
