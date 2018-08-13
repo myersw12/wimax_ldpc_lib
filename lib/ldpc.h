@@ -54,7 +54,6 @@ class ldpc
         
         uint64_t get_nanoseconds();
     
-    
 };
 
 #endif // LDPC_H

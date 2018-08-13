@@ -3,15 +3,46 @@
 #include <stdlib.h>
 #include <chrono>
 #include <inttypes.h>
+#include <string>
+#include <ctime>
 
 #include "ldpc_encoder.h"
 
 #define NUM_THREADS 4
-int main()
+
+void fill_with_random(uint8_t* buffer, unsigned int buf_len)
+{
+    // initialize the random number generator
+    srand(time(0));
+    for (unsigned int i = 0; i < buf_len; i++)
+    {
+        buffer[i] = rand() % 2;
+    }
+}
+
+int main(int argc, char *argv[])
 {
     
-    FILE *f;
-    FILE *fw;
+    if (argc != 6)
+    {
+        printf("\nError: Incorrect number of arguments\n");
+        printf("Usage: ./test_encoder <rate> <z> <num_rounds> <unencoded_data_file> <encoded_data_file>\n");
+        printf("Argument Description:\n");
+        printf("rate: LDPC code rate - half-rate        = 0\n");
+        printf("                       two-thirds-A     = 1\n");
+        printf("                       two-thirds-B     = 2\n");
+        printf("                       three-quarters-A = 3\n");
+        printf("                       three-quarters-B = 4\n");
+        printf("                       five-sixths      = 5\n");
+        printf("z: Z Factor (please refer to section 8.4.9.2.5 of the 802.16-2012 standard for more information\n");
+        printf("num_rounds: How many LDPC encoding rounds to run.\n");
+        printf("unencoded_data_file: File to write the unencoded data to.\n");
+        printf("encoded_data_file: File to write LDPC encoded data to.\n\n");
+        return 0;
+    }
+    
+    FILE *data_file;
+    FILE *encoded_file;
     
     uint64_t start_time;
     uint64_t elapsed_time;
@@ -19,35 +50,68 @@ int main()
     double avg_time;
     uint64_t max_time = 0;
     uint64_t min_time = 10000000000;
+   
+    coderate rate = (coderate)std::stoi(argv[1], nullptr, 0);
+    int z = std::stoi(argv[2], nullptr, 0);
+    unsigned int num_rounds = std::stoi(argv[3], nullptr, 0);
     
-    uint8_t* file_buffer = (uint8_t*) malloc(4096*(576/2));
+    int codeword_len = (z / 96.0) * BASE_LDPC_BLOCK_LEN;
+    int dataword_len = 0;
     
+    data_file = fopen(argv[4], "wb");
+    encoded_file = fopen(argv[5], "wb");
     
-    f = fopen("../example_data/576_infowords.bin", "rb");
-    
-    if(f)
+    ldpc_encoder encoder = ldpc_encoder(rate, z, NUM_THREADS);
+   
+    switch(rate)
     {
-        int n = fread(file_buffer, 1, 4096*(576/2), f);
-        printf("nread: %d\n", n);
+        case (HALFRATE):
+        {
+            dataword_len = codeword_len / 2; 
+            break;
+        }
+        
+        case (TWOTHIRDSA):
+        case (TWOTHIRDSB):
+        {
+            dataword_len = (codeword_len * 2) / 3;
+            break;
+        }
+        
+        case (THREEQUARTERSA):
+        case (THREEQUARTERSB):
+        {
+            dataword_len = (codeword_len * 3) / 4;
+            break;
+        }
+        
+        case (FIVESIXTHS):
+        {
+            dataword_len = (codeword_len * 5) / 6;
+            break;
+        }
+        
+        default:
+        {
+            printf("[!]test_encoder - Invalid Coderate: %d\n", rate);
+            throw std::exception();
+            break;
+        }
     }
     
-    fclose(f);
+    uint8_t temp_codeword[codeword_len];
+    uint8_t temp_dataword[dataword_len];
     
-    ldpc_encoder encoder = ldpc_encoder(HALFRATE, 24, NUM_THREADS);
-    
-    uint8_t temp_codeword[576];
-    
-    fw = fopen("../example_data/576_codewords.bin", "wb");
-    
-    
-    for (unsigned int i = 0; i < 4096; i++)
+    for (unsigned int i = 0; i < num_rounds; i++)
     {
+        fill_with_random(temp_dataword, dataword_len);
+        fwrite(temp_dataword, 1, dataword_len, data_file);
         
         start_time = encoder.get_nanoseconds();
-        encoder.encode_data(file_buffer + i * 288, temp_codeword);
+        encoder.encode_data(temp_dataword, temp_codeword);
         elapsed_time = encoder.get_nanoseconds() - start_time;
         time_sum += elapsed_time;
-        printf("Rate (Mbits/Sec): %f\n", (576.0 * 1000.0) / (elapsed_time) ); 
+        printf("Round[%d] Rate (Mbits/Sec): %f\n", i,(codeword_len * 1000.0) / (elapsed_time)); 
         
         if(elapsed_time > max_time)
             max_time = elapsed_time;
@@ -55,15 +119,17 @@ int main()
         if(elapsed_time < min_time)
             min_time = elapsed_time;
         
-        fwrite(temp_codeword, 1, 576, fw);
+        fwrite(temp_codeword, 1, codeword_len, encoded_file);
     }
-    avg_time = time_sum / 4096.0;
-    printf("Average Rate (Mbits/Sec): %f\n", (576.0 * 1000.0) / (avg_time) ); 
-    printf("Fastest Time (Mbits/Sec): %f\n", (576.0 * 1000.0) / (min_time) );
-    printf("Slowest Time (Mbits/Sec): %f\n", (576.0 * 1000.0) / (max_time) );
-
-    fclose(fw);
     
-    free(file_buffer);
+    avg_time = time_sum / float(num_rounds);
+    printf("\n\nTiming Statistics:\n\n");
+    printf("Average Rate (Mbits/Sec): %f\n", (codeword_len * 1000.0) / (avg_time) ); 
+    printf("Fastest Time (Mbits/Sec): %f\n", (codeword_len * 1000.0) / (min_time) );
+    printf("Slowest Time (Mbits/Sec): %f\n", (codeword_len * 1000.0) / (max_time) );
+
+    fclose(data_file);
+    fclose(encoded_file);
+    
     return 1;
 }

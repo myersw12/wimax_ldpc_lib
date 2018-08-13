@@ -40,6 +40,7 @@ ldpc::ldpc(coderate rate, unsigned int z_factor, unsigned int num_threads)
         default:
         {
             printf("[!]ldpc_encoder - Invalid Coderate: %d\n", rate);
+            throw std::exception();
             break;
         }
     }

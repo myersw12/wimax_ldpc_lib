@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+// Use these to choose which matrices to include
+// If you are concerned about size this will help
 #define Z_24
 #define Z_28
 #define Z_32
