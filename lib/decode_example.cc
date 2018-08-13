@@ -5,7 +5,7 @@
 #include "ldpc_decoder.h"
 
 #define MAX_ITER 10
-#define NUM_THREADS 4
+#define NUM_THREADS 6
 
 int main(int argc, char *argv[])
 {
@@ -102,7 +102,6 @@ int main(int argc, char *argv[])
             break;
         }
     }
-    
     
     decoded_data = fopen(argv[5], "wb");
     

@@ -20,13 +20,23 @@ void fill_with_random(uint8_t* buffer, unsigned int buf_len)
     }
 }
 
+void add_errors(uint8_t* buffer, unsigned int buf_len, unsigned int num_errors)
+{
+    srand(time(0));
+    for (unsigned int i = 0; i < num_errors; i++)
+    {
+        unsigned int rand_index = (rand() % buf_len) + 1;
+        buffer[rand_index] = not buffer[rand_index];
+    }
+}
+
 int main(int argc, char *argv[])
 {
     
-    if (argc != 6)
+    if (argc != 7)
     {
         printf("\nError: Incorrect number of arguments\n");
-        printf("Usage: ./test_encoder <rate> <z> <num_rounds> <unencoded_data_file> <encoded_data_file>\n");
+        printf("Usage: ./test_encoder <rate> <z> <num_rounds> <errors_to_add> <unencoded_data_file> <encoded_data_file>\n");
         printf("Argument Description:\n");
         printf("rate: LDPC code rate - half-rate        = 0\n");
         printf("                       two-thirds-A     = 1\n");
@@ -36,6 +46,7 @@ int main(int argc, char *argv[])
         printf("                       five-sixths      = 5\n");
         printf("z: Z Factor (please refer to section 8.4.9.2.5 of the 802.16-2012 standard for more information\n");
         printf("num_rounds: How many LDPC encoding rounds to run.\n");
+        printf("errors_to_add: How many errors to add to each LDPC codeword.\n");
         printf("unencoded_data_file: File to write the unencoded data to.\n");
         printf("encoded_data_file: File to write LDPC encoded data to.\n\n");
         return 0;
@@ -54,12 +65,18 @@ int main(int argc, char *argv[])
     coderate rate = (coderate)std::stoi(argv[1], nullptr, 0);
     int z = std::stoi(argv[2], nullptr, 0);
     unsigned int num_rounds = std::stoi(argv[3], nullptr, 0);
+    unsigned int num_errors = std::stoi(argv[4], nullptr, 0);
     
-    int codeword_len = (z / 96.0) * BASE_LDPC_BLOCK_LEN;
-    int dataword_len = 0;
+    unsigned int codeword_len = (z / 96.0) * BASE_LDPC_BLOCK_LEN;
+    unsigned int dataword_len = 0;
     
-    data_file = fopen(argv[4], "wb");
-    encoded_file = fopen(argv[5], "wb");
+    if(num_errors >= codeword_len){
+        printf("[!] Error: Num_errors greater than codeword length\n");
+        return 0;
+    }
+    
+    data_file = fopen(argv[5], "wb");
+    encoded_file = fopen(argv[6], "wb");
     
     ldpc_encoder encoder = ldpc_encoder(rate, z, NUM_THREADS);
    
@@ -118,6 +135,9 @@ int main(int argc, char *argv[])
         
         if(elapsed_time < min_time)
             min_time = elapsed_time;
+        
+        if(num_errors > 0)
+            add_errors(temp_codeword, codeword_len, num_errors);
         
         fwrite(temp_codeword, 1, codeword_len, encoded_file);
     }
