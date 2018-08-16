@@ -2,7 +2,7 @@
 # Setup executable
 ########################################################################
 
-set(CMAKE_CXX_FLAGS "-Wl,--gc-sections -ffunction-sections -fdata-sections -Wall -O3 -std=c++11 -fopenmp")
+set(CMAKE_CXX_FLAGS " -Wall -O3 -std=c++11 -fopenmp")
 
  
 set(SOURCES 

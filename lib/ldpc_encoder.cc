@@ -149,14 +149,14 @@ void ldpc_encoder::mult_matrices_mod2(uint8_t* A, uint8_t* B, uint8_t* C, unsign
     {
         for (unsigned int j = 0; j < b_cols; j++)
         {
-            unsigned int sum = 0;
             unsigned int idx = i * a_cols;
+            uint8_t value = 0;
             
             for(unsigned int k = 0; k < a_cols; k++)
             {   
-                sum += A[idx + k] * B[k * b_cols + j];
+                value ^= A[idx + k] && B[k * b_cols + j];
             }
-            C[i * b_cols + j] = sum & 0x01;
+            C[i * b_cols + j] = value;
         }
     }
 }
