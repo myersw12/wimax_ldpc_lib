@@ -166,7 +166,7 @@ void ldpc_encoder::add_matrices_mod2(uint8_t* A, uint8_t* B, uint8_t* C, unsigne
 {
     for(unsigned int i = 0; i < rows * cols; i++)
     {
-        C[i] = (A[i] + B[i]) & 0x01;
+        C[i] = (A[i] ^ B[i]);
     }
 }
 
