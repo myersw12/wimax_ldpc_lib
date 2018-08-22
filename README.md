@@ -10,6 +10,11 @@ This repository contains an LDPC encoder and decoder implemented in Python and C
 
 The LDPC codes used in this project are from the IEEE 802.16E standard (Mobile WIMAX).  These matrices are used because they are a special form of LDPC codes known as Quasi-Cyclic (QC) LDPC codes.  QC-LDPC codes are faster to encode and decode.  All of the LDPC matrices and coderates from the 802.16e-2012 standard are available for use.
 
+## Requirements
+
+  * CMake
+  * GSL >= 1.10
+
 ## Encoder
 
 The encoder is based on the Richardson Urbanke (RU) Algorithm <sup>[1](#footnote1)</sup>.
@@ -19,6 +24,32 @@ The encoder is based on the Richardson Urbanke (RU) Algorithm <sup>[1](#footnote
 The decoder uses the Turbo-Decoding Message-Passing Algorithm <sup>[2](#footnote2)</sup>.
 
 ## Tools
+
+To build the tools, perform the following steps:
+   * clone the repository: `git clone git@github.com:myersw12/wimax_ldpc_lib.git`
+   * create the build directory: `cd wimax_ldpc_lib && mkdir build && cd build`
+   * run cmake: `cmake ../`
+   * run make: `make -j4`
+   
+The executables listed below are found in the `wimax_ldpc_lib/build/lib/` directory.
+
+### test_encoder
+
+Example Usage: `./lib/test_encoder 0 96 500 100 data.bin encoded.bin`
+
+Stats from running on a i7-4771 @ 3.50GHz (running the example above):
+  * Average Rate (Mbits/Sec): 6.877333
+  * Fastest Time (Mbits/Sec): 7.820216
+  * Slowest Time (Mbits/Sec): 5.030568
+
+### test_decoder
+
+Example Usage: `./lib/test_decoder 0 96 500 encoded.bin decoded.bin`
+
+Stats from running on a i7-4771 @ 3.50GHz (decoding the output from the above example):
+  * Average Rate (Mbits/Sec): 16.805945
+  * Fastest Time (Mbits/Sec): 20.610994
+  * Slowest Time (Mbits/Sec): 0.490290
 
 
 ## Directory Structure
