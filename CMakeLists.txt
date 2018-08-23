@@ -24,3 +24,4 @@ include_directories(${CMAKE_SOURCE_DIR}/include,
 # Add subdirectories
 ######################################################################## 
 add_subdirectory(lib)
+add_subdirectory(include)

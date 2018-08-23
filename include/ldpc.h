@@ -6,7 +6,7 @@
 #include <iostream>
 
 #include "enums.h"
-#include "matrices/matrices.h"
+#include "matrices.h"
 
 #define BASE_LDPC_BLOCK_LEN 2304
 

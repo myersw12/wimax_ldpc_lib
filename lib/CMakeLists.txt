@@ -1,6 +1,7 @@
 ########################################################################
 # Setup executable
 ########################################################################
+project(lib)
 
 set(CMAKE_CXX_FLAGS " -Wall -O3 -std=c++11 -fopenmp")
 
@@ -122,12 +123,15 @@ set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/matrices/wimax_2304_0_75B.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/matrices/wimax_2304_0_83.cc
     )
- 
+    
+    
+include_directories("${CMAKE_SOURCE_DIR}/include")
 
 add_executable(test_encoder ${SOURCES} encode_example.cc ldpc_encoder.cc)
+
 add_executable(test_decoder ${SOURCES} decode_example.cc ldpc_decoder.cc)
 
-add_library(wimax_ldpc_lib ${SOURCES})
+add_library(wimax_ldpc_lib SHARED ${SOURCES})
 
 set_target_properties(test_encoder PROPERTIES LINKER_LANGUAGE CXX)
 
@@ -140,3 +144,5 @@ endif(GSL_FOUND)
 
 target_link_libraries(test_encoder ${test_encoder_libs})
 target_link_libraries(wimax_ldpc_lib ${test_encoder_libs})
+
+install(TARGETS wimax_ldpc_lib DESTINATION lib)
