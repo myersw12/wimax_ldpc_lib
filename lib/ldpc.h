@@ -31,30 +31,32 @@
 #define Z_92
 #define Z_96
 
-class ldpc
-{
-    
-    private:
-        unsigned int set_checknode_array(coderate rate, unsigned int z_factor);
+namespace wimax_ldpc_lib{
+    class ldpc
+    {
+        
+        private:
+            unsigned int set_checknode_array(coderate rate, unsigned int z_factor);
 
-    protected:
+        protected:
+            
+            int16_t*    m_checknode_array;
+            
+            unsigned int    m_N;
+            unsigned int    m_M;
+            unsigned int    m_z;
+            unsigned int    m_col_size;
+            unsigned int    m_row_size; 
+            unsigned int    m_num_threads;
+            
+        public:
+            ldpc(coderate rate, unsigned int z_factor, unsigned int num_threads);
+            ~ldpc();
+            
+            uint64_t get_nanoseconds();
         
-        int16_t*    m_checknode_array;
-        
-        unsigned int    m_N;
-        unsigned int    m_M;
-        unsigned int    m_z;
-        unsigned int    m_col_size;
-        unsigned int    m_row_size; 
-        unsigned int    m_num_threads;
-        
-    public:
-        ldpc(coderate rate, unsigned int z_factor, unsigned int num_threads);
-        ~ldpc();
-        
-        uint64_t get_nanoseconds();
-    
-};
+    };
+}// end namespace wimax_ldpc_lib
 
 #endif // LDPC_H
 

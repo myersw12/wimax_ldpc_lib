@@ -7,6 +7,8 @@
 #define MAX_ITER 10
 #define NUM_THREADS 6
 
+using namespace wimax_ldpc_lib;
+
 int main(int argc, char *argv[])
 {
     
@@ -107,7 +109,7 @@ int main(int argc, char *argv[])
     
     for (unsigned int i = 0; i < num_codewords; i++)
     {
-        initial_errors = decoder.compute_syndrome(file_buffer + i*codeword_len);
+        initial_errors = decoder.compute_syndrome(file_buffer + i*codeword_len, false);
         
         start_time = decoder.get_nanoseconds();
         

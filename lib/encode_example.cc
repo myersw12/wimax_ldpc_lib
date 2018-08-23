@@ -10,6 +10,8 @@
 
 #define NUM_THREADS 4
 
+using namespace wimax_ldpc_lib;
+
 void fill_with_random(uint8_t* buffer, unsigned int buf_len)
 {
     // initialize the random number generator
