@@ -127,6 +127,8 @@ set(SOURCES
 add_executable(test_encoder ${SOURCES} encode_example.cc ldpc_encoder.cc)
 add_executable(test_decoder ${SOURCES} decode_example.cc ldpc_decoder.cc)
 
+add_library(wimax_ldpc_lib ${SOURCES})
+
 set_target_properties(test_encoder PROPERTIES LINKER_LANGUAGE CXX)
 
 if(GSL_FOUND)
@@ -137,3 +139,4 @@ if(GSL_FOUND)
 endif(GSL_FOUND)
 
 target_link_libraries(test_encoder ${test_encoder_libs})
+target_link_libraries(wimax_ldpc_lib ${test_encoder_libs})
