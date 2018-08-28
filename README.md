@@ -17,11 +17,11 @@ The LDPC codes used in this project are from the IEEE 802.16E standard (Mobile W
 
 ## Encoder
 
-The encoder is based on the algorithm found in <sup>[1](#footnote1)</sup>.
+The encoder is based on the algorithm found in [[1](#footnote1)].
 
 ## Decoder
 
-The decoder uses the Turbo-Decoding Message-Passing Algorithm <sup>[2](#footnote2)</sup>.
+The decoder uses the Turbo-Decoding Message-Passing Algorithm [[2](#footnote2)].
 
 ## Tools
 
