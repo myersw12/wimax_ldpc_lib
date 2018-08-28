@@ -17,7 +17,7 @@ The LDPC codes used in this project are from the IEEE 802.16E standard (Mobile W
 
 ## Encoder
 
-The encoder is based on the Richardson Urbanke (RU) Algorithm <sup>[1](#footnote1)</sup>.
+The encoder is based on the algorithm found in <sup>[1](#footnote1)</sup>.
 
 ## Decoder
 
@@ -56,8 +56,8 @@ Stats from running on a i7-4771 @ 3.50GHz (decoding the output from the above ex
 
 ## References
 
-<a name="footnote1">1</a>:T. J. Richardson and R. L. Urbanke, "Efficient encoding of low-density parity-check codes," in IEEE Transactions on Information Theory, vol. 47, no. 2, pp. 638-656, Feb 2001.
-doi: 10.1109/18.910579
+<a name="footnote1">1</a>:Chia-Yu Lin, Chih-Chun Wei and Mong-Kai Ku, "Efficient encoding for dual-diagonal structured LDPC codes based on parity bit prediction and correction," APCCAS 2008 - 2008 IEEE Asia Pacific Conference on Circuits and Systems, Macao, 2008, pp. 1648-1651.
+doi: 10.1109/APCCAS.2008.4746353
 
 <a name="footnote2">2</a>: B. Le Gal and C. Jego, "High-Throughput Multi-Core LDPC Decoders Based on x86 Processor," in IEEE Transactions on Parallel and Distributed Systems, vol. 27, no. 5, pp. 1373-1386, May 1 2016.
 doi: 10.1109/TPDS.2015.2435787 
