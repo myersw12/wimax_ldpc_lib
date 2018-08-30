@@ -132,19 +132,18 @@ namespace wimax_ldpc_lib{
                         }
                     }
                     
+                    // update codeword
                     if (sign > 0)
+                    {
                         m_LMN[temp_index + m_N*(m+i*m_row_size)] = minimum;
+                        rx_codeword[temp_index] = LNM[n] + minimum;
+                    }
                     else
+                    {
                         m_LMN[temp_index + m_N*(m+i*m_row_size)] = -minimum;
+                        rx_codeword[temp_index] = LNM[n] - minimum;
+                    }
                 }
-                
-                // Update codeword 
-                for (unsigned int n = 0; n < current_row_len; n++)
-                {
-                    temp_index = m_checknode_array[m*m_col_size + n];
-                    rx_codeword[temp_index] = LNM[n] + m_LMN[temp_index + m_N*(m+i*m_row_size)];
-                }
-            
             }
             
             // Perform hard decision decode

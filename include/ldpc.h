@@ -42,8 +42,10 @@ namespace wimax_ldpc_lib{
             
             int16_t*    m_checknode_array;
             
+            unsigned int    m_D;
             unsigned int    m_N;
             unsigned int    m_M;
+            unsigned int    m_X;
             unsigned int    m_z;
             unsigned int    m_col_size;
             unsigned int    m_row_size; 

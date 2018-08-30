@@ -71,36 +71,48 @@ namespace wimax_ldpc_lib {
                     m_checknode_array = (int16_t*) &wimax_576_0_5;
                     m_row_size = sizeof(wimax_576_0_5) / sizeof(wimax_576_0_5[0]);
                     m_col_size = sizeof(wimax_576_0_5[0]) / sizeof(int16_t);
+                    m_D = wimax_576_0_5_D;
+                    m_X = wimax_576_0_5_X;
                 }
                 else if (rate == TWOTHIRDSA)
                 {
                     m_checknode_array = (int16_t*) &wimax_576_0_66A;
                     m_row_size = sizeof(wimax_576_0_66A) / sizeof(wimax_576_0_66A[0]);
                     m_col_size = sizeof(wimax_576_0_66A[0]) / sizeof(int16_t);
+                    m_D = wimax_576_0_66A_D;
+                    m_X = wimax_576_0_66A_X;
 
                 }
                 else if (rate == TWOTHIRDSB){
                     m_checknode_array = (int16_t*) &wimax_576_0_66B;
                     m_row_size = sizeof(wimax_576_0_66B) / sizeof(wimax_576_0_66B[0]);
                     m_col_size = sizeof(wimax_576_0_66B[0]) / sizeof(int16_t);
+                    m_D = wimax_576_0_66B_D;
+                    m_X = wimax_576_0_66B_X;
                 }
                 else if (rate == THREEQUARTERSA)
                 {
                     m_checknode_array = (int16_t*) &wimax_576_0_75A;
                     m_row_size = sizeof(wimax_576_0_75A) / sizeof(wimax_576_0_75A[0]);
                     m_col_size = sizeof(wimax_576_0_75A[0]) / sizeof(int16_t);
+                    m_D = wimax_576_0_75A_D;
+                    m_X = wimax_576_0_75A_X;
                 }
                 else if (rate == THREEQUARTERSB)
                 {
                     m_checknode_array = (int16_t*) &wimax_576_0_75B;
                     m_row_size = sizeof(wimax_576_0_75B) / sizeof(wimax_576_0_75B[0]);
                     m_col_size = sizeof(wimax_576_0_75B[0]) / sizeof(int16_t);
+                    m_D = wimax_576_0_75B_D;
+                    m_X = wimax_576_0_75B_X;
                 }
                 else if (rate == FIVESIXTHS)
                 {
                     m_checknode_array = (int16_t*) &wimax_576_0_83;
                     m_row_size = sizeof(wimax_576_0_83) / sizeof(wimax_576_0_83);
                     m_col_size = sizeof(wimax_576_0_83[0]) / sizeof(int16_t);
+                    m_D = wimax_576_0_83_D;
+                    m_X = wimax_576_0_83_X;
                 }
                 else
                 {
@@ -119,36 +131,48 @@ namespace wimax_ldpc_lib {
                     m_checknode_array = (int16_t*) &wimax_672_0_5;
                     m_row_size = sizeof(wimax_672_0_5) / sizeof(wimax_672_0_5[0]);
                     m_col_size = sizeof(wimax_672_0_5[0]) / sizeof(int16_t);
+                    m_D = wimax_672_0_5_D;
+                    m_X = wimax_672_0_5_X;
                 }
                 else if (rate == TWOTHIRDSA)
                 {
                     m_checknode_array = (int16_t*) &wimax_672_0_66A;
                     m_row_size = sizeof(wimax_672_0_66A) / sizeof(wimax_672_0_66A[0]);
                     m_col_size = sizeof(wimax_672_0_66A[0]) / sizeof(int16_t);
+                    m_D = wimax_672_0_66A_D;
+                    m_X = wimax_672_0_66A_X;
 
                 }
                 else if (rate == TWOTHIRDSB){
                     m_checknode_array = (int16_t*) &wimax_672_0_66B;
                     m_row_size = sizeof(wimax_672_0_66B) / sizeof(wimax_672_0_66B[0]);
                     m_col_size = sizeof(wimax_672_0_66B[0]) / sizeof(int16_t);
+                    m_D = wimax_672_0_66B_D;
+                    m_X = wimax_672_0_66B_X;
                 }
                 else if (rate == THREEQUARTERSA)
                 {
                     m_checknode_array = (int16_t*) &wimax_672_0_75A;
                     m_row_size = sizeof(wimax_672_0_75A) / sizeof(wimax_672_0_75A[0]);
                     m_col_size = sizeof(wimax_672_0_75A[0]) / sizeof(int16_t);
+                    m_D = wimax_672_0_75A_D;
+                    m_X = wimax_672_0_75A_X;
                 }
                 else if (rate == THREEQUARTERSB)
                 {
                     m_checknode_array = (int16_t*) &wimax_672_0_75B;
                     m_row_size = sizeof(wimax_672_0_75B) / sizeof(wimax_672_0_75B[0]);
                     m_col_size = sizeof(wimax_672_0_75B[0]) / sizeof(int16_t);
+                    m_D = wimax_672_0_75B_D;
+                    m_X = wimax_672_0_75B_X;
                 }
                 else if (rate == FIVESIXTHS)
                 {
                     m_checknode_array = (int16_t*) &wimax_672_0_83;
                     m_row_size = sizeof(wimax_672_0_83) / sizeof(wimax_672_0_83);
                     m_col_size = sizeof(wimax_672_0_83[0]) / sizeof(int16_t);
+                    m_D = wimax_672_0_83_D;
+                    m_X = wimax_672_0_83_X;
                 }
                 else
                 {
@@ -167,36 +191,47 @@ namespace wimax_ldpc_lib {
                     m_checknode_array = (int16_t*) &wimax_768_0_5;
                     m_row_size = sizeof(wimax_768_0_5) / sizeof(wimax_768_0_5[0]);
                     m_col_size = sizeof(wimax_768_0_5[0]) / sizeof(int16_t);
+                    m_D = wimax_768_0_5_D;
+                    m_X = wimax_768_0_5_X;
                 }
                 else if (rate == TWOTHIRDSA)
                 {
                     m_checknode_array = (int16_t*) &wimax_768_0_66A;
                     m_row_size = sizeof(wimax_768_0_66A) / sizeof(wimax_768_0_66A[0]);
                     m_col_size = sizeof(wimax_768_0_66A[0]) / sizeof(int16_t);
-
+                    m_D = wimax_768_0_66A_D;
+                    m_X = wimax_768_0_66A_X;
                 }
                 else if (rate == TWOTHIRDSB){
                     m_checknode_array = (int16_t*) &wimax_768_0_66B;
                     m_row_size = sizeof(wimax_768_0_66B) / sizeof(wimax_768_0_66B[0]);
                     m_col_size = sizeof(wimax_768_0_66B[0]) / sizeof(int16_t);
+                    m_D = wimax_768_0_66B_D;
+                    m_X = wimax_768_0_66B_X;
                 }
                 else if (rate == THREEQUARTERSA)
                 {
                     m_checknode_array = (int16_t*) &wimax_768_0_75A;
                     m_row_size = sizeof(wimax_768_0_75A) / sizeof(wimax_768_0_75A[0]);
                     m_col_size = sizeof(wimax_768_0_75A[0]) / sizeof(int16_t);
+                    m_D = wimax_768_0_75A_D;
+                    m_X = wimax_768_0_75A_X;
                 }
                 else if (rate == THREEQUARTERSB)
                 {
                     m_checknode_array = (int16_t*) &wimax_768_0_75B;
                     m_row_size = sizeof(wimax_768_0_75B) / sizeof(wimax_768_0_75B[0]);
                     m_col_size = sizeof(wimax_768_0_75B[0]) / sizeof(int16_t);
+                    m_D = wimax_768_0_75B_D;
+                    m_X = wimax_768_0_75B_X;
                 }
                 else if (rate == FIVESIXTHS)
                 {
                     m_checknode_array = (int16_t*) &wimax_768_0_83;
                     m_row_size = sizeof(wimax_768_0_83) / sizeof(wimax_768_0_83);
                     m_col_size = sizeof(wimax_768_0_83[0]) / sizeof(int16_t);
+                    m_D = wimax_768_0_83_D;
+                    m_X = wimax_768_0_83_X;
                 }
                 else
                 {
@@ -215,36 +250,47 @@ namespace wimax_ldpc_lib {
                     m_checknode_array = (int16_t*) &wimax_864_0_5;
                     m_row_size = sizeof(wimax_864_0_5) / sizeof(wimax_864_0_5[0]);
                     m_col_size = sizeof(wimax_864_0_5[0]) / sizeof(int16_t);
+                    m_D = wimax_864_0_5_D;
+                    m_X = wimax_864_0_5_X;
                 }
                 else if (rate == TWOTHIRDSA)
                 {
                     m_checknode_array = (int16_t*) &wimax_864_0_66A;
                     m_row_size = sizeof(wimax_864_0_66A) / sizeof(wimax_864_0_66A[0]);
                     m_col_size = sizeof(wimax_864_0_66A[0]) / sizeof(int16_t);
-
+                    m_D = wimax_864_0_66A_D;
+                    m_X = wimax_864_0_66A_X;
                 }
                 else if (rate == TWOTHIRDSB){
                     m_checknode_array = (int16_t*) &wimax_864_0_66B;
                     m_row_size = sizeof(wimax_864_0_66B) / sizeof(wimax_864_0_66B[0]);
                     m_col_size = sizeof(wimax_864_0_66B[0]) / sizeof(int16_t);
+                    m_D = wimax_864_0_66B_D;
+                    m_X = wimax_864_0_66B_X;
                 }
                 else if (rate == THREEQUARTERSA)
                 {
                     m_checknode_array = (int16_t*) &wimax_864_0_75A;
                     m_row_size = sizeof(wimax_864_0_75A) / sizeof(wimax_864_0_75A[0]);
                     m_col_size = sizeof(wimax_864_0_75A[0]) / sizeof(int16_t);
+                    m_D = wimax_864_0_75A_D;
+                    m_X = wimax_864_0_75A_X;
                 }
                 else if (rate == THREEQUARTERSB)
                 {
                     m_checknode_array = (int16_t*) &wimax_864_0_75B;
                     m_row_size = sizeof(wimax_864_0_75B) / sizeof(wimax_864_0_75B[0]);
                     m_col_size = sizeof(wimax_864_0_75B[0]) / sizeof(int16_t);
+                    m_D = wimax_864_0_75B_D;
+                    m_X = wimax_864_0_75B_X;
                 }
                 else if (rate == FIVESIXTHS)
                 {
                     m_checknode_array = (int16_t*) &wimax_864_0_83;
                     m_row_size = sizeof(wimax_864_0_83) / sizeof(wimax_864_0_83);
                     m_col_size = sizeof(wimax_864_0_83[0]) / sizeof(int16_t);
+                    m_D = wimax_864_0_83_D;
+                    m_X = wimax_864_0_83_X;
                 }
                 else
                 {
@@ -263,36 +309,47 @@ namespace wimax_ldpc_lib {
                     m_checknode_array = (int16_t*) &wimax_960_0_5;
                     m_row_size = sizeof(wimax_960_0_5) / sizeof(wimax_960_0_5[0]);
                     m_col_size = sizeof(wimax_960_0_5[0]) / sizeof(int16_t);
+                    m_D = wimax_960_0_5_D;
+                    m_X = wimax_960_0_5_X;
                 }
                 else if (rate == TWOTHIRDSA)
                 {
                     m_checknode_array = (int16_t*) &wimax_960_0_66A;
                     m_row_size = sizeof(wimax_960_0_66A) / sizeof(wimax_960_0_66A[0]);
                     m_col_size = sizeof(wimax_960_0_66A[0]) / sizeof(int16_t);
-
+                    m_D = wimax_960_0_66A_D;
+                    m_X = wimax_960_0_66A_X;
                 }
                 else if (rate == TWOTHIRDSB){
                     m_checknode_array = (int16_t*) &wimax_960_0_66B;
                     m_row_size = sizeof(wimax_960_0_66B) / sizeof(wimax_960_0_66B[0]);
                     m_col_size = sizeof(wimax_960_0_66B[0]) / sizeof(int16_t);
+                    m_D = wimax_960_0_66B_D;
+                    m_X = wimax_960_0_66B_X;
                 }
                 else if (rate == THREEQUARTERSA)
                 {
                     m_checknode_array = (int16_t*) &wimax_960_0_75A;
                     m_row_size = sizeof(wimax_960_0_75A) / sizeof(wimax_960_0_75A[0]);
                     m_col_size = sizeof(wimax_960_0_75A[0]) / sizeof(int16_t);
+                    m_D = wimax_960_0_75A_D;
+                    m_X = wimax_960_0_75A_X;
                 }
                 else if (rate == THREEQUARTERSB)
                 {
                     m_checknode_array = (int16_t*) &wimax_960_0_75B;
                     m_row_size = sizeof(wimax_960_0_75B) / sizeof(wimax_960_0_75B[0]);
                     m_col_size = sizeof(wimax_960_0_75B[0]) / sizeof(int16_t);
+                    m_D = wimax_960_0_75B_D;
+                    m_X = wimax_960_0_75B_X;
                 }
                 else if (rate == FIVESIXTHS)
                 {
                     m_checknode_array = (int16_t*) &wimax_960_0_83;
                     m_row_size = sizeof(wimax_960_0_83) / sizeof(wimax_960_0_83);
                     m_col_size = sizeof(wimax_960_0_83[0]) / sizeof(int16_t);
+                    m_D = wimax_960_0_83_D;
+                    m_X = wimax_960_0_83_X;
                 }
                 else
                 {
@@ -311,36 +368,47 @@ namespace wimax_ldpc_lib {
                     m_checknode_array = (int16_t*) &wimax_1056_0_5;
                     m_row_size = sizeof(wimax_1056_0_5) / sizeof(wimax_1056_0_5[0]);
                     m_col_size = sizeof(wimax_1056_0_5[0]) / sizeof(int16_t);
+                    m_D = wimax_1056_0_5_D;
+                    m_X = wimax_1056_0_5_X;
                 }
                 else if (rate == TWOTHIRDSA)
                 {
                     m_checknode_array = (int16_t*) &wimax_1056_0_66A;
                     m_row_size = sizeof(wimax_1056_0_66A) / sizeof(wimax_1056_0_66A[0]);
                     m_col_size = sizeof(wimax_1056_0_66A[0]) / sizeof(int16_t);
-
+                    m_D = wimax_1056_0_66A_D;
+                    m_X = wimax_1056_0_66A_X;
                 }
                 else if (rate == TWOTHIRDSB){
                     m_checknode_array = (int16_t*) &wimax_1056_0_66B;
                     m_row_size = sizeof(wimax_1056_0_66B) / sizeof(wimax_1056_0_66B[0]);
                     m_col_size = sizeof(wimax_1056_0_66B[0]) / sizeof(int16_t);
+                    m_D = wimax_1056_0_66B_D;
+                    m_X = wimax_1056_0_66B_X;
                 }
                 else if (rate == THREEQUARTERSA)
                 {
                     m_checknode_array = (int16_t*) &wimax_1056_0_75A;
                     m_row_size = sizeof(wimax_1056_0_75A) / sizeof(wimax_1056_0_75A[0]);
                     m_col_size = sizeof(wimax_1056_0_75A[0]) / sizeof(int16_t);
+                    m_D = wimax_1056_0_75A_D;
+                    m_X = wimax_1056_0_75A_X;
                 }
                 else if (rate == THREEQUARTERSB)
                 {
                     m_checknode_array = (int16_t*) &wimax_1056_0_75B;
                     m_row_size = sizeof(wimax_1056_0_75B) / sizeof(wimax_1056_0_75B[0]);
                     m_col_size = sizeof(wimax_1056_0_75B[0]) / sizeof(int16_t);
+                    m_D = wimax_1056_0_75B_D;
+                    m_X = wimax_1056_0_75B_X;
                 }
                 else if (rate == FIVESIXTHS)
                 {
                     m_checknode_array = (int16_t*) &wimax_1056_0_83;
                     m_row_size = sizeof(wimax_1056_0_83) / sizeof(wimax_1056_0_83);
                     m_col_size = sizeof(wimax_1056_0_83[0]) / sizeof(int16_t);
+                    m_D = wimax_1056_0_83_D;
+                    m_X = wimax_1056_0_83_X;
                 }
                 else
                 {
@@ -359,36 +427,47 @@ namespace wimax_ldpc_lib {
                     m_checknode_array = (int16_t*) &wimax_1152_0_5;
                     m_row_size = sizeof(wimax_1152_0_5) / sizeof(wimax_1152_0_5[0]);
                     m_col_size = sizeof(wimax_1152_0_5[0]) / sizeof(int16_t);
+                    m_D = wimax_1152_0_5_D;
+                    m_X = wimax_1152_0_5_X;
                 }
                 else if (rate == TWOTHIRDSA)
                 {
                     m_checknode_array = (int16_t*) &wimax_1152_0_66A;
                     m_row_size = sizeof(wimax_1152_0_66A) / sizeof(wimax_1152_0_66A[0]);
                     m_col_size = sizeof(wimax_1152_0_66A[0]) / sizeof(int16_t);
-
+                    m_D = wimax_1152_0_66A_D;
+                    m_X = wimax_1152_0_66A_X;
                 }
                 else if (rate == TWOTHIRDSB){
                     m_checknode_array = (int16_t*) &wimax_1152_0_66B;
                     m_row_size = sizeof(wimax_1152_0_66B) / sizeof(wimax_1152_0_66B[0]);
                     m_col_size = sizeof(wimax_1152_0_66B[0]) / sizeof(int16_t);
+                    m_D = wimax_1152_0_66B_D;
+                    m_X = wimax_1152_0_66B_X;
                 }
                 else if (rate == THREEQUARTERSA)
                 {
                     m_checknode_array = (int16_t*) &wimax_1152_0_75A;
                     m_row_size = sizeof(wimax_1152_0_75A) / sizeof(wimax_1152_0_75A[0]);
                     m_col_size = sizeof(wimax_1152_0_75A[0]) / sizeof(int16_t);
+                    m_D = wimax_1152_0_75A_D;
+                    m_X = wimax_1152_0_75A_X;
                 }
                 else if (rate == THREEQUARTERSB)
                 {
                     m_checknode_array = (int16_t*) &wimax_1152_0_75B;
                     m_row_size = sizeof(wimax_1152_0_75B) / sizeof(wimax_1152_0_75B[0]);
                     m_col_size = sizeof(wimax_1152_0_75B[0]) / sizeof(int16_t);
+                    m_D = wimax_1152_0_75B_D;
+                    m_X = wimax_1152_0_75B_X;
                 }
                 else if (rate == FIVESIXTHS)
                 {
                     m_checknode_array = (int16_t*) &wimax_1152_0_83;
                     m_row_size = sizeof(wimax_1152_0_83) / sizeof(wimax_1152_0_83);
                     m_col_size = sizeof(wimax_1152_0_83[0]) / sizeof(int16_t);
+                    m_D = wimax_1152_0_83_D;
+                    m_X = wimax_1152_0_83_X;
                 }
                 else
                 {
@@ -407,36 +486,47 @@ namespace wimax_ldpc_lib {
                     m_checknode_array = (int16_t*) &wimax_1248_0_5;
                     m_row_size = sizeof(wimax_1248_0_5) / sizeof(wimax_1248_0_5[0]);
                     m_col_size = sizeof(wimax_1248_0_5[0]) / sizeof(int16_t);
+                    m_D = wimax_1248_0_5_D;
+                    m_X = wimax_1248_0_5_X;
                 }
                 else if (rate == TWOTHIRDSA)
                 {
                     m_checknode_array = (int16_t*) &wimax_1248_0_66A;
                     m_row_size = sizeof(wimax_1248_0_66A) / sizeof(wimax_1248_0_66A[0]);
                     m_col_size = sizeof(wimax_1248_0_66A[0]) / sizeof(int16_t);
-
+                    m_D = wimax_1248_0_66A_D;
+                    m_X = wimax_1248_0_66A_X;
                 }
                 else if (rate == TWOTHIRDSB){
                     m_checknode_array = (int16_t*) &wimax_1248_0_66B;
                     m_row_size = sizeof(wimax_1248_0_66B) / sizeof(wimax_1248_0_66B[0]);
                     m_col_size = sizeof(wimax_1248_0_66B[0]) / sizeof(int16_t);
+                    m_D = wimax_1248_0_66B_D;
+                    m_X = wimax_1248_0_66B_X;
                 }
                 else if (rate == THREEQUARTERSA)
                 {
                     m_checknode_array = (int16_t*) &wimax_1248_0_75A;
                     m_row_size = sizeof(wimax_1248_0_75A) / sizeof(wimax_1248_0_75A[0]);
                     m_col_size = sizeof(wimax_1248_0_75A[0]) / sizeof(int16_t);
+                    m_D = wimax_1248_0_75A_D;
+                    m_X = wimax_1248_0_75A_X;
                 }
                 else if (rate == THREEQUARTERSB)
                 {
                     m_checknode_array = (int16_t*) &wimax_1248_0_75B;
                     m_row_size = sizeof(wimax_1248_0_75B) / sizeof(wimax_1248_0_75B[0]);
                     m_col_size = sizeof(wimax_1248_0_75B[0]) / sizeof(int16_t);
+                    m_D = wimax_1248_0_75B_D;
+                    m_X = wimax_1248_0_75B_X;
                 }
                 else if (rate == FIVESIXTHS)
                 {
                     m_checknode_array = (int16_t*) &wimax_1248_0_83;
                     m_row_size = sizeof(wimax_1248_0_83) / sizeof(wimax_1248_0_83);
                     m_col_size = sizeof(wimax_1248_0_83[0]) / sizeof(int16_t);
+                    m_D = wimax_1248_0_83_D;
+                    m_X = wimax_1248_0_83_X;
                 }
                 else
                 {
@@ -455,36 +545,47 @@ namespace wimax_ldpc_lib {
                     m_checknode_array = (int16_t*) &wimax_1344_0_5;
                     m_row_size = sizeof(wimax_1344_0_5) / sizeof(wimax_1344_0_5[0]);
                     m_col_size = sizeof(wimax_1344_0_5[0]) / sizeof(int16_t);
+                    m_D = wimax_1344_0_5_D;
+                    m_X = wimax_1344_0_5_X;
                 }
                 else if (rate == TWOTHIRDSA)
                 {
                     m_checknode_array = (int16_t*) &wimax_1344_0_66A;
                     m_row_size = sizeof(wimax_1344_0_66A) / sizeof(wimax_1344_0_66A[0]);
                     m_col_size = sizeof(wimax_1344_0_66A[0]) / sizeof(int16_t);
-
+                    m_D = wimax_1344_0_66A_D;
+                    m_X = wimax_1344_0_66A_X;
                 }
                 else if (rate == TWOTHIRDSB){
                     m_checknode_array = (int16_t*) &wimax_1344_0_66B;
                     m_row_size = sizeof(wimax_1344_0_66B) / sizeof(wimax_1344_0_66B[0]);
                     m_col_size = sizeof(wimax_1344_0_66B[0]) / sizeof(int16_t);
+                    m_D = wimax_1344_0_66B_D;
+                    m_X = wimax_1344_0_66B_X;
                 }
                 else if (rate == THREEQUARTERSA)
                 {
                     m_checknode_array = (int16_t*) &wimax_1344_0_75A;
                     m_row_size = sizeof(wimax_1344_0_75A) / sizeof(wimax_1344_0_75A[0]);
                     m_col_size = sizeof(wimax_1344_0_75A[0]) / sizeof(int16_t);
+                    m_D = wimax_1344_0_75A_D;
+                    m_X = wimax_1344_0_75A_X;
                 }
                 else if (rate == THREEQUARTERSB)
                 {
                     m_checknode_array = (int16_t*) &wimax_1344_0_75B;
                     m_row_size = sizeof(wimax_1344_0_75B) / sizeof(wimax_1344_0_75B[0]);
                     m_col_size = sizeof(wimax_1344_0_75B[0]) / sizeof(int16_t);
+                    m_D = wimax_1344_0_75B_D;
+                    m_X = wimax_1344_0_75B_X;
                 }
                 else if (rate == FIVESIXTHS)
                 {        
                     m_checknode_array = (int16_t*) &wimax_1344_0_83;
                     m_row_size = sizeof(wimax_1344_0_83) / sizeof(wimax_1344_0_83);
                     m_col_size = sizeof(wimax_1344_0_83[0]) / sizeof(int16_t);
+                    m_D = wimax_1344_0_83_D;
+                    m_X = wimax_1344_0_83_X;
                 }
                 else
                 {
@@ -503,36 +604,47 @@ namespace wimax_ldpc_lib {
                     m_checknode_array = (int16_t*) &wimax_1440_0_5;
                     m_row_size = sizeof(wimax_1440_0_5) / sizeof(wimax_1440_0_5[0]);
                     m_col_size = sizeof(wimax_1440_0_5[0]) / sizeof(int16_t);
+                    m_D = wimax_1440_0_5_D;
+                    m_X = wimax_1440_0_5_X;
                 }
                 else if (rate == TWOTHIRDSA)
                 {
                     m_checknode_array = (int16_t*) &wimax_1440_0_66A;
                     m_row_size = sizeof(wimax_1440_0_66A) / sizeof(wimax_1440_0_66A[0]);
                     m_col_size = sizeof(wimax_1440_0_66A[0]) / sizeof(int16_t);
-
+                    m_D = wimax_1440_0_66A_D;
+                    m_X = wimax_1440_0_66A_X;
                 }
                 else if (rate == TWOTHIRDSB){
                     m_checknode_array = (int16_t*) &wimax_1440_0_66B;
                     m_row_size = sizeof(wimax_1440_0_66B) / sizeof(wimax_1440_0_66B[0]);
                     m_col_size = sizeof(wimax_1440_0_66B[0]) / sizeof(int16_t);
+                    m_D = wimax_1440_0_66B_D;
+                    m_X = wimax_1440_0_66B_X;
                 }
                 else if (rate == THREEQUARTERSA)
                 {
                     m_checknode_array = (int16_t*) &wimax_1440_0_75A;
                     m_row_size = sizeof(wimax_1440_0_75A) / sizeof(wimax_1440_0_75A[0]);
                     m_col_size = sizeof(wimax_1440_0_75A[0]) / sizeof(int16_t);
+                    m_D = wimax_1440_0_75A_D;
+                    m_X = wimax_1440_0_75A_X;
                 }
                 else if (rate == THREEQUARTERSB)
                 {
                     m_checknode_array = (int16_t*) &wimax_1440_0_75B;
                     m_row_size = sizeof(wimax_1440_0_75B) / sizeof(wimax_1440_0_75B[0]);
                     m_col_size = sizeof(wimax_1440_0_75B[0]) / sizeof(int16_t);
+                    m_D = wimax_1440_0_75B_D;
+                    m_X = wimax_1440_0_75B_X;
                 }
                 else if (rate == FIVESIXTHS)
                 {
                     m_checknode_array = (int16_t*) &wimax_1440_0_83;
                     m_row_size = sizeof(wimax_1440_0_83) / sizeof(wimax_1440_0_83);
                     m_col_size = sizeof(wimax_1440_0_83[0]) / sizeof(int16_t);
+                    m_D = wimax_1440_0_83_D;
+                    m_X = wimax_1440_0_83_X;
                 }
                 else
                 {
@@ -551,36 +663,47 @@ namespace wimax_ldpc_lib {
                     m_checknode_array = (int16_t*) &wimax_1536_0_5;
                     m_row_size = sizeof(wimax_1536_0_5) / sizeof(wimax_1536_0_5[0]);
                     m_col_size = sizeof(wimax_1536_0_5[0]) / sizeof(int16_t);
+                    m_D = wimax_1536_0_5_D;
+                    m_X = wimax_1536_0_5_X;
                 }
                 else if (rate == TWOTHIRDSA)
                 {
                     m_checknode_array = (int16_t*) &wimax_1536_0_66A;
                     m_row_size = sizeof(wimax_1536_0_66A) / sizeof(wimax_1536_0_66A[0]);
                     m_col_size = sizeof(wimax_1536_0_66A[0]) / sizeof(int16_t);
-
+                    m_D = wimax_1536_0_66A_D;
+                    m_X = wimax_1536_0_66A_X;
                 }
                 else if (rate == TWOTHIRDSB){
                     m_checknode_array = (int16_t*) &wimax_1536_0_66B;
                     m_row_size = sizeof(wimax_1536_0_66B) / sizeof(wimax_1536_0_66B[0]);
                     m_col_size = sizeof(wimax_1536_0_66B[0]) / sizeof(int16_t);
+                    m_D = wimax_1536_0_66B_D;
+                    m_X = wimax_1536_0_66B_X;
                 }
                 else if (rate == THREEQUARTERSA)
                 {
                     m_checknode_array = (int16_t*) &wimax_1536_0_75A;
                     m_row_size = sizeof(wimax_1536_0_75A) / sizeof(wimax_1536_0_75A[0]);
                     m_col_size = sizeof(wimax_1536_0_75A[0]) / sizeof(int16_t);
+                    m_D = wimax_1536_0_75A_D;
+                    m_X = wimax_1536_0_75A_X;
                 }
                 else if (rate == THREEQUARTERSB)
                 {
                     m_checknode_array = (int16_t*) &wimax_1536_0_75B;
                     m_row_size = sizeof(wimax_1536_0_75B) / sizeof(wimax_1536_0_75B[0]);
                     m_col_size = sizeof(wimax_1536_0_75B[0]) / sizeof(int16_t);
+                    m_D = wimax_1536_0_75B_D;
+                    m_X = wimax_1536_0_75B_X;
                 }
                 else if (rate == FIVESIXTHS)
                 {
                     m_checknode_array = (int16_t*) &wimax_1536_0_83;
                     m_row_size = sizeof(wimax_1536_0_83) / sizeof(wimax_1536_0_83);
                     m_col_size = sizeof(wimax_1536_0_83[0]) / sizeof(int16_t);
+                    m_D = wimax_1536_0_83_D;
+                    m_X = wimax_1536_0_83_X;
                 }
                 else
                 {
@@ -599,36 +722,47 @@ namespace wimax_ldpc_lib {
                     m_checknode_array = (int16_t*) &wimax_1632_0_5;
                     m_row_size = sizeof(wimax_1632_0_5) / sizeof(wimax_1632_0_5[0]);
                     m_col_size = sizeof(wimax_1632_0_5[0]) / sizeof(int16_t);
+                    m_D = wimax_1632_0_5_D;
+                    m_X = wimax_1632_0_5_X;
                 }
                 else if (rate == TWOTHIRDSA)
                 {
                     m_checknode_array = (int16_t*) &wimax_1632_0_66A;
                     m_row_size = sizeof(wimax_1632_0_66A) / sizeof(wimax_1632_0_66A[0]);
                     m_col_size = sizeof(wimax_1632_0_66A[0]) / sizeof(int16_t);
-
+                    m_D = wimax_1632_0_66A_D;
+                    m_X = wimax_1632_0_66A_X;
                 }
                 else if (rate == TWOTHIRDSB){
                     m_checknode_array = (int16_t*) &wimax_1632_0_66B;
                     m_row_size = sizeof(wimax_1632_0_66B) / sizeof(wimax_1632_0_66B[0]);
                     m_col_size = sizeof(wimax_1632_0_66B[0]) / sizeof(int16_t);
+                    m_D = wimax_1632_0_66B_D;
+                    m_X = wimax_1632_0_66B_X;
                 }
                 else if (rate == THREEQUARTERSA)
                 {
                     m_checknode_array = (int16_t*) &wimax_1632_0_75A;
                     m_row_size = sizeof(wimax_1632_0_75A) / sizeof(wimax_1632_0_75A[0]);
                     m_col_size = sizeof(wimax_1632_0_75A[0]) / sizeof(int16_t);
+                    m_D = wimax_1632_0_75A_D;
+                    m_X = wimax_1632_0_75A_X;
                 }
                 else if (rate == THREEQUARTERSB)
                 {
                     m_checknode_array = (int16_t*) &wimax_1632_0_75B;
                     m_row_size = sizeof(wimax_1632_0_75B) / sizeof(wimax_1632_0_75B[0]);
                     m_col_size = sizeof(wimax_1632_0_75B[0]) / sizeof(int16_t);
+                    m_D = wimax_1632_0_75B_D;
+                    m_X = wimax_1632_0_75B_X;
                 }
                 else if (rate == FIVESIXTHS)
                 {
                     m_checknode_array = (int16_t*) &wimax_1632_0_83;
                     m_row_size = sizeof(wimax_1632_0_83) / sizeof(wimax_1632_0_83);
                     m_col_size = sizeof(wimax_1632_0_83[0]) / sizeof(int16_t);
+                    m_D = wimax_1632_0_83_D;
+                    m_X = wimax_1632_0_83_X;
                 }
                 else
                 {
@@ -647,36 +781,47 @@ namespace wimax_ldpc_lib {
                     m_checknode_array = (int16_t*) &wimax_1728_0_5;
                     m_row_size = sizeof(wimax_1728_0_5) / sizeof(wimax_1728_0_5[0]);
                     m_col_size = sizeof(wimax_1728_0_5[0]) / sizeof(int16_t);
+                    m_D = wimax_1728_0_5_D;
+                    m_X = wimax_1728_0_5_X;
                 }
                 else if (rate == TWOTHIRDSA)
                 {
                     m_checknode_array = (int16_t*) &wimax_1728_0_66A;
                     m_row_size = sizeof(wimax_1728_0_66A) / sizeof(wimax_1728_0_66A[0]);
                     m_col_size = sizeof(wimax_1728_0_66A[0]) / sizeof(int16_t);
-
+                    m_D = wimax_1728_0_66A_D;
+                    m_X = wimax_1728_0_66A_X;
                 }
                 else if (rate == TWOTHIRDSB){
                     m_checknode_array = (int16_t*) &wimax_1728_0_66B;
                     m_row_size = sizeof(wimax_1728_0_66B) / sizeof(wimax_1728_0_66B[0]);
                     m_col_size = sizeof(wimax_1728_0_66B[0]) / sizeof(int16_t);
+                    m_D = wimax_1728_0_66B_D;
+                    m_X = wimax_1728_0_66B_X;
                 }
                 else if (rate == THREEQUARTERSA)
                 {
                     m_checknode_array = (int16_t*) &wimax_1728_0_75A;
                     m_row_size = sizeof(wimax_1728_0_75A) / sizeof(wimax_1728_0_75A[0]);
                     m_col_size = sizeof(wimax_1728_0_75A[0]) / sizeof(int16_t);
+                    m_D = wimax_1728_0_75A_D;
+                    m_X = wimax_1728_0_75A_X;
                 }
                 else if (rate == THREEQUARTERSB)
                 {
                     m_checknode_array = (int16_t*) &wimax_1728_0_75B;
                     m_row_size = sizeof(wimax_1728_0_75B) / sizeof(wimax_1728_0_75B[0]);
                     m_col_size = sizeof(wimax_1728_0_75B[0]) / sizeof(int16_t);
+                    m_D = wimax_1728_0_75B_D;
+                    m_X = wimax_1728_0_75B_X;
                 }
                 else if (rate == FIVESIXTHS)
                 {
                     m_checknode_array = (int16_t*) &wimax_1728_0_83;
                     m_row_size = sizeof(wimax_1728_0_83) / sizeof(wimax_1728_0_83);
                     m_col_size = sizeof(wimax_1728_0_83[0]) / sizeof(int16_t);
+                    m_D = wimax_1728_0_83_D;
+                    m_X = wimax_1728_0_83_X;
                 }
                 else
                 {
@@ -695,36 +840,47 @@ namespace wimax_ldpc_lib {
                     m_checknode_array = (int16_t*) &wimax_1824_0_5;
                     m_row_size = sizeof(wimax_1824_0_5) / sizeof(wimax_1824_0_5[0]);
                     m_col_size = sizeof(wimax_1824_0_5[0]) / sizeof(int16_t);
+                    m_D = wimax_1824_0_5_D;
+                    m_X = wimax_1824_0_5_X;
                 }
                 else if (rate == TWOTHIRDSA)
                 {
                     m_checknode_array = (int16_t*) &wimax_1824_0_66A;
                     m_row_size = sizeof(wimax_1824_0_66A) / sizeof(wimax_1824_0_66A[0]);
                     m_col_size = sizeof(wimax_1824_0_66A[0]) / sizeof(int16_t);
-
+                    m_D = wimax_1824_0_66A_D;
+                    m_X = wimax_1824_0_66A_X;
                 }
                 else if (rate == TWOTHIRDSB){
                     m_checknode_array = (int16_t*) &wimax_1824_0_66B;
                     m_row_size = sizeof(wimax_1824_0_66B) / sizeof(wimax_1824_0_66B[0]);
                     m_col_size = sizeof(wimax_1824_0_66B[0]) / sizeof(int16_t);
+                    m_D = wimax_1824_0_66B_D;
+                    m_X = wimax_1824_0_66B_X;
                 }
                 else if (rate == THREEQUARTERSA)
                 {
                     m_checknode_array = (int16_t*) &wimax_1824_0_75A;
                     m_row_size = sizeof(wimax_1824_0_75A) / sizeof(wimax_1824_0_75A[0]);
                     m_col_size = sizeof(wimax_1824_0_75A[0]) / sizeof(int16_t);
+                    m_D = wimax_1824_0_75A_D;
+                    m_X = wimax_1824_0_75A_X;
                 }
                 else if (rate == THREEQUARTERSB)
                 {
                     m_checknode_array = (int16_t*) &wimax_1824_0_75B;
                     m_row_size = sizeof(wimax_1824_0_75B) / sizeof(wimax_1824_0_75B[0]);
                     m_col_size = sizeof(wimax_1824_0_75B[0]) / sizeof(int16_t);
+                    m_D = wimax_1824_0_75B_D;
+                    m_X = wimax_1824_0_75B_X;
                 }
                 else if (rate == FIVESIXTHS)
                 {
                     m_checknode_array = (int16_t*) &wimax_1824_0_83;
                     m_row_size = sizeof(wimax_1824_0_83) / sizeof(wimax_1824_0_83);
                     m_col_size = sizeof(wimax_1824_0_83[0]) / sizeof(int16_t);
+                    m_D = wimax_1824_0_83_D;
+                    m_X = wimax_1824_0_83_X;
                 }
                 else
                 {
@@ -743,36 +899,47 @@ namespace wimax_ldpc_lib {
                     m_checknode_array = (int16_t*) &wimax_1920_0_5;
                     m_row_size = sizeof(wimax_1920_0_5) / sizeof(wimax_1920_0_5[0]);
                     m_col_size = sizeof(wimax_1920_0_5[0]) / sizeof(int16_t);
+                    m_D = wimax_1920_0_5_D;
+                    m_X = wimax_1920_0_5_X;
                 }
                 else if (rate == TWOTHIRDSA)
                 {
                     m_checknode_array = (int16_t*) &wimax_1920_0_66A;
                     m_row_size = sizeof(wimax_1920_0_66A) / sizeof(wimax_1920_0_66A[0]);
                     m_col_size = sizeof(wimax_1920_0_66A[0]) / sizeof(int16_t);
-
+                    m_D = wimax_1920_0_66A_D;
+                    m_X = wimax_1920_0_66A_X;
                 }
                 else if (rate == TWOTHIRDSB){
                     m_checknode_array = (int16_t*) &wimax_1920_0_66B;
                     m_row_size = sizeof(wimax_1920_0_66B) / sizeof(wimax_1920_0_66B[0]);
                     m_col_size = sizeof(wimax_1920_0_66B[0]) / sizeof(int16_t);
+                    m_D = wimax_1920_0_66B_D;
+                    m_X = wimax_1920_0_66B_X;
                 }
                 else if (rate == THREEQUARTERSA)
                 {
                     m_checknode_array = (int16_t*) &wimax_1920_0_75A;
                     m_row_size = sizeof(wimax_1920_0_75A) / sizeof(wimax_1920_0_75A[0]);
                     m_col_size = sizeof(wimax_1920_0_75A[0]) / sizeof(int16_t);
+                    m_D = wimax_1920_0_75A_D;
+                    m_X = wimax_1920_0_75A_X;
                 }
                 else if (rate == THREEQUARTERSB)
                 {
                     m_checknode_array = (int16_t*) &wimax_1920_0_75B;
                     m_row_size = sizeof(wimax_1920_0_75B) / sizeof(wimax_1920_0_75B[0]);
                     m_col_size = sizeof(wimax_1920_0_75B[0]) / sizeof(int16_t);
+                    m_D = wimax_1920_0_75B_D;
+                    m_X = wimax_1920_0_75B_X;
                 }
                 else if (rate == FIVESIXTHS)
                 {
                     m_checknode_array = (int16_t*) &wimax_1920_0_83;
                     m_row_size = sizeof(wimax_1920_0_83) / sizeof(wimax_1920_0_83);
                     m_col_size = sizeof(wimax_1920_0_83[0]) / sizeof(int16_t);
+                    m_D = wimax_1920_0_83_D;
+                    m_X = wimax_1920_0_83_X;
                 }
                 else
                 {
@@ -791,36 +958,47 @@ namespace wimax_ldpc_lib {
                     m_checknode_array = (int16_t*) &wimax_2016_0_5;
                     m_row_size = sizeof(wimax_2016_0_5) / sizeof(wimax_2016_0_5[0]);
                     m_col_size = sizeof(wimax_2016_0_5[0]) / sizeof(int16_t);
+                    m_D = wimax_2016_0_5_D;
+                    m_X = wimax_2016_0_5_X;
                 }
                 else if (rate == TWOTHIRDSA)
                 {
                     m_checknode_array = (int16_t*) &wimax_2016_0_66A;
                     m_row_size = sizeof(wimax_2016_0_66A) / sizeof(wimax_2016_0_66A[0]);
                     m_col_size = sizeof(wimax_2016_0_66A[0]) / sizeof(int16_t);
-
+                    m_D = wimax_2016_0_66A_D;
+                    m_X = wimax_2016_0_66A_X;
                 }
                 else if (rate == TWOTHIRDSB){
                     m_checknode_array = (int16_t*) &wimax_2016_0_66B;
                     m_row_size = sizeof(wimax_2016_0_66B) / sizeof(wimax_2016_0_66B[0]);
                     m_col_size = sizeof(wimax_2016_0_66B[0]) / sizeof(int16_t);
+                    m_D = wimax_2016_0_66B_D;
+                    m_X = wimax_2016_0_66B_X;
                 }
                 else if (rate == THREEQUARTERSA)
                 {
                     m_checknode_array = (int16_t*) &wimax_2016_0_75A;
                     m_row_size = sizeof(wimax_2016_0_75A) / sizeof(wimax_2016_0_75A[0]);
                     m_col_size = sizeof(wimax_2016_0_75A[0]) / sizeof(int16_t);
+                    m_D = wimax_2016_0_75A_D;
+                    m_X = wimax_2016_0_75A_X;
                 }
                 else if (rate == THREEQUARTERSB)
                 {
                     m_checknode_array = (int16_t*) &wimax_2016_0_75B;
                     m_row_size = sizeof(wimax_2016_0_75B) / sizeof(wimax_2016_0_75B[0]);
                     m_col_size = sizeof(wimax_2016_0_75B[0]) / sizeof(int16_t);
+                    m_D = wimax_2016_0_75B_D;
+                    m_X = wimax_2016_0_75B_X;
                 }
                 else if (rate == FIVESIXTHS)
                 {
                     m_checknode_array = (int16_t*) &wimax_2016_0_83;
                     m_row_size = sizeof(wimax_2016_0_83) / sizeof(wimax_2016_0_83);
                     m_col_size = sizeof(wimax_2016_0_83[0]) / sizeof(int16_t);
+                    m_D = wimax_2016_0_83_D;
+                    m_X = wimax_2016_0_83_X;
                 }
                 else
                 {
@@ -839,36 +1017,47 @@ namespace wimax_ldpc_lib {
                     m_checknode_array = (int16_t*) &wimax_2112_0_5;
                     m_row_size = sizeof(wimax_2112_0_5) / sizeof(wimax_2112_0_5[0]);
                     m_col_size = sizeof(wimax_2112_0_5[0]) / sizeof(int16_t);
+                    m_D = wimax_2112_0_5_D;
+                    m_X = wimax_2112_0_5_X;
                 }
                 else if (rate == TWOTHIRDSA)
                 {
                     m_checknode_array = (int16_t*) &wimax_2112_0_66A;
                     m_row_size = sizeof(wimax_2112_0_66A) / sizeof(wimax_2112_0_66A[0]);
                     m_col_size = sizeof(wimax_2112_0_66A[0]) / sizeof(int16_t);
-
+                    m_D = wimax_2112_0_66A_D;
+                    m_X = wimax_2112_0_66A_X;
                 }
                 else if (rate == TWOTHIRDSB){
                     m_checknode_array = (int16_t*) &wimax_2112_0_66B;
                     m_row_size = sizeof(wimax_2112_0_66B) / sizeof(wimax_2112_0_66B[0]);
                     m_col_size = sizeof(wimax_2112_0_66B[0]) / sizeof(int16_t);
+                    m_D = wimax_2112_0_66B_D;
+                    m_X = wimax_2112_0_66B_X;
                 }
                 else if (rate == THREEQUARTERSA)
                 {
                     m_checknode_array = (int16_t*) &wimax_2112_0_75A;
                     m_row_size = sizeof(wimax_2112_0_75A) / sizeof(wimax_2112_0_75A[0]);
                     m_col_size = sizeof(wimax_2112_0_75A[0]) / sizeof(int16_t);
+                    m_D = wimax_2112_0_75A_D;
+                    m_X = wimax_2112_0_75A_X;
                 }
                 else if (rate == THREEQUARTERSB)
                 {
                     m_checknode_array = (int16_t*) &wimax_2112_0_75B;
                     m_row_size = sizeof(wimax_2112_0_75B) / sizeof(wimax_2112_0_75B[0]);
                     m_col_size = sizeof(wimax_2112_0_75B[0]) / sizeof(int16_t);
+                    m_D = wimax_2112_0_75B_D;
+                    m_X = wimax_2112_0_75B_X;
                 }
                 else if (rate == FIVESIXTHS)
                 {
                     m_checknode_array = (int16_t*) &wimax_2112_0_83;
                     m_row_size = sizeof(wimax_2112_0_83) / sizeof(wimax_2112_0_83);
                     m_col_size = sizeof(wimax_2112_0_83[0]) / sizeof(int16_t);
+                    m_D = wimax_2112_0_83_D;
+                    m_X = wimax_2112_0_83_X;
                 }
                 else
                 {
@@ -887,36 +1076,47 @@ namespace wimax_ldpc_lib {
                     m_checknode_array = (int16_t*) &wimax_2208_0_5;
                     m_row_size = sizeof(wimax_2208_0_5) / sizeof(wimax_2208_0_5[0]);
                     m_col_size = sizeof(wimax_2208_0_5[0]) / sizeof(int16_t);
+                    m_D = wimax_2208_0_5_D;
+                    m_X = wimax_2208_0_5_X;
                 }
                 else if (rate == TWOTHIRDSA)
                 {
                     m_checknode_array = (int16_t*) &wimax_2208_0_66A;
                     m_row_size = sizeof(wimax_2208_0_66A) / sizeof(wimax_2208_0_66A[0]);
                     m_col_size = sizeof(wimax_2208_0_66A[0]) / sizeof(int16_t);
-
+                    m_D = wimax_2208_0_66A_D;
+                    m_X = wimax_2208_0_66A_X;
                 }
                 else if (rate == TWOTHIRDSB){
                     m_checknode_array = (int16_t*) &wimax_2208_0_66B;
                     m_row_size = sizeof(wimax_2208_0_66B) / sizeof(wimax_2208_0_66B[0]);
                     m_col_size = sizeof(wimax_2208_0_66B[0]) / sizeof(int16_t);
+                    m_D = wimax_2208_0_66B_D;
+                    m_X = wimax_2208_0_66B_X;
                 }
                 else if (rate == THREEQUARTERSA)
                 {
                     m_checknode_array = (int16_t*) &wimax_2208_0_75A;
                     m_row_size = sizeof(wimax_2208_0_75A) / sizeof(wimax_2208_0_75A[0]);
                     m_col_size = sizeof(wimax_2208_0_75A[0]) / sizeof(int16_t);
+                    m_D = wimax_2208_0_75A_D;
+                    m_X = wimax_2208_0_75A_X;
                 }
                 else if (rate == THREEQUARTERSB)
                 {
                     m_checknode_array = (int16_t*) &wimax_2208_0_75B;
                     m_row_size = sizeof(wimax_2208_0_75B) / sizeof(wimax_2208_0_75B[0]);
                     m_col_size = sizeof(wimax_2208_0_75B[0]) / sizeof(int16_t);
+                    m_D = wimax_2208_0_75B_D;
+                    m_X = wimax_2208_0_75B_X;
                 }
                 else if (rate == FIVESIXTHS)
                 {
                     m_checknode_array = (int16_t*) &wimax_2208_0_83;
                     m_row_size = sizeof(wimax_2208_0_83) / sizeof(wimax_2208_0_83);
                     m_col_size = sizeof(wimax_2208_0_83[0]) / sizeof(int16_t);
+                    m_D = wimax_2208_0_83_D;
+                    m_X = wimax_2208_0_83_X;
                 }
                 else
                 {
@@ -935,36 +1135,47 @@ namespace wimax_ldpc_lib {
                     m_checknode_array = (int16_t*) &wimax_2304_0_5;
                     m_row_size = sizeof(wimax_2304_0_5) / sizeof(wimax_2304_0_5[0]);
                     m_col_size = sizeof(wimax_2304_0_5[0]) / sizeof(int16_t);
+                    m_D = wimax_2304_0_5_D;
+                    m_X = wimax_2304_0_5_X;
                 }
                 else if (rate == TWOTHIRDSA)
                 {
                     m_checknode_array = (int16_t*) &wimax_2304_0_66A;
                     m_row_size = sizeof(wimax_2304_0_66A) / sizeof(wimax_2304_0_66A[0]);
                     m_col_size = sizeof(wimax_2304_0_66A[0]) / sizeof(int16_t);
-
+                    m_D = wimax_2304_0_66A_D;
+                    m_X = wimax_2304_0_66A_X;
                 }
                 else if (rate == TWOTHIRDSB){
                     m_checknode_array = (int16_t*) &wimax_2304_0_66B;
                     m_row_size = sizeof(wimax_2304_0_66B) / sizeof(wimax_2304_0_66B[0]);
                     m_col_size = sizeof(wimax_2304_0_66B[0]) / sizeof(int16_t);
+                    m_D = wimax_2304_0_66B_D;
+                    m_X = wimax_2304_0_66B_X;
                 }
                 else if (rate == THREEQUARTERSA)
                 {
                     m_checknode_array = (int16_t*) &wimax_2304_0_75A;
                     m_row_size = sizeof(wimax_2304_0_75A) / sizeof(wimax_2304_0_75A[0]);
                     m_col_size = sizeof(wimax_2304_0_75A[0]) / sizeof(int16_t);
+                    m_D = wimax_2304_0_75A_D;
+                    m_X = wimax_2304_0_75A_X;
                 }
                 else if (rate == THREEQUARTERSB)
                 {
                     m_checknode_array = (int16_t*) &wimax_2304_0_75B;
                     m_row_size = sizeof(wimax_2304_0_75B) / sizeof(wimax_2304_0_75B[0]);
                     m_col_size = sizeof(wimax_2304_0_75B[0]) / sizeof(int16_t);
+                    m_D = wimax_2304_0_75B_D;
+                    m_X = wimax_2304_0_75B_X;
                 }
                 else if (rate == FIVESIXTHS)
                 {
                     m_checknode_array = (int16_t*) &wimax_2304_0_83;
                     m_row_size = sizeof(wimax_2304_0_83) / sizeof(wimax_2304_0_83);
                     m_col_size = sizeof(wimax_2304_0_83[0]) / sizeof(int16_t);
+                    m_D = wimax_2304_0_83_D;
+                    m_X = wimax_2304_0_83_X;
                 }
                 else
                 {

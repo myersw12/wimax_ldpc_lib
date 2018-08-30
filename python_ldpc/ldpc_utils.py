@@ -21,6 +21,9 @@ h_matrix_halfrate = [ -1,  94,  73,  -1,  -1,  -1,  -1,  -1,  55,  83,  -1,  -1,
 -1,  -1,  7,  65,  -1,  -1,  -1,  -1,  39,  49,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  0,  0, 
 43,  -1,  -1,  -1,  -1,  66,  -1,  41,  -1,  -1,  -1,  26,  7,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  0 ]
 
+h_halfrate_x = 5
+h_halfrate_d = 7
+
 h_matrix_23A = [3,  0,  -1,  -1,  2,  0,  -1,  3,  7,  -1,  1,  1,  -1,  -1,  -1,  -1,  1,  0,  -1,  -1,  -1,  -1,  -1,  -1, 
 -1,  -1,  1,  -1,  36,  -1,  -1,  34,  10,  -1,  -1,  18,  2,  -1,  3,  0,  -1,  0,  0,  -1,  -1,  -1,  -1,  -1, 
 -1,  -1,  12,  2,  -1,  15,  -1,  40,  -1,  3,  -1,  15,  -1,  2,  13,  -1,  -1,  -1,  0,  0,  -1,  -1,  -1,  -1, 
@@ -29,6 +32,9 @@ h_matrix_23A = [3,  0,  -1,  -1,  2,  0,  -1,  3,  7,  -1,  1,  1,  -1,  -1,  -1
 -1,  -1,  10,  -1,  28,  20,  -1,  -1,  8,  -1,  36,  -1,  9,  -1,  21,  45,  -1,  -1,  -1,  -1,  -1,  0,  0,  -1, 
 35,  25,  -1,  37,  -1,  21,  -1,  -1,  5,  -1,  -1,  0,  -1,  4,  20,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  0,  0, 
 -1,  6,  6,  -1,  -1,  -1,  4,  -1,  14,  30,  -1,  3,  36,  -1,  14,  -1,  1,  -1,  -1,  -1,  -1,  -1,  -1,  0]
+
+h_23A_x = 4
+h_23A_d = 1
 
 h_matrix_23B = [2,  -1,  19,  -1,  47,  -1,  48,  -1,  36,  -1,  82,  -1,  47,  -1,  15,  -1,  95,  0,  -1,  -1,  -1,  -1,  -1,  -1, 
 -1,  69,  -1,  88,  -1,  33,  -1,  3,  -1,  16,  -1,  37,  -1,  40,  -1,  48,  -1,  0,  0,  -1,  -1,  -1,  -1,  -1, 
@@ -39,6 +45,9 @@ h_matrix_23B = [2,  -1,  19,  -1,  47,  -1,  48,  -1,  36,  -1,  82,  -1,  47,  
 32,  -1,  0,  -1,  15,  -1,  56,  -1,  85,  -1,  5,  -1,  6,  -1,  52,  -1,  0,  -1,  -1,  -1,  -1,  -1,  0,  0, 
 -1,  0,  -1,  47,  -1,  13,  -1,  61,  -1,  84,  -1,  55,  -1,  78,  -1,  41,  95,  -1,  -1,  -1,  -1,  -1,  -1,  0]
 
+h_23B_x = 6
+h_23B_d = 95
+
 h_matrix_34A = [6,  38,  3,  93,  -1,  -1,  -1,  30,  70,  -1,  86,  -1,  37,  38,  4,  11,  -1,  46,  48,  0,  -1,  -1,  -1,  -1, 
 62,  94,  19,  84,  -1,  92,  78,  -1,  15,  -1,  -1,  92,  -1,  45,  24,  32,  30,  -1,  -1,  0,  0,  -1,  -1,  -1, 
 71,  -1,  55,  -1,  12,  66,  45,  79,  -1,  78,  -1,  -1,  10,  -1,  22,  55,  70,  82,  -1,  -1,  0,  0,  -1,  -1, 
@@ -46,12 +55,18 @@ h_matrix_34A = [6,  38,  3,  93,  -1,  -1,  -1,  30,  70,  -1,  86,  -1,  37,  3
 -1,  -1,  -1,  -1,  32,  52,  55,  80,  95,  22,  6,  51,  24,  90,  44,  20,  -1,  -1,  -1,  -1,  -1,  -1,  0,  0, 
 -1,  63,  31,  88,  20,  -1,  -1,  -1,  6,  40,  56,  16,  71,  53,  -1,  -1,  27,  26,  48,  -1,  -1,  -1,  -1,  0]
 
+h_34A_x = 3
+h_34A_d = 48
+
 h_matrix_34B = [-1,  81,  -1,  28,  -1,  -1,  14,  25,  17,  -1,  -1,  85,  29,  52,  78,  95,  22,  92,  0,  0,  -1,  -1,  -1,  -1, 
 42,  -1,  14,  68,  32,  -1,  -1,  -1,  -1,  70,  43,  11,  36,  40,  33,  57,  38,  24,  -1,  0,  0,  -1,  -1,  -1, 
 -1,  -1,  20,  -1,  -1,  63,  39,  -1,  70,  67,  -1,  38,  4,  72,  47,  29,  60,  5,  80,  -1,  0,  0,  -1,  -1, 
 64,  2,  -1,  -1,  63,  -1,  -1,  3,  51,  -1,  81,  15,  94,  9,  85,  36,  14,  19,  -1,  -1,  -1,  0,  0,  -1, 
 -1,  53,  60,  80,  -1,  26,  75,  -1,  -1,  -1,  -1,  86,  77,  1,  3,  72,  60,  25,  -1,  -1,  -1,  -1,  0,  0, 
 77,  -1,  -1,  -1,  15,  28,  -1,  35,  -1,  72,  30,  68,  85,  84,  26,  64,  11,  89,  0,  -1,  -1,  -1,  -1,  0]
+
+h_34B_x = 2
+h_34B_d = 80
 
 # I've run across two different 5/6 code rate matrices
 # This one is printed in the 2012 standard
@@ -70,6 +85,9 @@ h_matrix_56 = [
 51, 81, 83, 4,  67,  -1,  21,  -1,  31,  24,  91,  61,  81,  9,  86,  78,  60,  88,  67,  15,  -1,  -1,  0,  0, 
 50, -1, 50, 15,  -1,  36,  13,  10,  11,  20,  53,  90,  29,  92,  57,  30,  84,  92,  11,  66,  80,  -1,  -1, 0
 ]
+
+h_56_x = 1
+h_56_d = 80
 
 
 # Determine the shift size for the 1/2, 3/4 A&B, 2/3 B, and 5/6 code rates
@@ -218,16 +236,14 @@ def create_alist_file(matrix, filename, print_to_console = False):
                 f.write("%d " % m[n])      
 
         f.write('\n')
-    
+    80
     f.close()
 
 
 # Create C header and source file for ldpc size and rate
-def create_c_matrix_file(matrix, matrix_name, filename, z, header_file):
+def create_c_matrix_file(matrix, matrix_name, filename, z, header_file, X, D):
         
     f = open(filename + ".cc", 'w')
-
-    
     
     # number of variable nodes
     N = len(matrix[0])
@@ -259,6 +275,8 @@ def create_c_matrix_file(matrix, matrix_name, filename, z, header_file):
     
     f.write("#include \"matrices.h\"\n\n\n")
     f.write("#ifdef Z_%d\n"%z)
+    f.write("unsigned int %s_D = %d;\n" %(matrix_name, D))
+    f.write("unsigned int %s_X = %d;\n\n" %(matrix_name, X))
     f.write("int16_t %s[%d][%d] = {\n" % (matrix_name, M, max_row_weight))
     
     for m in range(len(mlist)):
@@ -287,6 +305,8 @@ def create_c_matrix_file(matrix, matrix_name, filename, z, header_file):
     f.close()
 
     header_file.write("#ifdef Z_%d\n"%z)
+    header_file.write("extern unsigned int %s_D;\n" %(matrix_name))
+    header_file.write("extern unsigned int %s_X;\n\n" %(matrix_name))
     header_file.write("extern int16_t %s[%d][%d];\n" % (matrix_name, M, max_row_weight))
     header_file.write("#endif\n\n")
     
@@ -317,8 +337,9 @@ def main():
     # generate all of the c files
 
     cfiles_dir = "../lib/matrices/"
+    include_dir = "../include/"
     
-    header_file = open(cfiles_dir + "matrices.h", 'w')
+    header_file = open(include_dir + "matrices.h", 'w')
     
     include_filename = "matrices"
     
@@ -346,13 +367,21 @@ def main():
         filename_34A = cfiles_dir + matrixname_34A
         filename_34B = cfiles_dir + matrixname_34B
         filename_56 = cfiles_dir + matrixname_56
+        
+        shift_halfrate = shift_size(h_halfrate_d, i)
+        shift_23A = shift_size_23A(h_23A_d, i)
+        shift_23B = shift_size(h_23B_d, i)
+        shift_34A = shift_size(h_34A_d, i)
+        shift_34B = shift_size(h_34B_d, i)
+        shift_56 = shift_size(h_56_d, i)
 
-        create_c_matrix_file(expand_h_matrix(h_matrix_halfrate, i), halfrate_matrixname, halfrate_filename, i, header_file)
-        create_c_matrix_file(expand_h_matrix(h_matrix_23A, i, case_23A_rate=True), matrixname_23A, filename_23A, i, header_file)
-        create_c_matrix_file(expand_h_matrix(h_matrix_23B, i), matrixname_23B, filename_23B, i, header_file)
-        create_c_matrix_file(expand_h_matrix(h_matrix_34A, i), matrixname_34A, filename_34A, i, header_file)
-        create_c_matrix_file(expand_h_matrix(h_matrix_34B, i), matrixname_34B, filename_34B, i, header_file)
-        create_c_matrix_file(expand_h_matrix(h_matrix_56, i), matrixname_56, filename_56, i, header_file)
+        create_c_matrix_file(expand_h_matrix(h_matrix_halfrate, i), halfrate_matrixname, halfrate_filename, i, header_file, h_halfrate_x, shift_halfrate)
+        create_c_matrix_file(expand_h_matrix(h_matrix_23A, i, case_23A_rate=True), matrixname_23A, filename_23A, i, header_file, h_23A_x, shift_23A)
+        create_c_matrix_file(expand_h_matrix(h_matrix_23B, i), matrixname_23B, filename_23B, i, header_file, h_23B_x, shift_23B)
+        create_c_matrix_file(expand_h_matrix(h_matrix_34A, i), matrixname_34A, filename_34A, i, header_file, h_34A_x, shift_34A)
+        create_c_matrix_file(expand_h_matrix(h_matrix_34B, i), matrixname_34B, filename_34B, i, header_file, h_34B_x, shift_34B)
+        create_c_matrix_file(expand_h_matrix(h_matrix_56, i), matrixname_56, filename_56, i,
+        header_file, h_56_x, shift_56)
         
     header_file.write("#endif // %s_H\n" % (include_filename.upper()))
     header_file.close()

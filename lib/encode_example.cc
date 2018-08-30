@@ -22,7 +22,8 @@ void fill_with_random(uint8_t* buffer, unsigned int buf_len)
     }
 }
 
-void add_errors(uint8_t* buffer, unsigned int buf_len, unsigned int num_errors)
+void add_errors(uint8_t* buffer, 
+                    unsigned int buf_len, unsigned int num_errors)
 {
     srand(time(0));
     for (unsigned int i = 0; i < num_errors; i++)
@@ -97,8 +98,13 @@ int main(int argc, char *argv[])
             break;
         }
         
-        case (THREEQUARTERSA):
         case (THREEQUARTERSB):
+        {
+            printf("[!]test_encoder - 34B is not yet supported: %d\n", rate);
+            throw std::exception();
+            break;
+        }
+        case (THREEQUARTERSA):
         {
             dataword_len = (codeword_len * 3) / 4;
             break;
