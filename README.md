@@ -13,7 +13,6 @@ The LDPC codes used in this project are from the IEEE 802.16E standard (Mobile W
 ## Requirements
 
   * CMake
-  * GSL >= 1.10
 
 ## Encoder
 
