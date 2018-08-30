@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
         printf("                       three-quarters-A = 3\n");
         printf("                       three-quarters-B = 4\n");
         printf("                       five-sixths      = 5\n");
-        printf("z: Z Factor (please refer to section 8.4.9.2.5 of the 802.16-2012 standard for more information\n");
+        printf("z: Z Factor (please refer to section 8.4.9.2.5 of the 802.16-2012 standard for more information)\n");
         printf("num_rounds: How many LDPC encoding rounds to run.\n");
         printf("errors_to_add: How many errors to add to each LDPC codeword.\n");
         printf("unencoded_data_file: File to write the unencoded data to.\n");
