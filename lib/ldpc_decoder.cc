@@ -121,6 +121,7 @@ namespace wimax_ldpc_lib{
                     minimum = 10000.0;
                     sign = 1.0;
                     
+                    
                     for (unsigned int d = 0; d < current_row_len; d++)
                     {
                         if (d != n)

@@ -52,7 +52,7 @@ namespace wimax_ldpc_lib {
         unsigned int i;
         
         uint8_t Y[m_z];
-        memset(m_P, 0, m_M); 
+        memset(m_P, 0, m_z); 
         memset(m_V, 0, m_M);
         
         compute_v(infoword, m_V);
