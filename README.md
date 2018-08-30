@@ -20,10 +20,40 @@ The encoder is based on the algorithm found in [[1](#footnote1)].  It takes adva
 
 The encoder currently supports the 1/2, 2/3A, 2/3B, 3/4A, and 5/6 code rates.  The base matrix for the 3/4B matrix is structured a little differently than the others and is not implemented.  The encoder supports all of the block sizes available in the 802.16e standard.
 
+```
+Usage: ./test_encoder <rate> <z> <num_rounds> <errors_to_add> <unencoded_data_file> <encoded_data_file>
+Argument Description:
+rate: LDPC code rate - half-rate        = 0
+                       two-thirds-A     = 1
+                       two-thirds-B     = 2
+                       three-quarters-A = 3
+                       three-quarters-B = 4
+                       five-sixths      = 5
+z: Z Factor (please refer to section 8.4.9.2.5 of the 802.16-2012 standard for more information)
+num_rounds: How many LDPC encoding rounds to run.
+errors_to_add: How many errors to add to each LDPC codeword.
+unencoded_data_file: File to write the unencoded data to.
+encoded_data_file: File to write LDPC encoded data to.
+```
+
 ## Decoder
 
 The decoder uses the Turbo-Decoding Message-Passing Algorithm [[2](#footnote2)].  The docoder currently supports the 1/2, 2/3A, 2/3B, 3/4A, 3/4B, and 5/6 code rates.  The decoder supports all of the block sizes available in the 802.16e standard.
 
+```
+Usage: ./test_decoder <rate> <z> <num_codewords> <encoded_data_file> <decoded_data_file>
+Argument Description:
+rate: LDPC code rate - half-rate        = 0
+                       two-thirds-A     = 1
+                       two-thirds-B     = 2
+                       three-quarters-A = 3
+                       three-quarters-B = 4
+                       five-sixths      = 5
+z: Z Factor (please refer to section 8.4.9.2.5 of the 802.16-2012 standard for more information)
+num_codewords: How many LDPC codewords are in the file.
+encoded_data_file: File to read the encoded data from.
+decoded_data_file: File to write decoded data to.
+```
 ## Tools
 
 To build the tools, perform the following steps:
