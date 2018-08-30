@@ -38,7 +38,7 @@ encoded_data_file: File to write LDPC encoded data to.
 
 ## Decoder
 
-The decoder uses the Turbo-Decoding Message-Passing Algorithm [[2](#footnote2)].  The docoder currently supports the 1/2, 2/3A, 2/3B, 3/4A, 3/4B, and 5/6 code rates.  The decoder supports all of the block sizes available in the 802.16e standard.
+The decoder uses the Turbo-Decoding Message-Passing Algorithm [[2](#footnote2)].  The decoder currently supports the 1/2, 2/3A, 2/3B, 3/4A, 3/4B, and 5/6 code rates.  The decoder supports all of the block sizes available in the 802.16e standard.
 
 ```
 Usage: ./test_decoder <rate> <z> <num_codewords> <encoded_data_file> <decoded_data_file>
