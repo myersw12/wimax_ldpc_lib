@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
         printf("                       three-quarters-A = 3\n");
         printf("                       three-quarters-B = 4\n");
         printf("                       five-sixths      = 5\n");
-        printf("z: Z Factor (please refer to section 8.4.9.2.5 of the 802.16-2012 standard for more information\n");
+        printf("z: Z Factor (please refer to section 8.4.9.2.5 of the 802.16-2012 standard for more information)\n");
         printf("num_codewords: How many LDPC codewords are in the file.\n");
         printf("encoded_data_file: File to read the encoded data from.\n");
         printf("decoded_data_file: File to write decoded data to.\n\n");
