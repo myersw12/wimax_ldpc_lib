@@ -38,9 +38,9 @@ The executables listed below are found in the `wimax_ldpc_lib/build/lib/` direct
 Example Usage: `./lib/test_encoder 0 96 500 100 data.bin encoded.bin`
 
 Stats from running on a i7-4771 @ 3.50GHz (running the example above, 4 threads):
-  * Average Rate (Mbits/Sec): 6.877333
-  * Fastest Time (Mbits/Sec): 7.820216
-  * Slowest Time (Mbits/Sec): 5.030568
+  * Average Rate (Mbits/Sec): 171.904706
+  * Fastest Time (Mbits/Sec): 252.659283
+  * Slowest Time (Mbits/Sec): 16.031953
 
 ### test_decoder
 
