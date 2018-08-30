@@ -18,9 +18,11 @@ The LDPC codes used in this project are from the IEEE 802.16E standard (Mobile W
 
 The encoder is based on the algorithm found in [[1](#footnote1)].  It takes advantage of the dual-diagonal structure found in the LDPC codes used by WiMax.  With minor modifications, this encoder will also work the the LDPC codes found in 802.11n.
 
+The encoder currently supports the 1/2, 2/3A, 2/3B, 3/4A, and 5/6 code rates.  The base matrix for the 3/4B matrix is structured a little differently than the others and is not implemented.  The encoder supports all of the block sizes available in the 802.16e standard.
+
 ## Decoder
 
-The decoder uses the Turbo-Decoding Message-Passing Algorithm [[2](#footnote2)].
+The decoder uses the Turbo-Decoding Message-Passing Algorithm [[2](#footnote2)].  The docoder currently supports the 1/2, 2/3A, 2/3B, 3/4A, 3/4B, and 5/6 code rates.  The decoder supports all of the block sizes available in the 802.16e standard.
 
 ## Tools
 
