@@ -10,15 +10,17 @@ class ldpc_encoder:
    
     """
     
-    def __init__(self, alist):
+    def __init__(self, alist, X, D, is_23B_rate):
         
         self.H, self.N, self.M = self.create_H_from_alist(alist)
 
+        self.X = X
+        self.D = D
+        self.is_23B = is_23B_rate
+        
         # for codes found in the 802.16e standard, 24 is the base
         # H matrix size
         self.Z = self.N / 24
-
-        self.M1, self.M2, self.M3, self.T, self.A, self.B, self.C, self.E = self.generate_encoding_matrices(self.H, self.M, self.Z)
 
     def create_H_from_alist(self, alist):
 
@@ -62,8 +64,6 @@ class ldpc_encoder:
         for i in range(int(M)):
             mlist.append(f.readline().split('\n')[0])
         
-        
-        # create 2304 x 1152 matrix
         H = np.zeros((int(M), int(N)), dtype=bool)
         
         for i in range(int(M)):
@@ -78,39 +78,70 @@ class ldpc_encoder:
         f.close()
         
         return H, int(N), int(M)
+    
+    """The following 2 functions compute the correct
+    shift for a given shift value
+    """
+    
+    def shift_size(self, val, Zf, Z0 = 96):
+        if (val <= 0):
+            return val
+        else:
+            return int(np.floor((val * Zf)/Z0))
+    
+    # determine shift size for the 2/3 A code rate
+    def shift_size_23A(self, val, Zf):
+        if (val <= 0):
+            return val
+        else:
+            return val % Zf
+        
+    """Compute the parity bits
+    M - M dimension from alist
+    Z - Z factor from alist
+    X - row index of non zero value in h_b
+    d - shift from the first index of h_b
+    V - precomputed V 
+    """
+        
+    def compute_parity(self, M, Z, X, d, V):
+        
+        p_p = np.zeros(M, dtype=np.uint8)
+        p_y = np.zeros(Z, dtype=np.uint8)
+        
+        #fwd sub : p_i = l_i-1  + p_i-1'
+        for i in range(Z, (X+1)*Z):
+            p_p[i] = V[i-Z] ^ p_p[i-Z]
 
-    def generate_encoding_matrices(self, H, M, Z):
+        #M-1 : p_i = l_m-1  + p_0'd
+        for i in range(M-1, M-1 -Z, -1):
+            p_p[i] = V[i] ^ p_p[(M-1)-i]
         
-        """generate encoding matrices for modified RU 
-        encoding algorithm
+            
+        #back sub : p_i = l_i  + p_i+1'
+        for i in range(M-1-Z, (X+1)*Z -1, -1):
+            p_p[i] = V[i] ^ p_p[i+Z]
         
-        H -- numpy array of size MxN, H matrix for LDPC code
-        M -- int, M parameter for LDPC code
-        Z -- int, Z parameter for LDPC code
+            
+        # Y : p_y = l_x + P_x+1
+        for i in range(X*Z, X*Z + Z):
+            p_y[i - X*Z] = V[i] ^ p_p[Z+i]
         
-        returns:
-        M1 -- numpy array M1
-        M2 -- numpy array M2
-        M3 -- numpy array M3
-        
-        """
-        A = H[:M-Z,:M]
-        B = H[:M-Z, M:M+Z]
-        C = H[M-Z::, :M]
-        E = H[M-Z::, M+Z::]
-        T = H[:M-Z, M+Z::]
+        # P0
+        for i in range(0, Z):
+            p_p[i] = p_y[i] ^ p_p[Z*X+i]
 
-        T = np.linalg.inv(T) %2
+        f = np.roll(p_p[0:Z], -d)
         
-        M1 = np.dot(E,T)%2
-        M1 = np.dot(M1, A)%2
-        M1 = (M1 + C)%2
-
-        M2 = np.dot(T, A)%2
-
-        M3 = np.dot(T, B)%2
+        p_out = np.zeros(M, dtype=np.uint8)
         
-        return M1, M2, M3, T, A, B, C, E
+        for i in range(M):
+            if i < Z:
+                p_out[i] = p_p[i]
+            else:
+                p_out[i] = p_p[i] ^ f[i%Z]
+                
+        return p_out
 
     def encode_data(self, infoword):
     
@@ -124,10 +155,18 @@ class ldpc_encoder:
         numpy array (uint8), codeword
         
         """
-        p1 = np.dot(self.M1, infoword)%2
+        H_b1 = self.H[0::, 0:self.N-self.M]
         
-        p2 = (np.dot(self.M2, infoword)%2 + np.dot(self.M3, p1)%2)%2
+        # compute V for later use
+        V = np.dot(H_b1, infoword)%2
+       
+        if (self.is_23B):
+            shift = self.shift_size_23A(self.D, self.Z)
+        else:
+            shift = self.shift_size(self.D, self.Z)
+            
+        p = self.compute_parity(self.M, self.Z, self.X, shift, V)
         
-        return np.array(np.concatenate((infoword, p1, p2), axis = 0), dtype=np.uint8)
+        return np.array(np.concatenate((infoword, p), axis = 0), dtype=np.uint8)
 
 
