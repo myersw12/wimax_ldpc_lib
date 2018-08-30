@@ -16,7 +16,7 @@ The LDPC codes used in this project are from the IEEE 802.16E standard (Mobile W
 
 ## Encoder
 
-The encoder is based on the algorithm found in [[1](#footnote1)].
+The encoder is based on the algorithm found in [[1](#footnote1)].  It takes advantage of the dual-diagonal structure found in the LDPC codes used by WiMax.  With minor modifications, this encoder will also work the the LDPC codes found in 802.11n.
 
 ## Decoder
 
