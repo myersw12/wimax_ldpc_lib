@@ -4,8 +4,6 @@
 
 #include "ldpc_encoder.h"
 
-#include <gsl/gsl_linalg.h>
-
 namespace wimax_ldpc_lib {
     
     ldpc_encoder::ldpc_encoder(coderate rate,
