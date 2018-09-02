@@ -83,7 +83,7 @@ Stats from running on a i7-4771 @ 3.50GHz (decoding the output from the above ex
   * Slowest Time (Mbits/Sec): 0.490290
 
 
-### Mac OS X
+### macOS
 The default clang compiler in macOS does not provide OpenMP support. Before building please follow the instructions below: 
 ```
 brew install llvm
