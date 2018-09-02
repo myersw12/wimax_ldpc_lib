@@ -10,6 +10,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/Modules)
 ########################################################################
 # Find build dependencies
 ########################################################################
+find_package(OpenMP REQUIRED)
 
 ########################################################################
 # Setup the include and linker paths
