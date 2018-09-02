@@ -89,7 +89,7 @@ class ldpc_decoder:
         """Correct Errors using the Turbo-decoding Message-Passing
         (TDMP) algorithm
         
-        codeword -- numpy array (float), received codeword
+        codeword -- numpy array (uint8 or float), received codeword
         checknodes -- list, checknodes for LDPC code
         max_iter -- int, max number of TDMP iterations to run
         
@@ -103,14 +103,15 @@ class ldpc_decoder:
         result = np.zeros(len(codeword), dtype=np.uint8)
         float_in = np.zeros(len(codeword))
         
-        for n in range(len(codeword)):
-            if codeword[n] == 0:
-                float_in[n] = 1.0
-            else:
-                float_in[n] = -1.0
+        if (isinstance(codeword[0], float)):
+            float_in = codeword
+        else:
+            for n in range(len(codeword)):
+                if codeword[n] == 0:
+                    float_in[n] = 1.0
+                else:
+                    float_in[n] = -1.0
         
-        
-
         for i in range(max_iter):
             
             # loop through all checknodes
