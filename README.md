@@ -6,7 +6,7 @@ LDPC codes are a type of linear forward error correcting code.  They are high pe
   *  DVB-C2 (Digital Video Broadcasting - Cable)
   *  G.hn (ITU-T Standard for networking over power lines)
 
-This repository contains an LDPC encoder and decoder implemented in Python and C++.  The objective is to create a fast, high performance, easy to use LDPC encoder/decoder. 
+This repository contains an LDPC encoder and decoder implemented in Python and C++.  The objective is to create a fast, high performance, and easy to use LDPC encoder/decoder. 
 
 The LDPC codes used in this project are from the IEEE 802.16E standard (Mobile WIMAX).  These matrices are used because they are a special form of LDPC codes known as Quasi-Cyclic (QC) LDPC codes.  QC-LDPC codes are faster to encode and decode.  All of the LDPC matrices and coderates from the 802.16e-2012 standard are available for use.
 
@@ -95,6 +95,14 @@ export CPPFLAGS="-I/usr/local/opt/llvm/include"
 ```
 
 ## Directory Structure
+
+  * /alist - alist files for all of the 802.16e code rates.  Provided for reference and convenience.
+  * /cmake - cmake modules
+  * /include - header files
+  * /ipython_notebooks - Encoder/Decoder examples in python
+  * /lib - source code
+  * /python_ldpc - python implementation of encoder & decoder
+
 
 ## References
 
