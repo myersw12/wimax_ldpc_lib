@@ -4,6 +4,8 @@
 
 #include "ldpc_decoder.h"
 
+//#define PRINT_ERRORS
+
 namespace wimax_ldpc_lib{
 
     ldpc_decoder::ldpc_decoder(coderate rate,
@@ -72,6 +74,7 @@ namespace wimax_ldpc_lib{
     unsigned int ldpc_decoder::decode(float* rx_codeword, uint8_t* decoded)
     {
         unsigned int num_errors = 0;
+        unsigned int initial_errors = 0;
         
         float LNM[m_col_size];
         unsigned int current_row_len = 0;
@@ -79,6 +82,25 @@ namespace wimax_ldpc_lib{
             
         float minimum = 10000.0;
         float sign = 1.0;
+        
+        
+        // Check for errors initially, if there are none
+        // then exit.
+        // Perform hard decision decode
+        for (unsigned int n = 0; n < m_N; n++)
+        {
+            if(rx_codeword[n] <= 0)
+                decoded[n] = 1;
+            else
+                decoded[n] = 0;
+        }
+        
+        // compute the symdrome
+        initial_errors = this->compute_syndrome(decoded, true);
+        
+        // Exit if there are no inital errors
+        if(initial_errors == 0)
+            return initial_errors;
         
         for (unsigned int i = 0; i < m_max_iter; i++)
         {
@@ -163,6 +185,11 @@ namespace wimax_ldpc_lib{
             if(num_errors == 0)
                 return num_errors;
         }
+        
+        #ifdef PRINT_ERRORS
+        printf("Initial Errors: %d\n", initial_errors);
+        printf("Final Errors: %d\n", num_errors);
+        #endif
         
         // return the number of errors remaining after 
         // the maximum number of iterations is performed.
