@@ -5,7 +5,7 @@
 #include "ldpc_decoder.h"
 
 #define MAX_ITER 10
-#define NUM_THREADS 6
+#define NUM_THREADS 4
 
 using namespace wimax_ldpc_lib;
 

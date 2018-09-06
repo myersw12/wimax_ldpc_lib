@@ -2,6 +2,8 @@
 
 #include "ldpc.h"
 
+#define DEBUG_INITIALIZATION
+
 namespace wimax_ldpc_lib {
     
     ldpc::ldpc(coderate rate, unsigned int z_factor, unsigned int num_threads)
@@ -49,7 +51,11 @@ namespace wimax_ldpc_lib {
     
         if(set_checknode_array(rate, z_factor) == 0)
             throw std::exception();
-        
+ 
+        #ifdef DEBUG_INITIALIZATION
+        printf("m_N: %d\nm_M: %d\nm_z: %d\n", m_N, m_M, m_z);
+        printf("m_row_size: %d\nm_col_size: %d\nm_D: %d\nm_X: %d\n", m_row_size, m_col_size, m_D, m_X);
+        #endif       
     }
 
     ldpc::~ldpc()
@@ -109,7 +115,7 @@ namespace wimax_ldpc_lib {
                 else if (rate == FIVESIXTHS)
                 {
                     m_checknode_array = (int16_t*) &wimax_576_0_83;
-                    m_row_size = sizeof(wimax_576_0_83) / sizeof(wimax_576_0_83);
+                    m_row_size = sizeof(wimax_576_0_83) / sizeof(wimax_576_0_83[0]);
                     m_col_size = sizeof(wimax_576_0_83[0]) / sizeof(int16_t);
                     m_D = wimax_576_0_83_D;
                     m_X = wimax_576_0_83_X;
@@ -169,7 +175,7 @@ namespace wimax_ldpc_lib {
                 else if (rate == FIVESIXTHS)
                 {
                     m_checknode_array = (int16_t*) &wimax_672_0_83;
-                    m_row_size = sizeof(wimax_672_0_83) / sizeof(wimax_672_0_83);
+                    m_row_size = sizeof(wimax_672_0_83) / sizeof(wimax_672_0_83[0]);
                     m_col_size = sizeof(wimax_672_0_83[0]) / sizeof(int16_t);
                     m_D = wimax_672_0_83_D;
                     m_X = wimax_672_0_83_X;
@@ -228,7 +234,7 @@ namespace wimax_ldpc_lib {
                 else if (rate == FIVESIXTHS)
                 {
                     m_checknode_array = (int16_t*) &wimax_768_0_83;
-                    m_row_size = sizeof(wimax_768_0_83) / sizeof(wimax_768_0_83);
+                    m_row_size = sizeof(wimax_768_0_83) / sizeof(wimax_768_0_83[0]);
                     m_col_size = sizeof(wimax_768_0_83[0]) / sizeof(int16_t);
                     m_D = wimax_768_0_83_D;
                     m_X = wimax_768_0_83_X;
@@ -287,7 +293,7 @@ namespace wimax_ldpc_lib {
                 else if (rate == FIVESIXTHS)
                 {
                     m_checknode_array = (int16_t*) &wimax_864_0_83;
-                    m_row_size = sizeof(wimax_864_0_83) / sizeof(wimax_864_0_83);
+                    m_row_size = sizeof(wimax_864_0_83) / sizeof(wimax_864_0_83[0]);
                     m_col_size = sizeof(wimax_864_0_83[0]) / sizeof(int16_t);
                     m_D = wimax_864_0_83_D;
                     m_X = wimax_864_0_83_X;
@@ -346,7 +352,7 @@ namespace wimax_ldpc_lib {
                 else if (rate == FIVESIXTHS)
                 {
                     m_checknode_array = (int16_t*) &wimax_960_0_83;
-                    m_row_size = sizeof(wimax_960_0_83) / sizeof(wimax_960_0_83);
+                    m_row_size = sizeof(wimax_960_0_83) / sizeof(wimax_960_0_83[0]);
                     m_col_size = sizeof(wimax_960_0_83[0]) / sizeof(int16_t);
                     m_D = wimax_960_0_83_D;
                     m_X = wimax_960_0_83_X;
@@ -405,7 +411,7 @@ namespace wimax_ldpc_lib {
                 else if (rate == FIVESIXTHS)
                 {
                     m_checknode_array = (int16_t*) &wimax_1056_0_83;
-                    m_row_size = sizeof(wimax_1056_0_83) / sizeof(wimax_1056_0_83);
+                    m_row_size = sizeof(wimax_1056_0_83) / sizeof(wimax_1056_0_83[0]);
                     m_col_size = sizeof(wimax_1056_0_83[0]) / sizeof(int16_t);
                     m_D = wimax_1056_0_83_D;
                     m_X = wimax_1056_0_83_X;
@@ -464,7 +470,7 @@ namespace wimax_ldpc_lib {
                 else if (rate == FIVESIXTHS)
                 {
                     m_checknode_array = (int16_t*) &wimax_1152_0_83;
-                    m_row_size = sizeof(wimax_1152_0_83) / sizeof(wimax_1152_0_83);
+                    m_row_size = sizeof(wimax_1152_0_83) / sizeof(wimax_1152_0_83[0]);
                     m_col_size = sizeof(wimax_1152_0_83[0]) / sizeof(int16_t);
                     m_D = wimax_1152_0_83_D;
                     m_X = wimax_1152_0_83_X;
@@ -523,7 +529,7 @@ namespace wimax_ldpc_lib {
                 else if (rate == FIVESIXTHS)
                 {
                     m_checknode_array = (int16_t*) &wimax_1248_0_83;
-                    m_row_size = sizeof(wimax_1248_0_83) / sizeof(wimax_1248_0_83);
+                    m_row_size = sizeof(wimax_1248_0_83) / sizeof(wimax_1248_0_83[0]);
                     m_col_size = sizeof(wimax_1248_0_83[0]) / sizeof(int16_t);
                     m_D = wimax_1248_0_83_D;
                     m_X = wimax_1248_0_83_X;
@@ -582,7 +588,7 @@ namespace wimax_ldpc_lib {
                 else if (rate == FIVESIXTHS)
                 {        
                     m_checknode_array = (int16_t*) &wimax_1344_0_83;
-                    m_row_size = sizeof(wimax_1344_0_83) / sizeof(wimax_1344_0_83);
+                    m_row_size = sizeof(wimax_1344_0_83) / sizeof(wimax_1344_0_83[0]);
                     m_col_size = sizeof(wimax_1344_0_83[0]) / sizeof(int16_t);
                     m_D = wimax_1344_0_83_D;
                     m_X = wimax_1344_0_83_X;
@@ -641,7 +647,7 @@ namespace wimax_ldpc_lib {
                 else if (rate == FIVESIXTHS)
                 {
                     m_checknode_array = (int16_t*) &wimax_1440_0_83;
-                    m_row_size = sizeof(wimax_1440_0_83) / sizeof(wimax_1440_0_83);
+                    m_row_size = sizeof(wimax_1440_0_83) / sizeof(wimax_1440_0_83[0]);
                     m_col_size = sizeof(wimax_1440_0_83[0]) / sizeof(int16_t);
                     m_D = wimax_1440_0_83_D;
                     m_X = wimax_1440_0_83_X;
@@ -700,7 +706,7 @@ namespace wimax_ldpc_lib {
                 else if (rate == FIVESIXTHS)
                 {
                     m_checknode_array = (int16_t*) &wimax_1536_0_83;
-                    m_row_size = sizeof(wimax_1536_0_83) / sizeof(wimax_1536_0_83);
+                    m_row_size = sizeof(wimax_1536_0_83) / sizeof(wimax_1536_0_83[0]);
                     m_col_size = sizeof(wimax_1536_0_83[0]) / sizeof(int16_t);
                     m_D = wimax_1536_0_83_D;
                     m_X = wimax_1536_0_83_X;
@@ -759,7 +765,7 @@ namespace wimax_ldpc_lib {
                 else if (rate == FIVESIXTHS)
                 {
                     m_checknode_array = (int16_t*) &wimax_1632_0_83;
-                    m_row_size = sizeof(wimax_1632_0_83) / sizeof(wimax_1632_0_83);
+                    m_row_size = sizeof(wimax_1632_0_83) / sizeof(wimax_1632_0_83[0]);
                     m_col_size = sizeof(wimax_1632_0_83[0]) / sizeof(int16_t);
                     m_D = wimax_1632_0_83_D;
                     m_X = wimax_1632_0_83_X;
@@ -818,7 +824,7 @@ namespace wimax_ldpc_lib {
                 else if (rate == FIVESIXTHS)
                 {
                     m_checknode_array = (int16_t*) &wimax_1728_0_83;
-                    m_row_size = sizeof(wimax_1728_0_83) / sizeof(wimax_1728_0_83);
+                    m_row_size = sizeof(wimax_1728_0_83) / sizeof(wimax_1728_0_83[0]);
                     m_col_size = sizeof(wimax_1728_0_83[0]) / sizeof(int16_t);
                     m_D = wimax_1728_0_83_D;
                     m_X = wimax_1728_0_83_X;
@@ -877,7 +883,7 @@ namespace wimax_ldpc_lib {
                 else if (rate == FIVESIXTHS)
                 {
                     m_checknode_array = (int16_t*) &wimax_1824_0_83;
-                    m_row_size = sizeof(wimax_1824_0_83) / sizeof(wimax_1824_0_83);
+                    m_row_size = sizeof(wimax_1824_0_83) / sizeof(wimax_1824_0_83[0]);
                     m_col_size = sizeof(wimax_1824_0_83[0]) / sizeof(int16_t);
                     m_D = wimax_1824_0_83_D;
                     m_X = wimax_1824_0_83_X;
@@ -936,7 +942,7 @@ namespace wimax_ldpc_lib {
                 else if (rate == FIVESIXTHS)
                 {
                     m_checknode_array = (int16_t*) &wimax_1920_0_83;
-                    m_row_size = sizeof(wimax_1920_0_83) / sizeof(wimax_1920_0_83);
+                    m_row_size = sizeof(wimax_1920_0_83) / sizeof(wimax_1920_0_83[0]);
                     m_col_size = sizeof(wimax_1920_0_83[0]) / sizeof(int16_t);
                     m_D = wimax_1920_0_83_D;
                     m_X = wimax_1920_0_83_X;
@@ -995,7 +1001,7 @@ namespace wimax_ldpc_lib {
                 else if (rate == FIVESIXTHS)
                 {
                     m_checknode_array = (int16_t*) &wimax_2016_0_83;
-                    m_row_size = sizeof(wimax_2016_0_83) / sizeof(wimax_2016_0_83);
+                    m_row_size = sizeof(wimax_2016_0_83) / sizeof(wimax_2016_0_83[0]);
                     m_col_size = sizeof(wimax_2016_0_83[0]) / sizeof(int16_t);
                     m_D = wimax_2016_0_83_D;
                     m_X = wimax_2016_0_83_X;
@@ -1054,7 +1060,7 @@ namespace wimax_ldpc_lib {
                 else if (rate == FIVESIXTHS)
                 {
                     m_checknode_array = (int16_t*) &wimax_2112_0_83;
-                    m_row_size = sizeof(wimax_2112_0_83) / sizeof(wimax_2112_0_83);
+                    m_row_size = sizeof(wimax_2112_0_83) / sizeof(wimax_2112_0_83[0]);
                     m_col_size = sizeof(wimax_2112_0_83[0]) / sizeof(int16_t);
                     m_D = wimax_2112_0_83_D;
                     m_X = wimax_2112_0_83_X;
@@ -1113,7 +1119,7 @@ namespace wimax_ldpc_lib {
                 else if (rate == FIVESIXTHS)
                 {
                     m_checknode_array = (int16_t*) &wimax_2208_0_83;
-                    m_row_size = sizeof(wimax_2208_0_83) / sizeof(wimax_2208_0_83);
+                    m_row_size = sizeof(wimax_2208_0_83) / sizeof(wimax_2208_0_83[0]);
                     m_col_size = sizeof(wimax_2208_0_83[0]) / sizeof(int16_t);
                     m_D = wimax_2208_0_83_D;
                     m_X = wimax_2208_0_83_X;
@@ -1172,7 +1178,7 @@ namespace wimax_ldpc_lib {
                 else if (rate == FIVESIXTHS)
                 {
                     m_checknode_array = (int16_t*) &wimax_2304_0_83;
-                    m_row_size = sizeof(wimax_2304_0_83) / sizeof(wimax_2304_0_83);
+                    m_row_size = sizeof(wimax_2304_0_83) / sizeof(wimax_2304_0_83[0]);
                     m_col_size = sizeof(wimax_2304_0_83[0]) / sizeof(int16_t);
                     m_D = wimax_2304_0_83_D;
                     m_X = wimax_2304_0_83_X;

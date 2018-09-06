@@ -61,9 +61,10 @@ namespace wimax_ldpc_lib{
         float soft_codeword[m_N];
         
         // convert to soft demod
+        //#pragma omp parallel for num_threads(m_num_threads)  
         for(unsigned int i = 0; i < m_N; i++)
         {
-            soft_codeword[i] = (float)((rx_codeword[i] * -2.0) + 1.0);
+            soft_codeword[i] = rx_codeword[i] * -2.0 + 1.0;
         }
         return this->decode(soft_codeword, decoded);
         
@@ -77,16 +78,11 @@ namespace wimax_ldpc_lib{
         unsigned int initial_errors = 0;
         
         float LNM[m_col_size];
-        unsigned int current_row_len = 0;
-        int16_t temp_index = 0;
-            
-        float minimum = 10000.0;
-        float sign = 1.0;
-        
         
         // Check for errors initially, if there are none
         // then exit.
         // Perform hard decision decode
+        #pragma omp parallel for num_threads(m_num_threads)
         for (unsigned int n = 0; n < m_N; n++)
         {
             if(rx_codeword[n] <= 0)
@@ -104,12 +100,14 @@ namespace wimax_ldpc_lib{
         
         for (unsigned int i = 0; i < m_max_iter; i++)
         {
-            #pragma omp parallel for private(LNM, current_row_len, temp_index, minimum, sign) num_threads(m_num_threads)
+            #pragma omp parallel for private(LNM) num_threads(m_num_threads)
             for (unsigned int m = 0; m < m_row_size; m++)
             {
-                current_row_len = 0;
-                minimum = 10000.0;
-                sign = 1.0;
+                unsigned int current_row_len = 0;
+                int16_t temp_index;
+            
+                float minimum = 10000.0;
+                float sign = 1.0;
                 
                 // Compute LNM Message
                 if (i == 0){
@@ -170,6 +168,7 @@ namespace wimax_ldpc_lib{
             }
             
             // Perform hard decision decode
+            #pragma omp parallel for num_threads(m_num_threads)
             for (unsigned int n = 0; n < m_N; n++)
             {
                 if(rx_codeword[n] <= 0)
