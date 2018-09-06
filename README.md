@@ -13,7 +13,7 @@ The LDPC codes used in this project are from the IEEE 802.16E standard (Mobile W
 ## Requirements
 
   * CMake
-  * Compiler with OpenMP support (standard with gcc/g++ v4.9 and later. See macOS instructions below.)
+  * Compiler with OpenMP support (standard with GCC v4.9 and later. For macOS, see instructions below.)
 
 ## Encoder
 
