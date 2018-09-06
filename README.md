@@ -55,7 +55,7 @@ num_codewords: How many LDPC codewords are in the file.
 encoded_data_file: File to read the encoded data from.
 decoded_data_file: File to write decoded data to.
 ```
-The throughput of the decoder is increased using openmp threading.  For the 5/6ths code rate, this can result in concurrency problems.  The has to do with the decreased number of rows in the base matrix.  Currently the best solution is to reduce the number of threads to 1 or trade BER performance for speed.
+The throughput of the decoder is increased using openmp threading.  For certain code rate/number of error combinations (particularly for the 5/6th rate), this can result in concurrency problems.  In the case of the 5/6th rate code, it has to do with the decreased number of rows in the base matrix.  Currently the best solution is to reduce the number of threads to 1 or trade BER performance for speed.
 
 ## Tools
 
