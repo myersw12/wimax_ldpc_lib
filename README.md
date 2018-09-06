@@ -55,6 +55,8 @@ num_codewords: How many LDPC codewords are in the file.
 encoded_data_file: File to read the encoded data from.
 decoded_data_file: File to write decoded data to.
 ```
+The throughput of the decoder is increased using openmp threading.  For the 5/6ths code rate, this can result in concurrency problems.  The has to do with the decreased number of rows in the base matrix.  Currently the best solution is to reduce the number of threads to 1 or trade BER performance for speed.
+
 ## Tools
 
 To build the tools, perform the following steps:
@@ -102,7 +104,6 @@ export CPPFLAGS="-I/usr/local/opt/llvm/include"
   * /ipython_notebooks - Encoder/Decoder examples in python
   * /lib - source code
   * /python_ldpc - python implementation of encoder & decoder
-
 
 ## References
 
