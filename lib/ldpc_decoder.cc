@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <cmath>
 #include <cstdlib>
+#include <cstring>
 
 #include "ldpc_decoder.h"
 
@@ -15,7 +16,10 @@ namespace wimax_ldpc_lib{
     {
         m_max_iter = max_iter;
         
-        m_LMN = (float*)calloc(m_max_iter * m_row_size * m_N, sizeof(float));
+        m_LMN = (float*)aligned_alloc(sizeof(float), 
+                                      sizeof(float) * m_max_iter * m_row_size * m_col_size);
+        
+        std::memset(m_LMN, 0, sizeof(float) * m_max_iter * m_row_size * m_col_size); 
         
     }
 
@@ -61,7 +65,6 @@ namespace wimax_ldpc_lib{
         float soft_codeword[m_N];
         
         // convert to soft demod
-        //#pragma omp parallel for num_threads(m_num_threads)  
         for(unsigned int i = 0; i < m_N; i++)
         {
             soft_codeword[i] = rx_codeword[i] * -2.0 + 1.0;
@@ -69,7 +72,7 @@ namespace wimax_ldpc_lib{
         return this->decode(soft_codeword, decoded);
         
     }
-
+    
     // TDMP Decoder for LDPC
     // takes soft demodulated input
     unsigned int ldpc_decoder::decode(float* rx_codeword, uint8_t* decoded)
@@ -127,7 +130,7 @@ namespace wimax_ldpc_lib{
                         if (temp_index != -1){
                             LNM[n] = 
                                 rx_codeword[temp_index] 
-                                - m_LMN[temp_index + m_N*(m + (i-1)*m_row_size)];
+                                - m_LMN[n + m_col_size*(m + (i-1)*m_row_size)];
                             current_row_len += 1;
                         }
                     }
@@ -156,12 +159,12 @@ namespace wimax_ldpc_lib{
                     // update codeword
                     if (sign > 0)
                     {
-                        m_LMN[temp_index + m_N*(m+i*m_row_size)] = minimum;
+                        m_LMN[n + m_col_size*(m+i*m_row_size)] = minimum;
                         rx_codeword[temp_index] = LNM[n] + minimum;
                     }
                     else
                     {
-                        m_LMN[temp_index + m_N*(m+i*m_row_size)] = -minimum;
+                        m_LMN[n + m_col_size*(m+i*m_row_size)] = -minimum;
                         rx_codeword[temp_index] = LNM[n] - minimum;
                     }
                 }
