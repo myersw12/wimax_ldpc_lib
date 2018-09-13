@@ -31,15 +31,16 @@ namespace wimax_ldpc_lib{
     unsigned int ldpc_decoder::compute_syndrome(uint8_t* rx_codeword, bool early_exit)
     {
         unsigned int num_errors = 0;
-        uint8_t xorsum = 0;
-        int16_t temp_index = 0;
         
         for (unsigned int i = 0; i < m_row_size; i++)
         {
-            xorsum = 0;
+            uint8_t xorsum = 0;
+            int16_t temp_index;
+            unsigned int offset = i*m_col_size;
+            
             for (unsigned int k = 0; k < m_col_size; k++)
             {
-                temp_index = m_checknode_array[i*m_col_size + k];
+                temp_index = m_checknode_array[offset + k];
                 if (temp_index != -1)
                     xorsum ^= rx_codeword[temp_index];
             }
@@ -47,8 +48,11 @@ namespace wimax_ldpc_lib{
             // if we just want to know if there are errors or
             // not, then return when the first error is found
             if (xorsum != 0){
-                if (early_exit)
-                    return 1;
+                if (early_exit){
+                    num_errors = 1;
+                    i = m_row_size;
+                }
+                    
                 else
                     num_errors += 1;
             }
@@ -112,11 +116,14 @@ namespace wimax_ldpc_lib{
                 float minimum = 10000.0;
                 float sign = 1.0;
                 
+                unsigned int cn_offset = m*m_col_size;
+                unsigned int lmn_offset;
+                
                 // Compute LNM Message
                 if (i == 0){
                     for (unsigned int n = 0; n < m_col_size; n++)
                     {
-                        temp_index = m_checknode_array[m*m_col_size + n];
+                        temp_index = m_checknode_array[cn_offset + n];
                         if (temp_index != -1){
                             LNM[n] = rx_codeword[temp_index];
                             current_row_len += 1;
@@ -124,22 +131,25 @@ namespace wimax_ldpc_lib{
                     }
                 } else
                 {
+                    lmn_offset = m_col_size*(m + (i-1)*m_row_size);
+                    
                     for (unsigned int n = 0; n < m_col_size; n++)
                     {
-                        temp_index = m_checknode_array[m*m_col_size + n];
+                        temp_index = m_checknode_array[cn_offset + n];
                         if (temp_index != -1){
                             LNM[n] = 
                                 rx_codeword[temp_index] 
-                                - m_LMN[n + m_col_size*(m + (i-1)*m_row_size)];
+                                - m_LMN[n + lmn_offset];
                             current_row_len += 1;
                         }
                     }
                 }
                 
+                lmn_offset = m_col_size*(m + i*m_row_size);
                 // Compute LMN Message
                 for (unsigned int n = 0; n < current_row_len; n++)
                 {
-                    temp_index = m_checknode_array[m*m_col_size + n];
+                    temp_index = m_checknode_array[cn_offset + n];
                     
                     minimum = 10000.0;
                     sign = 1.0;
@@ -159,12 +169,12 @@ namespace wimax_ldpc_lib{
                     // update codeword
                     if (sign > 0)
                     {
-                        m_LMN[n + m_col_size*(m+i*m_row_size)] = minimum;
+                        m_LMN[n + lmn_offset] = minimum;
                         rx_codeword[temp_index] = LNM[n] + minimum;
                     }
                     else
                     {
-                        m_LMN[n + m_col_size*(m+i*m_row_size)] = -minimum;
+                        m_LMN[n + lmn_offset] = -minimum;
                         rx_codeword[temp_index] = LNM[n] - minimum;
                     }
                 }
