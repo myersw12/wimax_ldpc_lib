@@ -60,7 +60,7 @@ The throughput of the decoder is increased using openmp threading.  For certain 
 ## Tools
 
 To build the tools, perform the following steps:
-   * clone the repository: `git clone git@github.com:myersw12/wimax_ldpc_lib.git`
+   * clone the repository: `https://github.com/myersw12/wimax_ldpc_lib.git`
    * create the build directory: `cd wimax_ldpc_lib && mkdir build && cd build`
    * run cmake: `cmake ../`
    * run make: `make -j4`
