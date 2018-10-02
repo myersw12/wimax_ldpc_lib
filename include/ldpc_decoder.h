@@ -15,6 +15,11 @@ namespace wimax_ldpc_lib {
             unsigned int m_max_iter;
             
             float* m_LMN;
+            //float* LNM;
+            
+            unsigned int* m_row_lens;
+            
+            unsigned int m_alignment;
             
         public:
             ldpc_decoder(coderate rate,

@@ -153,8 +153,8 @@ int main(int argc, char *argv[])
     avg_time = time_sum / float(num_rounds);
     printf("\n\nTiming Statistics:\n\n");
     printf("Average Rate (Mbits/Sec): %f\n", (codeword_len * 1000.0) / (avg_time) ); 
-    printf("Fastest Time (Mbits/Sec): %f\n", (codeword_len * 1000.0) / (min_time) );
-    printf("Slowest Time (Mbits/Sec): %f\n", (codeword_len * 1000.0) / (max_time) );
+    printf("Fastest Iteration (Mbits/Sec): %f\n", (codeword_len * 1000.0) / (min_time) );
+    printf("Slowest Iteration (Mbits/Sec): %f\n", (codeword_len * 1000.0) / (max_time) );
 
     fclose(data_file);
     fclose(encoded_file);

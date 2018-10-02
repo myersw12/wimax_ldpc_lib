@@ -3,6 +3,9 @@
 #include <cstdlib>
 #include <cstring>
 
+#include <volk/volk.h>
+#include <volk/volk_malloc.h>
+
 #include "ldpc_decoder.h"
 
 //#define PRINT_ERRORS
@@ -16,16 +19,35 @@ namespace wimax_ldpc_lib{
     {
         m_max_iter = max_iter;
         
-        m_LMN = (float*)aligned_alloc(sizeof(float), 
-                                      sizeof(float) * m_max_iter * m_row_size * m_col_size);
+        m_alignment = volk_get_alignment();
+        
+        m_LMN = (float*)volk_malloc(sizeof(float) * (m_max_iter+1) * m_row_size * m_col_size, m_alignment);
         
         std::memset(m_LMN, 0, sizeof(float) * m_max_iter * m_row_size * m_col_size); 
+        
+        m_row_lens = (unsigned int*)malloc(sizeof(int) * m_row_size);
+        
+        
+        unsigned int current_row_len = 0;
+        
+        for (unsigned int m = 0; m < m_row_size; m++)
+        {
+            current_row_len = 0;
+            for (unsigned int n = 0; n < m_col_size; n++)
+            {
+                if (m_checknode_array[m*m_col_size + n] != -1){
+                    current_row_len += 1;
+                }
+            }
+            m_row_lens[m] = current_row_len;
+        }
         
     }
 
     ldpc_decoder::~ldpc_decoder()
     {
-        free(m_LMN);
+        volk_free(m_LMN);
+        free(m_row_lens);
     }
 
     unsigned int ldpc_decoder::compute_syndrome(uint8_t* rx_codeword, bool early_exit)
@@ -66,7 +88,7 @@ namespace wimax_ldpc_lib{
     unsigned int ldpc_decoder::decode(uint8_t* rx_codeword, uint8_t* decoded)
     {
         
-        float soft_codeword[m_N];
+        float soft_codeword[m_N] __attribute__((aligned(32)));
         
         // convert to soft demod
         for(unsigned int i = 0; i < m_N; i++)
@@ -84,7 +106,6 @@ namespace wimax_ldpc_lib{
         unsigned int num_errors = 0;
         unsigned int initial_errors = 0;
         
-        float LNM[m_col_size];
         
         // Check for errors initially, if there are none
         // then exit.
@@ -105,79 +126,81 @@ namespace wimax_ldpc_lib{
         if(initial_errors == 0)
             return initial_errors;
         
-        for (unsigned int i = 0; i < m_max_iter; i++)
+        for (unsigned int i = 1; i < m_max_iter+1; i++)
         {
-            #pragma omp parallel for private(LNM) num_threads(m_num_threads)
+            #pragma omp parallel for num_threads(m_num_threads)
             for (unsigned int m = 0; m < m_row_size; m++)
             {
-                unsigned int current_row_len = 0;
-                int16_t temp_index;
-            
-                float minimum = 10000.0;
-                float sign = 1.0;
+                
+                float LNM[m_col_size];
+                
+                float first_minimum = 10000.0;
+                float minimum;
+                bool sign = true;
+                float iter_sign;
+                
+                float lnm_abs;
                 
                 unsigned int cn_offset = m*m_col_size;
                 unsigned int lmn_offset;
                 
+                unsigned int first_min_index = 0;
+                
                 // Compute LNM Message
-                if (i == 0){
-                    for (unsigned int n = 0; n < m_col_size; n++)
-                    {
-                        temp_index = m_checknode_array[cn_offset + n];
-                        if (temp_index != -1){
-                            LNM[n] = rx_codeword[temp_index];
-                            current_row_len += 1;
-                        }
-                    }
-                } else
-                {
-                    lmn_offset = m_col_size*(m + (i-1)*m_row_size);
+               
+                lmn_offset = m_col_size*(m + (i-1)*m_row_size);
                     
-                    for (unsigned int n = 0; n < m_col_size; n++)
-                    {
-                        temp_index = m_checknode_array[cn_offset + n];
-                        if (temp_index != -1){
-                            LNM[n] = 
-                                rx_codeword[temp_index] 
-                                - m_LMN[n + lmn_offset];
-                            current_row_len += 1;
-                        }
+                for (unsigned int n = 0; n < m_row_lens[m]; n++)
+                {
+                    LNM[n] = rx_codeword[m_checknode_array[cn_offset + n]] 
+                            - m_LMN[n + lmn_offset];
+                            
+                    sign ^= std::signbit(LNM[n]);
+                            
+                    lnm_abs = fabs(LNM[n]);
+                    if (lnm_abs < first_minimum){
+                        first_minimum = lnm_abs;
+                        first_min_index = n;
                     }
+                    
                 }
                 
+                
                 lmn_offset = m_col_size*(m + i*m_row_size);
-                // Compute LMN Message
-                for (unsigned int n = 0; n < current_row_len; n++)
+                
+                // compute and apply LNM message for starting indices
+                
+                for (unsigned int n = 0; n < m_row_lens[m]; n++)
                 {
-                    temp_index = m_checknode_array[cn_offset + n];
                     
-                    minimum = 10000.0;
-                    sign = 1.0;
+                    iter_sign = (sign ^ std::signbit(LNM[n])) * 2 - 1;
                     
-                    
-                    for (unsigned int d = 0; d < current_row_len; d++)
+                    if (n == first_min_index)
                     {
-                        if (d != n)
+                        // Compute and apply LNM message for min index
+                        minimum = 10000.0;
+
+                        for (unsigned int d = 0; d < m_row_lens[m]; d++)
                         {
-                            sign *= LNM[d];
-                            
-                            if (fabs(LNM[d]) < minimum)
-                                minimum = fabs(LNM[d]);
+                            if (d != first_min_index)
+                            {
+                                lnm_abs = fabs(LNM[d]);
+                                if (lnm_abs < minimum)
+                                    minimum = lnm_abs;
+                            }
                         }
-                    }
-                    
-                    // update codeword
-                    if (sign > 0)
-                    {
-                        m_LMN[n + lmn_offset] = minimum;
-                        rx_codeword[temp_index] = LNM[n] + minimum;
+
                     }
                     else
                     {
-                        m_LMN[n + lmn_offset] = -minimum;
-                        rx_codeword[temp_index] = LNM[n] - minimum;
+                        minimum = first_minimum;
                     }
+                    
+                    m_LMN[n + lmn_offset] = iter_sign * minimum;
+                    rx_codeword[m_checknode_array[cn_offset + n]] = LNM[n] + iter_sign * minimum;
                 }
+                
+                
             }
             
             // Perform hard decision decode

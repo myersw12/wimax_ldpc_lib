@@ -1,11 +1,12 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <volk/volk.h>
 
 #include "ldpc_decoder.h"
 
 #define MAX_ITER 10
-#define NUM_THREADS 4
+#define NUM_THREADS 2
 
 using namespace wimax_ldpc_lib;
 
@@ -49,7 +50,7 @@ int main(int argc, char *argv[])
     int codeword_len = (z / 96.0) * BASE_LDPC_BLOCK_LEN;
     int dataword_len = 0;
     
-    uint8_t* file_buffer = (uint8_t*) malloc(num_codewords*codeword_len);
+    uint8_t* file_buffer = (uint8_t*) volk_malloc(num_codewords*codeword_len, volk_get_alignment());
     
     encoded_data = fopen(argv[4], "rb");
     
@@ -134,12 +135,12 @@ int main(int argc, char *argv[])
     avg_time = time_sum / float(num_codewords);
     printf("\nTiming Statistics:\n\n");
     printf("Average Rate (Mbits/Sec): %f\n", (codeword_len * 1000.0) / (avg_time) ); 
-    printf("Fastest Time (Mbits/Sec): %f\n", (codeword_len * 1000.0) / (min_time) );
-    printf("Slowest Time (Mbits/Sec): %f\n", (codeword_len * 1000.0) / (max_time) );
+    printf("Fastest Iteration (Mbits/Sec): %f\n", (codeword_len * 1000.0) / (min_time) );
+    printf("Slowest Iteration (Mbits/Sec): %f\n", (codeword_len * 1000.0) / (max_time) );
 
     fclose(decoded_data);
     
-    free(file_buffer);
+    volk_free(file_buffer);
     
     return 1;
 }
