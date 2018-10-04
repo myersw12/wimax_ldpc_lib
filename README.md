@@ -57,7 +57,7 @@ num_codewords: How many LDPC codewords are in the file.
 encoded_data_file: File to read the encoded data from.
 decoded_data_file: File to write decoded data to.
 ```
-The throughput of the decoder is increased using openmp threading.  Parallelization is performed at the LDPC frame level making this ideal for bursts that contain multiple LDPC frames.  This approach eliminates the concurrency issues found when parallelization is performed at the Check Node level.
+The throughput of the decoder is increased using openmp threading.  Parallelization is performed at the LDPC frame level making this ideal for bursts that contain multiple LDPC frames.  This approach eliminates the concurrency issues found when parallelization is performed at the Check Node level.  If this decoder is used on streaming LDPC frames, there will be latency added by the aggregation of frames.
 
 ## Tools
 
