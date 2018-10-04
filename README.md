@@ -14,6 +14,7 @@ The LDPC codes used in this project are from the IEEE 802.16E standard (Mobile W
 
   * CMake
   * Compiler with OpenMP support (standard with GCC v4.9 and later. For macOS, see instructions below.)
+  * [VOLK](http://libvolk.org/)
 
 ## Encoder
 
