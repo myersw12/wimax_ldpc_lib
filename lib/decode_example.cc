@@ -1,22 +1,23 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <volk/volk.h>
 
 #include "ldpc_decoder.h"
 
 #define MAX_ITER 10
-#define NUM_THREADS 4
 
 using namespace wimax_ldpc_lib;
 
 int main(int argc, char *argv[])
 {
     
-    if (argc != 6)
+    if (argc != 7)
     {
         printf("\nError: Incorrect number of arguments\n");
-        printf("Usage: ./test_decoder <rate> <z> <num_codewords> <encoded_data_file> <decoded_data_file>\n");
+        printf("Usage: ./test_decoder <num_threads> <rate> <z> <num_codewords> <encoded_data_file> <decoded_data_file>\n");
         printf("Argument Description:\n");
+        printf("num_threads: Number of threads to use.  num_codewords modulo num_threads == 0.\n");
         printf("rate: LDPC code rate - half-rate        = 0\n");
         printf("                       two-thirds-A     = 1\n");
         printf("                       two-thirds-B     = 2\n");
@@ -39,19 +40,25 @@ int main(int argc, char *argv[])
     double avg_time;
     uint64_t max_time = 0;
     uint64_t min_time = 10000000000;
-    unsigned int num_errors;
-    unsigned int initial_errors;
+
     
-    coderate rate = (coderate)std::stoi(argv[1], nullptr, 0);
-    int z = std::stoi(argv[2], nullptr, 0);
-    unsigned int num_codewords = std::stoi(argv[3], nullptr, 0);
+    coderate rate = (coderate)std::stoi(argv[2], nullptr, 0);
+    unsigned int num_threads = std::stoi(argv[1], nullptr, 0);
+    int z = std::stoi(argv[3], nullptr, 0);
+    unsigned int num_codewords = std::stoi(argv[4], nullptr, 0);
+    
+    unsigned int num_errors[num_threads];
+    unsigned int initial_errors[num_threads];
+    
+    ldpc_decoder* decoders[num_threads];
     
     int codeword_len = (z / 96.0) * BASE_LDPC_BLOCK_LEN;
     int dataword_len = 0;
     
-    uint8_t* file_buffer = (uint8_t*) malloc(num_codewords*codeword_len);
+    int8_t* file_buffer = (int8_t*) volk_malloc(num_codewords*codeword_len, volk_get_alignment());
     
-    encoded_data = fopen(argv[4], "rb");
+    encoded_data = fopen(argv[5], "rb");
+    decoded_data = fopen(argv[6], "wb");
     
     if(encoded_data)
     {
@@ -65,10 +72,12 @@ int main(int argc, char *argv[])
     
     fclose(encoded_data);
     
-    ldpc_decoder decoder = ldpc_decoder(rate, z, MAX_ITER, NUM_THREADS);
-   
-    uint8_t temp_codeword[codeword_len];
+    for (unsigned int i = 0; i < num_threads; i++){
+        decoders[i] = new ldpc_decoder(rate, z, MAX_ITER, num_threads);
+    }
     
+    int8_t* temp_codeword = (int8_t*)volk_malloc(codeword_len * num_threads, volk_get_alignment());
+
     switch(rate)
     {
         case (HALFRATE):
@@ -105,17 +114,25 @@ int main(int argc, char *argv[])
         }
     }
     
-    decoded_data = fopen(argv[5], "wb");
     
-    for (unsigned int i = 0; i < num_codewords; i++)
+    for (unsigned int i = 0; i < num_codewords-(num_threads-1); i+=num_threads)
     {
-        initial_errors = decoder.compute_syndrome(file_buffer + i*codeword_len, false);
         
-        start_time = decoder.get_nanoseconds();
+        for (unsigned int k = 0; k < num_threads; k++)
+            initial_errors[k] = decoders[k]->compute_syndrome(file_buffer + (i+k)*codeword_len, false);
         
-        num_errors = decoder.decode(file_buffer + i * codeword_len, temp_codeword);
+        start_time = decoders[0]->get_nanoseconds();
         
-        elapsed_time = decoder.get_nanoseconds() - start_time;
+        #pragma omp parallel for num_threads(num_threads)
+        for(unsigned int j = 0; j < num_threads; j++)
+        {
+            num_errors[j] = 
+            decoders[j]->decode(file_buffer + (i+j) * codeword_len,
+                               temp_codeword + j*codeword_len);
+       
+        }
+        
+        elapsed_time = decoders[0]->get_nanoseconds() - start_time;
         time_sum += elapsed_time;
        
         if(elapsed_time > max_time)
@@ -124,22 +141,30 @@ int main(int argc, char *argv[])
         if(elapsed_time < min_time)
             min_time = elapsed_time;
         
-        fwrite(temp_codeword, 1, dataword_len, decoded_data);
+        for (unsigned int j = 0; j < num_threads; j++)
+            fwrite(temp_codeword + j*codeword_len, 1, dataword_len, decoded_data);
         
-        printf("Rate (Mbits/Sec): %f\n", (codeword_len * 1000.0) / (elapsed_time) ); 
-        printf("Initial Number of Errors: %d\n", initial_errors);
-        printf("Final Number of Errors: %d\n\n", num_errors);
+        printf("Rate (Mbits/Sec): %f\n", (num_threads*codeword_len * 1000.0) / (elapsed_time) ); 
+        
+        for (unsigned int n = 0; n < num_threads; n++){
+            printf("Initial Number of Errors (%d): %d\n", n, initial_errors[n]);
+            printf("Final Number of Errors (%d): %d\n", n, num_errors[n]);
+        }
+        printf("\n");
+
     }
     
     avg_time = time_sum / float(num_codewords);
     printf("\nTiming Statistics:\n\n");
     printf("Average Rate (Mbits/Sec): %f\n", (codeword_len * 1000.0) / (avg_time) ); 
-    printf("Fastest Time (Mbits/Sec): %f\n", (codeword_len * 1000.0) / (min_time) );
-    printf("Slowest Time (Mbits/Sec): %f\n", (codeword_len * 1000.0) / (max_time) );
+    printf("Fastest Iteration (Mbits/Sec): %f\n", (num_threads*codeword_len * 1000.0) / (min_time) );
+    printf("Slowest Iteration (Mbits/Sec): %f\n", (num_threads*codeword_len * 1000.0) / (max_time) );
 
     fclose(decoded_data);
     
-    free(file_buffer);
+    volk_free(file_buffer);
+    volk_free(temp_codeword);
+
     
     return 1;
 }

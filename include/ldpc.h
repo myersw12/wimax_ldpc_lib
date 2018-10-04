@@ -52,6 +52,7 @@ namespace wimax_ldpc_lib{
             unsigned int    m_num_threads;
             
         public:
+            ldpc();
             ldpc(coderate rate, unsigned int z_factor, unsigned int num_threads);
             ~ldpc();
             

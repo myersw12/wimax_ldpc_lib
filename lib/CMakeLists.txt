@@ -3,7 +3,7 @@
 ########################################################################
 project(lib)
 
-set(CMAKE_CXX_FLAGS " -Wall -O3 -std=c++11 -fopenmp")
+set(CMAKE_CXX_FLAGS " -Wall -O3 -std=c++11 -fopenmp -ffast-math")
 
  
 set(SOURCES 
@@ -135,14 +135,14 @@ add_library(wimax_ldpc_lib SHARED ${SOURCES})
 
 set_target_properties(test_encoder PROPERTIES LINKER_LANGUAGE CXX)
 
-if(GSL_FOUND)
-  include_directories(${GSL_INCLUDE_DIRS})
-  link_directories(${GSL_LIBRARY_DIRS})
-  list(APPEND test_encoder_libs ${GSL_LIBRARIES})
+if(VOLK_FOUND)
+  include_directories(${VOLK_INCLUDE_DIRS})
+  list(APPEND test_encoder_libs ${VOLK_LIBRARIES})
+endif(VOLK_FOUND)
 
-endif(GSL_FOUND)
 
-target_link_libraries(test_encoder ${test_encoder_libs})
+
+target_link_libraries(test_decoder ${test_encoder_libs})
 target_link_libraries(wimax_ldpc_lib ${test_encoder_libs})
 
 install(TARGETS wimax_ldpc_lib DESTINATION lib)
