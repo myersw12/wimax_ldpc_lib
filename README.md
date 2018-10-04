@@ -42,8 +42,9 @@ encoded_data_file: File to write LDPC encoded data to.
 The decoder uses the Turbo-Decoding Message-Passing Algorithm [[2](#footnote2)].  The decoder currently supports the 1/2, 2/3A, 2/3B, 3/4A, 3/4B, and 5/6 code rates.  The decoder supports all of the block sizes available in the 802.16e standard.
 
 ```
-Usage: ./test_decoder <rate> <z> <num_codewords> <encoded_data_file> <decoded_data_file>
+Usage: ./test_decoder <num_threads> <rate> <z> <num_codewords> <encoded_data_file> <decoded_data_file>
 Argument Description:
+num_threads: Number of threads to use.  num_codewords modulo num_threads == 0.
 rate: LDPC code rate - half-rate        = 0
                        two-thirds-A     = 1
                        two-thirds-B     = 2
@@ -55,7 +56,7 @@ num_codewords: How many LDPC codewords are in the file.
 encoded_data_file: File to read the encoded data from.
 decoded_data_file: File to write decoded data to.
 ```
-The throughput of the decoder is increased using openmp threading.  For certain code rate/number of error combinations (particularly for the 5/6th rate), this can result in concurrency problems.  In the case of the 5/6th rate code, it has to do with the decreased number of rows in the base matrix.  Currently the best solution is to reduce the number of threads to 1 or trade BER performance for speed.
+The throughput of the decoder is increased using openmp threading.  Parallelization is performed at the LDPC frame level making this ideal for bursts that contain multiple LDPC frames.  This approach eliminates the concurrency issues found when parallelization is performed at the Check Node level.
 
 ## Tools
 
@@ -73,17 +74,17 @@ Example Usage: `./lib/test_encoder 0 96 500 100 data.bin encoded.bin`
 
 Stats from running on a i7-4771 @ 3.50GHz (running the example above, 4 threads):
   * Average Rate (Mbits/Sec): 171.904706
-  * Fastest Time (Mbits/Sec): 252.659283
-  * Slowest Time (Mbits/Sec): 16.031953
+  * Fastest Iteration (Mbits/Sec): 252.659283
+  * Slowest Iteration (Mbits/Sec): 16.031953
 
 ### test_decoder
 
-Example Usage: `./lib/test_decoder 0 96 500 encoded.bin decoded.bin`
+Example Usage: `./lib/test_decoder 4 0 96 500 encoded.bin decoded.bin`
 
 Stats from running on a i7-4771 @ 3.50GHz (decoding the output from the above example, 4 threads):
-  * Average Rate (Mbits/Sec): 16.805945
-  * Fastest Time (Mbits/Sec): 20.610994
-  * Slowest Time (Mbits/Sec): 0.490290
+  * Average Rate (Mbits/Sec): 31.755333
+  * Fastest Iteration (Mbits/Sec): 35.466888
+  * Slowest Iteration (Mbits/Sec): 11.636364
 
 
 ### macOS
