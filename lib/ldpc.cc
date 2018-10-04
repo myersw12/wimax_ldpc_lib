@@ -6,6 +6,8 @@
 
 namespace wimax_ldpc_lib {
     
+    ldpc::ldpc() {}
+    
     ldpc::ldpc(coderate rate, unsigned int z_factor, unsigned int num_threads)
     {
         m_num_threads = num_threads;

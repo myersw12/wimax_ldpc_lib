@@ -11,7 +11,9 @@
 //#define PRINT_ERRORS
 
 namespace wimax_ldpc_lib{
-
+    
+    ldpc_decoder::ldpc_decoder() {}
+    
     ldpc_decoder::ldpc_decoder(coderate rate,
                             unsigned int z_factor,
                             unsigned int max_iter,
@@ -50,13 +52,13 @@ namespace wimax_ldpc_lib{
         free(m_row_lens);
     }
 
-    unsigned int ldpc_decoder::compute_syndrome(uint8_t* rx_codeword, bool early_exit)
+    unsigned int ldpc_decoder::compute_syndrome(int8_t* rx_codeword, bool early_exit)
     {
         unsigned int num_errors = 0;
         
         for (unsigned int i = 0; i < m_row_size; i++)
         {
-            uint8_t xorsum = 0;
+            int8_t xorsum = 0;
             int16_t temp_index;
             unsigned int offset = i*m_col_size;
             
@@ -85,7 +87,7 @@ namespace wimax_ldpc_lib{
 
     // this is function takes a bit array and converts it
     // to the input required by the decoder.
-    unsigned int ldpc_decoder::decode(uint8_t* rx_codeword, uint8_t* decoded)
+    unsigned int ldpc_decoder::decode(int8_t* rx_codeword, int8_t* decoded)
     {
         
         float soft_codeword[m_N] __attribute__((aligned(32)));
@@ -93,7 +95,7 @@ namespace wimax_ldpc_lib{
         // convert to soft demod
         for(unsigned int i = 0; i < m_N; i++)
         {
-            soft_codeword[i] = rx_codeword[i] * -2.0 + 1.0;
+            soft_codeword[i] = rx_codeword[i] * 2.0 - 1.0;
         }
         return this->decode(soft_codeword, decoded);
         
@@ -101,23 +103,15 @@ namespace wimax_ldpc_lib{
     
     // TDMP Decoder for LDPC
     // takes soft demodulated input
-    unsigned int ldpc_decoder::decode(float* rx_codeword, uint8_t* decoded)
+    unsigned int ldpc_decoder::decode(float* rx_codeword, int8_t* decoded)
     {
         unsigned int num_errors = 0;
         unsigned int initial_errors = 0;
         
-        
         // Check for errors initially, if there are none
         // then exit.
         // Perform hard decision decode
-        #pragma omp parallel for num_threads(m_num_threads)
-        for (unsigned int n = 0; n < m_N; n++)
-        {
-            if(rx_codeword[n] <= 0)
-                decoded[n] = 1;
-            else
-                decoded[n] = 0;
-        }
+        volk_32f_binary_slicer_8i(decoded, rx_codeword, m_N);
         
         // compute the symdrome
         initial_errors = this->compute_syndrome(decoded, true);
@@ -128,17 +122,16 @@ namespace wimax_ldpc_lib{
         
         for (unsigned int i = 1; i < m_max_iter+1; i++)
         {
-            #pragma omp parallel for num_threads(m_num_threads)
             for (unsigned int m = 0; m < m_row_size; m++)
             {
                 
-                float LNM[m_col_size];
+                float LNM[m_row_lens[m]];
+                    
+                bool sign = true;
                 
                 float first_minimum = 10000.0;
                 float minimum;
-                bool sign = true;
                 float iter_sign;
-                
                 float lnm_abs;
                 
                 unsigned int cn_offset = m*m_col_size;
@@ -149,13 +142,14 @@ namespace wimax_ldpc_lib{
                 // Compute LNM Message
                
                 lmn_offset = m_col_size*(m + (i-1)*m_row_size);
-                    
+                
                 for (unsigned int n = 0; n < m_row_lens[m]; n++)
                 {
+                    
                     LNM[n] = rx_codeword[m_checknode_array[cn_offset + n]] 
                             - m_LMN[n + lmn_offset];
-                            
-                    sign ^= std::signbit(LNM[n]);
+                    
+                    sign ^= !std::signbit(LNM[n]);
                             
                     lnm_abs = fabs(LNM[n]);
                     if (lnm_abs < first_minimum){
@@ -165,7 +159,6 @@ namespace wimax_ldpc_lib{
                     
                 }
                 
-                
                 lmn_offset = m_col_size*(m + i*m_row_size);
                 
                 // compute and apply LNM message for starting indices
@@ -173,7 +166,7 @@ namespace wimax_ldpc_lib{
                 for (unsigned int n = 0; n < m_row_lens[m]; n++)
                 {
                     
-                    iter_sign = (sign ^ std::signbit(LNM[n])) * 2 - 1;
+                    iter_sign = (sign ^ !std::signbit(LNM[n])) * -2 + 1;
                     
                     if (n == first_min_index)
                     {
@@ -189,7 +182,6 @@ namespace wimax_ldpc_lib{
                                     minimum = lnm_abs;
                             }
                         }
-
                     }
                     else
                     {
@@ -197,22 +189,15 @@ namespace wimax_ldpc_lib{
                     }
                     
                     m_LMN[n + lmn_offset] = iter_sign * minimum;
+                    
                     rx_codeword[m_checknode_array[cn_offset + n]] = LNM[n] + iter_sign * minimum;
+                    
                 }
                 
-                
             }
             
-            // Perform hard decision decode
-            #pragma omp parallel for num_threads(m_num_threads)
-            for (unsigned int n = 0; n < m_N; n++)
-            {
-                if(rx_codeword[n] <= 0)
-                    decoded[n] = 1;
-                else
-                    decoded[n] = 0;
-            }
-            
+            volk_32f_binary_slicer_8i(decoded, rx_codeword, m_N);
+
             // compute the symdrome
             num_errors = this->compute_syndrome(decoded, true);
             
