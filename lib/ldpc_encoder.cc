@@ -26,12 +26,12 @@ namespace wimax_ldpc_lib {
     // For information on the LDPC encoding algorithm used here
     // please see the paper "Efficient Encoding for Dual-Diagonal Structured LDPC
     // Codes Based on Parity Bit Prediction and Correction" by Lin, Wei, and Ku
-    void ldpc_encoder::compute_v(uint8_t* infoword, uint8_t* V)
+    void ldpc_encoder::compute_v(uint8_t* infoword)
     {
         int16_t temp_index = 0;
         uint8_t value = 0;
         
-        #pragma omp parallel for shared(infoword, V) private(temp_index, value) num_threads(m_num_threads)
+        #pragma omp parallel for private(temp_index, value) num_threads(m_num_threads)
         for (unsigned int m = 0; m < m_row_size; m++)
         {
             value = 0;
@@ -43,7 +43,7 @@ namespace wimax_ldpc_lib {
                     value ^= 1 && infoword[temp_index];
                 }
             }
-            V[m] = value;
+            m_V[m] = value;
         }
     }
     
@@ -55,7 +55,7 @@ namespace wimax_ldpc_lib {
         memset(m_P, 0, m_z); 
         memset(m_V, 0, m_M);
         
-        compute_v(infoword, m_V);
+        compute_v(infoword);
         
         // calculate the last subblock
         for (i = m_M-1; i > m_M-1-m_z; i--)

@@ -3,7 +3,7 @@
 ########################################################################
 project(lib)
 
-set(CMAKE_CXX_FLAGS " -Wall -O3 -std=gnu++11 -fopenmp -ffast-math")
+set(CMAKE_CXX_FLAGS " -Wall -O3 -std=gnu++11 -fopenmp -ffast-math -g")
 
  
 set(SOURCES 
@@ -131,7 +131,7 @@ add_executable(test_encoder ${SOURCES} encode_example.cc ldpc_encoder.cc)
 
 add_executable(test_decoder ${SOURCES} decode_example.cc ldpc_decoder.cc)
 
-add_executable(BER_example ${SOURCES} BER_example.cc ldpc_encoder.cc ldpc_decoder.cc)
+add_executable(BER_example ${SOURCES} BER_example.cc ldpc_encoder.cc ldpc_decoder.cc BER_runner.cc)
 
 add_library(wimax_ldpc_lib SHARED ${SOURCES})
 
@@ -147,7 +147,6 @@ if(MathGL_FOUND)
   include_directories(${MATHGL_INCLUDE_DIRS})
   list(APPEND test_BER_libs ${MathGL_LIBRARIES})
 endif(MathGL_FOUND)
-
 
 
 target_link_libraries(test_decoder ${test_decoder_libs})
