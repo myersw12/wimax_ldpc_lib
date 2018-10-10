@@ -23,12 +23,24 @@ namespace wimax_ldpc_lib {
             unsigned int m_dataword_len;
             
             float m_float_rate;
+            float m_stored_value;
+            
+            bool m_num_stored;
+            
             
             unsigned int compare_data(uint8_t* rand_data,
                                       int8_t* decoded_data);
             
             void fill_with_random(uint8_t* buffer,
                                   unsigned int buf_len);
+            
+            float gaussian_dev();
+            
+            std::mt19937 m_generator_awgn; 
+            std::mt19937 m_generator_data; 
+
+            std::normal_distribution<float> m_dist_awgn;
+            std::uniform_real_distribution<> m_dist_data;
             
             
         public:

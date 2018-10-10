@@ -30,6 +30,12 @@ namespace wimax_ldpc_lib {
 
         m_codeword_len = (z_factor / 96.0) * BASE_LDPC_BLOCK_LEN;
         
+        m_dist_awgn = std::normal_distribution<float> (0.0, 1.0);
+        m_generator_awgn = std::mt19937(0);
+        
+        m_dist_data = std::uniform_real_distribution<> (0.0, 1.0);
+        m_generator_data = std::mt19937(0);
+        
         switch(rate)
         {
             case (HALFRATE):
@@ -98,11 +104,9 @@ namespace wimax_ldpc_lib {
     
     void BER_runner::fill_with_random(uint8_t* buffer, unsigned int buf_len)
     {
-        // initialize the random number generator
-        srand(time(0));
         for (unsigned int i = 0; i < buf_len; i++)
         {
-            buffer[i] = rand() % 2;
+            buffer[i] = (uint8_t)(m_dist_data(m_generator_data) < 0.5);
         }
     }
     
@@ -110,7 +114,7 @@ namespace wimax_ldpc_lib {
     {
         unsigned int num_errors = 0;
         
-        for(unsigned int j = 0; j < m_codeword_len; j++)
+        for(unsigned int j = 0; j < m_dataword_len; j++)
         {
             if (rand_data[j] != decoded_data[j])
             {
@@ -120,10 +124,30 @@ namespace wimax_ldpc_lib {
         return num_errors;
     }
     
+    float BER_runner::gaussian_dev()
+    {
+        if(m_num_stored)
+        {
+            m_num_stored = false;
+            return m_stored_value;
+        }
+        else
+        {
+            float x,y,s;
+            do{
+                x = 2.0*m_dist_awgn(m_generator_awgn)-1.0;
+                y = 2.0*m_dist_awgn(m_generator_awgn)-1.0;
+                s = x*x+y*y;
+            }while(s >= 1.0f || s == 0.0f);
+            m_num_stored = true;
+            m_stored_value = x*std::sqrt(-2.0*std::log(s)/s);
+            return y*std::sqrt(-2.0*std::log(s)/s);
+        }
+    
+    }
+    
     double BER_runner::run_iteration(double EbNo_dB)
     {
-        std::default_random_engine generator; 
-        std::normal_distribution<float> dist(0.0, 1.0);
         
         uint8_t temp_dataword[m_dataword_len];
         uint8_t temp_codeword[m_codeword_len];
@@ -132,9 +156,15 @@ namespace wimax_ldpc_lib {
         
         int8_t decoded_data[m_codeword_len];
         
-        float EbNo_linear = pow(10,(EbNo_dB/10.0));
+        double EbNo_linear = pow(10.0,(EbNo_dB/10.0));
+        
+        unsigned int errs;
+        
+        //printf("linear: %f\n", EbNo_linear);
         
         float noise_amplitude = (1.0/std::sqrt(EbNo_linear)) * std::sqrt(1.0/(m_float_rate*BITS_PER_SYM));
+        
+        //printf("noise amp %f\n", noise_amplitude);
         
         // generate random data and BPSK modulate
         fill_with_random(temp_dataword, m_dataword_len);
@@ -151,15 +181,18 @@ namespace wimax_ldpc_lib {
         //#pragma omp parallel for num_threads(num_threads)
         for (unsigned int j = 0; j <m_codeword_len; j++)
         {
-            codeword_buffer[j] = codeword_buffer[j] + noise_amplitude * dist(generator);
+            codeword_buffer[j] = codeword_buffer[j] +
+                        std::sqrt(0.5) * noise_amplitude * gaussian_dev();
         }
         
         
-        m_decoder->decode(codeword_buffer,
+        errs = m_decoder->decode(codeword_buffer,
                          decoded_data);
+        
             
-        m_num_bits += m_codeword_len;
-        m_num_errors += compare_data(temp_codeword, decoded_data);
+        m_num_bits += m_dataword_len;
+        m_num_errors += compare_data(temp_dataword, decoded_data);
+        
         
         return (double) m_num_errors / (double) m_num_bits;
         

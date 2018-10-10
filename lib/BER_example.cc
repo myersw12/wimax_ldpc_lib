@@ -9,7 +9,7 @@
 #include "BER_runner.h"
 
 #define MAX_ITER 10
-#define CONFIDENCE_VALUE 0.0
+#define CONFIDENCE_VALUE -1.0
 
 using namespace wimax_ldpc_lib;
 
@@ -69,24 +69,29 @@ int main(int argc, char *argv[])
         
         while(!confidence)
         {
-            for (unsigned int j = 0; j < 10000; j++)
+            for (unsigned int j = 0; j < 5000; j++)
+            {
                 BER = ber_test.run_iteration(EbNo_dB);
             
-            //printf("exp: %f\n", ((double)ber_test.get_total_num_bits() * BER * -1.0));
-             
+                //printf("BER: %f\n", BER);
+            }
+            
             confidence_level = 1.0 - std::exp((double)ber_test.get_total_num_bits()*BER*-1.0);
             
             
             //printf("confidence_level: %f\n", confidence_level);
             
-            if (confidence_level > CONFIDENCE_VALUE)
+            //if (confidence_level > CONFIDENCE_VALUE)
                 confidence = true;
         }
+        
+        printf("num_bits: %d\n", ber_test.get_total_num_bits());
+        printf("num_err: %d\n", ber_test.get_total_num_errors());
         
         ber_test.reset_test();
         
         printf("confidence_level: %f\n", confidence_level);
-        printf("BER: %f\n\n", BER);
+        printf("BER: %e\n\n", BER);
         EbNo_dB += step;
         
     }
