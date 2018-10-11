@@ -24,7 +24,6 @@ namespace wimax_ldpc_lib {
         m_encoder = new ldpc_encoder(rate, z_factor, num_threads);
         m_decoder = new ldpc_decoder(rate, z_factor, max_iter, num_threads);
         
-        
         m_num_bits = 0;
         m_num_errors = 0;
 
@@ -33,8 +32,13 @@ namespace wimax_ldpc_lib {
         m_dist_awgn = std::normal_distribution<float> (0.0, 1.0);
         m_generator_awgn = std::mt19937(0);
         
-        m_dist_data = std::uniform_real_distribution<> (0.0, 1.0);
-        m_generator_data = std::mt19937(0);
+        m_lfsr_start_state = 0xdeadbeef;
+        
+        m_lfsr = m_lfsr_start_state;
+        
+        m_lfsr_reset_len = 1152;
+        
+        m_lfsr_index = 0;
         
         switch(rate)
         {
@@ -92,58 +96,62 @@ namespace wimax_ldpc_lib {
         
     }
     
-    unsigned int BER_runner::get_total_num_bits()
+    uint64_t BER_runner::get_total_num_bits()
     {
         return m_num_bits;
     }
     
-    unsigned int BER_runner::get_total_num_errors()
+    uint64_t BER_runner::get_total_num_errors()
     {
         return m_num_errors;
+    }
+    
+    unsigned int BER_runner::get_codeword_len()
+    {
+        return m_codeword_len;
+    }
+    
+    unsigned int BER_runner::get_dataword_len()
+    {
+        return m_dataword_len;
+    }
+    
+    uint32_t BER_runner::lfsr_get_num()
+    {
+        // polynomial x^31 + x^28 + 1
+        uint32_t bit = ((m_lfsr >> 0) ^ (m_lfsr >> 3)) & 1;
+        m_lfsr = (m_lfsr >> 1) | (bit << 30);
+        m_lfsr_index++;
+        
+        if (m_lfsr_index == m_lfsr_reset_len)
+        {
+            m_lfsr = m_lfsr_start_state;
+            m_lfsr_index = 0;
+        }
+        
+        return bit;
     }
     
     void BER_runner::fill_with_random(uint8_t* buffer, unsigned int buf_len)
     {
         for (unsigned int i = 0; i < buf_len; i++)
         {
-            buffer[i] = (uint8_t)(m_dist_data(m_generator_data) < 0.5);
+            buffer[i] = (uint8_t)lfsr_get_num();
         }
     }
     
-    unsigned int BER_runner::compare_data(uint8_t* rand_data, int8_t* decoded_data)
+    unsigned int BER_runner::compare_data(uint8_t* original_data, int8_t* decoded_data)
     {
         unsigned int num_errors = 0;
         
         for(unsigned int j = 0; j < m_dataword_len; j++)
         {
-            if (rand_data[j] != decoded_data[j])
+            if (original_data[j] != decoded_data[j])
             {
                 num_errors++;
             }
         }
         return num_errors;
-    }
-    
-    float BER_runner::gaussian_dev()
-    {
-        if(m_num_stored)
-        {
-            m_num_stored = false;
-            return m_stored_value;
-        }
-        else
-        {
-            float x,y,s;
-            do{
-                x = 2.0*m_dist_awgn(m_generator_awgn)-1.0;
-                y = 2.0*m_dist_awgn(m_generator_awgn)-1.0;
-                s = x*x+y*y;
-            }while(s >= 1.0f || s == 0.0f);
-            m_num_stored = true;
-            m_stored_value = x*std::sqrt(-2.0*std::log(s)/s);
-            return y*std::sqrt(-2.0*std::log(s)/s);
-        }
-    
     }
     
     double BER_runner::run_iteration(double EbNo_dB)
@@ -158,13 +166,7 @@ namespace wimax_ldpc_lib {
         
         double EbNo_linear = pow(10.0,(EbNo_dB/10.0));
         
-        unsigned int errs;
-        
-        //printf("linear: %f\n", EbNo_linear);
-        
         float noise_amplitude = (1.0/std::sqrt(EbNo_linear)) * std::sqrt(1.0/(m_float_rate*BITS_PER_SYM));
-        
-        //printf("noise amp %f\n", noise_amplitude);
         
         // generate random data and BPSK modulate
         fill_with_random(temp_dataword, m_dataword_len);
@@ -173,7 +175,6 @@ namespace wimax_ldpc_lib {
         
         for(unsigned int k = 0; k < m_codeword_len; k++)
         {
-            //printf("index: %d\n", j*codeword_len + k);
             codeword_buffer[k] = temp_codeword[k] * 2 - 1; 
         }
         
@@ -182,11 +183,11 @@ namespace wimax_ldpc_lib {
         for (unsigned int j = 0; j <m_codeword_len; j++)
         {
             codeword_buffer[j] = codeword_buffer[j] +
-                        std::sqrt(0.5) * noise_amplitude * gaussian_dev();
+                        std::sqrt(0.5) * noise_amplitude * m_dist_awgn(m_generator_awgn);
         }
         
         
-        errs = m_decoder->decode(codeword_buffer,
+        m_decoder->decode(codeword_buffer,
                          decoded_data);
         
             

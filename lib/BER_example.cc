@@ -4,12 +4,12 @@
 #include <volk/volk.h>
 #include <math.h>
 #include <random>
+#include <string>
 
 #include <mgl2/qt.h>    
 #include "BER_runner.h"
 
 #define MAX_ITER 10
-#define CONFIDENCE_VALUE -1.0
 
 using namespace wimax_ldpc_lib;
 
@@ -45,6 +45,12 @@ int main(int argc, char *argv[])
     float step = std::stof(argv[6], nullptr);
     
     unsigned int num_steps = 0;
+   
+    mglGraph gr;
+    mglData BER_array;
+    mglData EbNo_db_array;
+    
+    std::string string_rate;
     
     if (fmod(stop - stop, step) != 0)
     {
@@ -60,41 +66,104 @@ int main(int argc, char *argv[])
     double EbNo_dB = (double)start;
     double BER = 0.0;
     
+    BER_array.Create(num_steps);
+    EbNo_db_array.Create(num_steps);
+    
     for (unsigned int i = 0; i < num_steps; i++)
     {
         printf("EbN0(dB): %f\n", EbNo_dB);
         
-        double confidence_level = 0.0;
-        bool confidence = false;
-        
-        while(!confidence)
+        // default to running 46080000*coderate bits through
+        // this is not optimal and a future improvement would 
+        // be to calculate approximately how many bits are needed at each BER 
+        // level.  
+        for (unsigned int j = 0; j < 46080000/ber_test.get_codeword_len(); j++)
         {
-            for (unsigned int j = 0; j < 5000; j++)
-            {
-                BER = ber_test.run_iteration(EbNo_dB);
-            
-                //printf("BER: %f\n", BER);
-            }
-            
-            confidence_level = 1.0 - std::exp((double)ber_test.get_total_num_bits()*BER*-1.0);
-            
-            
-            //printf("confidence_level: %f\n", confidence_level);
-            
-            //if (confidence_level > CONFIDENCE_VALUE)
-                confidence = true;
+            BER = ber_test.run_iteration(EbNo_dB);
         }
+            
         
-        printf("num_bits: %d\n", ber_test.get_total_num_bits());
-        printf("num_err: %d\n", ber_test.get_total_num_errors());
+        BER_array.a[i] = BER;
+        EbNo_db_array.a[i] = EbNo_dB;
         
         ber_test.reset_test();
         
-        printf("confidence_level: %f\n", confidence_level);
         printf("BER: %e\n\n", BER);
         EbNo_dB += step;
+       
+    }
+    
+    char sbuff [50];
+    
+    switch(rate)
+    {
+        case (HALFRATE):
+        {
+            string_rate = "1/2";
+            break;
+        }
+        case (TWOTHIRDSA):
+        {
+            string_rate = "2/3A";
+            break;
+        }
+        case (TWOTHIRDSB):
+        {
+            string_rate = "2/3B";
+            break;
+        }
+        case (THREEQUARTERSA):
+        {
+            string_rate = "3/4A";
+            break;
+        }
+        case (THREEQUARTERSB):
+        {
+            string_rate = "3/4B";
+            break;
+        }
+        case (FIVESIXTHS):
+        {
+            string_rate = "5/6";
+            break;
+        }
+        default:
+        {
+            printf("[!]test_encoder - Invalid Coderate: %d\n", rate);
+            throw std::exception();
+            break;
+        }
         
     }
+    
+    sprintf(sbuff, "LDPC %s Rate, N = %d, K = %d",
+            string_rate.c_str(), ber_test.get_codeword_len(),
+            ber_test.get_dataword_len());
+    
+    gr.Box();
+    gr.SetRanges(start-step, stop, pow(10, -8), .1);
+    gr.SetFunc("","lg(y)");
+    //gr.SetTicks('y', .0001, 0, 0, "");
+    //gr.SetTicks('x', step, 0, 0, "");
+
+    gr.Axis();
+    gr.Title(sbuff, "k:C", 7);
+    
+    sprintf(sbuff, "%d %s Rate LDPC", ber_test.get_codeword_len(), string_rate.c_str());
+    
+    gr.AddLegend(sbuff, "b");
+    gr.Legend();
+    gr.Label('x', "Eb/N0 (dB)", 0);
+    gr.Label('y', "Bit Error Rate", 0);
+    gr.Plot(EbNo_db_array, BER_array, "+");
+    gr.Label(BER_array, "%y", 0);
+    
+    sprintf(sbuff, "BER_LDPC_RATE%d_N%d_K%d.png",
+            (int)rate, ber_test.get_codeword_len(),
+            ber_test.get_dataword_len());
+    gr.WriteFrame(sbuff); 
+    
+    
     
     
     return 1;

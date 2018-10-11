@@ -10,7 +10,7 @@
 
 #define BASE_LDPC_BLOCK_LEN 2304
 
-// Use this to enable/disable matrice switch statements
+// Use this to enable/disable matrix switch statements
 #define Z_24
 #define Z_28
 #define Z_32

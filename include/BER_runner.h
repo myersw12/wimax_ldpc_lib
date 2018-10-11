@@ -17,8 +17,9 @@ namespace wimax_ldpc_lib {
             ldpc_encoder* m_encoder;
             ldpc_decoder* m_decoder;
             
-            unsigned int m_num_bits;
-            unsigned int m_num_errors;
+            uint64_t m_num_bits;
+            uint64_t m_num_errors;
+            
             unsigned int m_codeword_len;
             unsigned int m_dataword_len;
             
@@ -27,6 +28,11 @@ namespace wimax_ldpc_lib {
             
             bool m_num_stored;
             
+            uint32_t m_lfsr;
+            uint32_t m_lfsr_start_state;
+            unsigned int m_lfsr_index;
+            unsigned int m_lfsr_reset_len;
+            
             
             unsigned int compare_data(uint8_t* rand_data,
                                       int8_t* decoded_data);
@@ -34,14 +40,12 @@ namespace wimax_ldpc_lib {
             void fill_with_random(uint8_t* buffer,
                                   unsigned int buf_len);
             
-            float gaussian_dev();
+            
+            uint32_t lfsr_get_num();
             
             std::mt19937 m_generator_awgn; 
-            std::mt19937 m_generator_data; 
 
             std::normal_distribution<float> m_dist_awgn;
-            std::uniform_real_distribution<> m_dist_data;
-            
             
         public:
             BER_runner();
@@ -55,9 +59,13 @@ namespace wimax_ldpc_lib {
             
             double run_iteration(double EbNo_dB);
             
-            unsigned int get_total_num_bits();
+            uint64_t get_total_num_bits();
             
-            unsigned int get_total_num_errors();
+            uint64_t get_total_num_errors();
+            
+            unsigned int get_codeword_len();
+            
+            unsigned int get_dataword_len();
             
     };
 }// end namespace wimax_ldpc_lib
