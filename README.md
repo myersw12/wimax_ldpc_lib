@@ -15,6 +15,8 @@ The LDPC codes used in this project are from the IEEE 802.16E standard (Mobile W
   * CMake
   * Compiler with OpenMP support (standard with GCC v4.9 and later. For macOS, see instructions below.)
   * [VOLK](http://libvolk.org/)
+  * MathGL- v2.3.3, used to plot BER curves
+      * to install on Ubuntu 16.04: `sudo apt-get install mathgl libmgl-dev`
 
 ## Encoder
 
@@ -59,6 +61,25 @@ decoded_data_file: File to write decoded data to.
 ```
 The throughput of the decoder is increased using openmp threading.  Parallelization is performed at the LDPC frame level making this ideal for bursts that contain multiple LDPC frames.  This approach eliminates the concurrency issues found when parallelization is performed at the Check Node level.  If this decoder is used on streaming LDPC frames, there will be latency added by the aggregation of frames.
 
+## BER_runner
+
+The BER runner creates an encoder/decoder pair and returns the Bit Error Rate (BER) curve for the user specified code rate and size.  The resulting plot is a saved as a PNG file in to the directory where the tool is running.
+
+```
+Usage: ./BER_example <num_threads> <rate> <z> <EbNo_start> <EbNo_end> <EbNo_step> 
+Argument Description:
+num_threads: Number of threads to use.  num_codewords modulo num_threads == 0.
+rate: LDPC code rate - half-rate        = 0
+                       two-thirds-A     = 1
+                       two-thirds-B     = 2
+           std::normal_distribution<double>             three-quarters-A = 3
+                       three-quarters-B = 4
+                       five-sixths      = 5
+z: Z Factor (please refer to section 8.4.9.2.5 of the 802.16-2012 standard for more information)
+EbNo_start: Starting value for BER plot x axis (dB)
+EbNo_end: Ending value for BER plot x axis (dB)
+EbNo_step: Step value for BER plot x axis (dB)
+```
 ## Tools
 
 To build the tools, perform the following steps:
