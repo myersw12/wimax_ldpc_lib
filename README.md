@@ -82,7 +82,7 @@ EbNo_step: Step value for BER plot x axis (dB)
 ```
 An example plot is show below:
 
-![alt text](https://github.com/myersw12/wimax_ldpc_lib/blob/add_BER_plotting/example_plots/BER_LDPC_RATE5_N576_K480.png)
+![alt text](https://github.com/myersw12/wimax_ldpc_lib/blob/master/example_plots/BER_LDPC_RATE5_N576_K480.png)
 
 ## Tools
 
