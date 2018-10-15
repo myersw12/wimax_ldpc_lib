@@ -72,7 +72,7 @@ num_threads: Number of threads to use.  num_codewords modulo num_threads == 0.
 rate: LDPC code rate - half-rate        = 0
                        two-thirds-A     = 1
                        two-thirds-B     = 2
-           std::normal_distribution<double>             three-quarters-A = 3
+                       three-quarters-A = 3
                        three-quarters-B = 4
                        five-sixths      = 5
 z: Z Factor (please refer to section 8.4.9.2.5 of the 802.16-2012 standard for more information)
