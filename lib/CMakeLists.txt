@@ -3,7 +3,7 @@
 ########################################################################
 project(lib)
 
-set(CMAKE_CXX_FLAGS " -Wall -O3 -std=c++11 -fopenmp -ffast-math")
+set(CMAKE_CXX_FLAGS " -Wall -O3 -std=gnu++11 -fopenmp -ffast-math")
 
  
 set(SOURCES 
@@ -131,18 +131,26 @@ add_executable(test_encoder ${SOURCES} encode_example.cc ldpc_encoder.cc)
 
 add_executable(test_decoder ${SOURCES} decode_example.cc ldpc_decoder.cc)
 
+add_executable(BER_example ${SOURCES} BER_example.cc ldpc_encoder.cc ldpc_decoder.cc BER_runner.cc)
+
 add_library(wimax_ldpc_lib SHARED ${SOURCES})
 
 set_target_properties(test_encoder PROPERTIES LINKER_LANGUAGE CXX)
 
 if(VOLK_FOUND)
   include_directories(${VOLK_INCLUDE_DIRS})
-  list(APPEND test_encoder_libs ${VOLK_LIBRARIES})
+  list(APPEND test_decoder_libs ${VOLK_LIBRARIES})
+  list(APPEND test_BER_libs ${VOLK_LIBRARIES})
 endif(VOLK_FOUND)
 
+if(MathGL_FOUND)
+  include_directories(${MATHGL_INCLUDE_DIRS})
+  list(APPEND test_BER_libs ${MathGL_LIBRARIES})
+endif(MathGL_FOUND)
 
 
-target_link_libraries(test_decoder ${test_encoder_libs})
-target_link_libraries(wimax_ldpc_lib ${test_encoder_libs})
+target_link_libraries(test_decoder ${test_decoder_libs})
+target_link_libraries(wimax_ldpc_lib ${test_decoder_libs})
+target_link_libraries(BER_example ${test_BER_libs})
 
 install(TARGETS wimax_ldpc_lib DESTINATION lib)

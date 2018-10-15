@@ -12,6 +12,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/Modules)
 ########################################################################
 find_package(OpenMP REQUIRED)
 find_package(Volk REQUIRED)
+find_package(MathGL REQUIRED)
 
 ########################################################################
 # Setup the include and linker paths
