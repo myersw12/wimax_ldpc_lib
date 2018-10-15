@@ -190,7 +190,7 @@ namespace wimax_ldpc_lib{
                     
                     m_LMN[n + lmn_offset] = iter_sign * minimum;
                     
-                    rx_codeword[m_checknode_array[cn_offset + n]] = LNM[n] + iter_sign * minimum;
+                    rx_codeword[m_checknode_array[cn_offset + n]] = LNM[n] + iter_sign * minimum ;
                     
                 }
                 

@@ -3,7 +3,7 @@
 ########################################################################
 project(lib)
 
-set(CMAKE_CXX_FLAGS " -Wall -O3 -std=gnu++11 -fopenmp -ffast-math -g")
+set(CMAKE_CXX_FLAGS " -Wall -O3 -std=gnu++11 -fopenmp -ffast-math")
 
  
 set(SOURCES 

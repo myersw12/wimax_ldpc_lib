@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
         printf("rate: LDPC code rate - half-rate        = 0\n");
         printf("                       two-thirds-A     = 1\n");
         printf("                       two-thirds-B     = 2\n");
-        printf("           std::normal_distribution<double>             three-quarters-A = 3\n");
+        printf("                       three-quarters-A = 3\n");
         printf("                       three-quarters-B = 4\n");
         printf("                       five-sixths      = 5\n");
         printf("z: Z Factor (please refer to section 8.4.9.2.5 of the 802.16-2012 standard for more information)\n");
@@ -45,54 +45,14 @@ int main(int argc, char *argv[])
     float step = std::stof(argv[6], nullptr);
     
     unsigned int num_steps = 0;
+    
+    BER_runner ber_test = BER_runner(rate, z, num_threads, MAX_ITER);
    
     mglGraph gr;
     mglData BER_array;
     mglData EbNo_db_array;
     
     std::string string_rate;
-    
-    if (fmod(stop - stop, step) != 0)
-    {
-        printf("[!] BER_example: step size does not evenly divide range\n");
-    }
-    else
-    {
-        num_steps = (unsigned int)(stop-start)/step;
-    }
-    
-    BER_runner ber_test = BER_runner(rate, z, num_threads, MAX_ITER);
-    
-    double EbNo_dB = (double)start;
-    double BER = 0.0;
-    
-    BER_array.Create(num_steps);
-    EbNo_db_array.Create(num_steps);
-    
-    for (unsigned int i = 0; i < num_steps; i++)
-    {
-        printf("EbN0(dB): %f\n", EbNo_dB);
-        
-        // default to running 46080000*coderate bits through
-        // this is not optimal and a future improvement would 
-        // be to calculate approximately how many bits are needed at each BER 
-        // level.  
-        for (unsigned int j = 0; j < 46080000/ber_test.get_codeword_len(); j++)
-        {
-            BER = ber_test.run_iteration(EbNo_dB);
-        }
-            
-        
-        BER_array.a[i] = BER;
-        EbNo_db_array.a[i] = EbNo_dB;
-        
-        ber_test.reset_test();
-        
-        printf("BER: %e\n\n", BER);
-        EbNo_dB += step;
-       
-    }
-    
     char sbuff [50];
     
     switch(rate)
@@ -143,8 +103,6 @@ int main(int argc, char *argv[])
     gr.Box();
     gr.SetRanges(start-step, stop, pow(10, -8), .1);
     gr.SetFunc("","lg(y)");
-    //gr.SetTicks('y', .0001, 0, 0, "");
-    //gr.SetTicks('x', step, 0, 0, "");
 
     gr.Axis();
     gr.Title(sbuff, "k:C", 7);
@@ -155,6 +113,66 @@ int main(int argc, char *argv[])
     gr.Legend();
     gr.Label('x', "Eb/N0 (dB)", 0);
     gr.Label('y', "Bit Error Rate", 0);
+    
+    
+    if (fmod(stop - start, step) != 0)
+    {
+        printf("[!] BER_example: step size does not evenly divide range\n");
+    }
+    else
+    {
+        num_steps = (unsigned int)((stop-start)/step) + 1;
+    }
+    
+    
+    double EbNo_dB = (double)start;
+    double BER = 0.0;
+    unsigned int num_req = 0;
+    
+    BER_array.Create(num_steps);
+    EbNo_db_array.Create(num_steps);
+    
+    for (unsigned int i = 0; i < num_steps; i++)
+    {
+        bool complete = false;
+        
+        printf("EbN0(dB): %f\n", EbNo_dB);
+        
+        // run a few iterations to get a guestimate of what the BER is 
+        // going to be
+        for (unsigned int j = 0; j < 230400 / ber_test.get_dataword_len(); j++)
+        {
+            BER = ber_test.run_iteration(EbNo_dB);
+        }  
+        
+        if(BER == 0.0)
+        {
+            // if BER is 0, then we are dealing with a low BER
+            // the num_req value set below will give us enough 
+            // bits to see low BER levels
+            num_req = floor(2.996 / 0.00000001);
+        }
+        else
+        {
+            num_req = floor(2.996 / BER);
+        }
+        
+        for (unsigned int j = 0; j < num_req/ber_test.get_dataword_len(); j++)
+        {
+            BER = ber_test.run_iteration(EbNo_dB);
+        }
+           
+        
+        BER_array.a[i] = BER;
+        EbNo_db_array.a[i] = EbNo_dB;
+        
+        ber_test.reset_test();
+        
+        printf("BER: %e\n\n", BER);
+        EbNo_dB += step;
+
+    }
+    
     gr.Plot(EbNo_db_array, BER_array, "+");
     gr.Label(BER_array, "%y", 0);
     
@@ -162,9 +180,7 @@ int main(int argc, char *argv[])
             (int)rate, ber_test.get_codeword_len(),
             ber_test.get_dataword_len());
     gr.WriteFrame(sbuff); 
-    
-    
-    
+
     
     return 1;
 }

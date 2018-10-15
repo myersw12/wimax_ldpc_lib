@@ -36,7 +36,7 @@ namespace wimax_ldpc_lib {
         
         m_lfsr = m_lfsr_start_state;
         
-        m_lfsr_reset_len = 1152;
+        m_lfsr_reset_len = 1152*100;
         
         m_lfsr_index = 0;
         
