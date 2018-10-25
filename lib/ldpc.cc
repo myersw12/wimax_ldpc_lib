@@ -2,7 +2,7 @@
 
 #include "ldpc.h"
 
-#define DEBUG_INITIALIZATION
+//#define DEBUG_INITIALIZATION
 
 namespace wimax_ldpc_lib {
     

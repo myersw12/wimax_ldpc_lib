@@ -134,13 +134,12 @@ int main(int argc, char *argv[])
     
     for (unsigned int i = 0; i < num_steps; i++)
     {
-        bool complete = false;
         
         printf("EbN0(dB): %f\n", EbNo_dB);
         
         // run a few iterations to get a guestimate of what the BER is 
         // going to be
-        for (unsigned int j = 0; j < 230400 / ber_test.get_dataword_len(); j++)
+        for (unsigned int j = 0; j < 46080 / ber_test.get_dataword_len(); j++)
         {
             BER = ber_test.run_iteration(EbNo_dB);
         }  
@@ -150,11 +149,11 @@ int main(int argc, char *argv[])
             // if BER is 0, then we are dealing with a low BER
             // the num_req value set below will give us enough 
             // bits to see low BER levels
-            num_req = floor(2.996 / 0.00000001);
+            num_req = floor(3.912 / 0.00000001);
         }
         else
         {
-            num_req = floor(2.996 / BER);
+            num_req = 10 * floor(3.912 / BER);
         }
         
         for (unsigned int j = 0; j < num_req/ber_test.get_dataword_len(); j++)

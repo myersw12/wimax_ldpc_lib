@@ -10,6 +10,12 @@
 
 //#define PRINT_ERRORS
 
+#define NMS
+#define NMS_OFFSET 0.815
+
+//#define OMS
+#define OMS_OFFSET .10
+
 namespace wimax_ldpc_lib{
     
     ldpc_decoder::ldpc_decoder() {}
@@ -187,11 +193,26 @@ namespace wimax_ldpc_lib{
                     {
                         minimum = first_minimum;
                     }
+                    #if defined(NMS) || defined(OMS)
+                    #ifdef NMS
                     
-                    m_LMN[n + lmn_offset] = iter_sign * minimum;
+                    m_LMN[n + lmn_offset] = iter_sign * (minimum*NMS_OFFSET);
                     
-                    rx_codeword[m_checknode_array[cn_offset + n]] = LNM[n] + iter_sign * minimum ;
+                    rx_codeword[m_checknode_array[cn_offset + n]] = LNM[n] + iter_sign * (minimum*NMS_OFFSET);
                     
+                    #else
+                    
+                    m_LMN[n + lmn_offset] = iter_sign * std::max(minimum-OMS_OFFSET, 0.0);
+                    
+                    rx_codeword[m_checknode_array[cn_offset + n]] = LNM[n] + iter_sign * std::max(minimum-OMS_OFFSET, 0.0);
+#endif
+                    
+                    #else
+                     
+                    m_LMN[n + lmn_offset] = iter_sign * (minimum);
+                    
+                    rx_codeword[m_checknode_array[cn_offset + n]] = LNM[n] + iter_sign * (minimum);
+                    #endif
                 }
                 
             }
