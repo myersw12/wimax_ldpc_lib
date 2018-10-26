@@ -58,10 +58,15 @@ namespace wimax_ldpc_lib {
             }
             
             case (THREEQUARTERSA):
-            case (THREEQUARTERSB):
             {
                 m_dataword_len = (m_codeword_len * 3) / 4;
                 m_float_rate = 3.0/4.0;
+                break;
+            }
+            case (THREEQUARTERSB):
+            {
+                printf("[!]ber_runner - 3/4B Not Implemented\n");
+                throw std::exception();
                 break;
             }
             case (FIVESIXTHS):
@@ -144,7 +149,7 @@ namespace wimax_ldpc_lib {
     {
         unsigned int num_errors = 0;
         
-        for(unsigned int j = 0; j < m_dataword_len; j++)
+        for(unsigned int j = 0; j < m_codeword_len; j++)
         {
             if (original_data[j] != decoded_data[j])
             {
@@ -179,7 +184,6 @@ namespace wimax_ldpc_lib {
         }
         
         // Apply AWGN
-        //#pragma omp parallel for num_threads(num_threads)
         for (unsigned int j = 0; j <m_codeword_len; j++)
         {
             codeword_buffer[j] = codeword_buffer[j] +
@@ -192,7 +196,7 @@ namespace wimax_ldpc_lib {
         
             
         m_num_bits += m_dataword_len;
-        m_num_errors += compare_data(temp_dataword, decoded_data);
+        m_num_errors += compare_data(temp_codeword, decoded_data);
         
         
         return (double) m_num_errors / (double) m_num_bits;

@@ -10,6 +10,16 @@
 
 //#define PRINT_ERRORS
 
+// Right now the flags and values 
+// for the min sum algorithm modifications
+// are here.  These values were found experimentally.
+// Only select one at a time or comment both out.
+#define NMS
+#define NMS_OFFSET 0.815
+
+//#define OMS
+#define OMS_OFFSET .10
+
 namespace wimax_ldpc_lib{
     
     ldpc_decoder::ldpc_decoder() {}
@@ -29,9 +39,11 @@ namespace wimax_ldpc_lib{
         
         m_row_lens = (unsigned int*)malloc(sizeof(int) * m_row_size);
         
-        
         unsigned int current_row_len = 0;
         
+        // measure the length of each row in the checknode array
+        // doing this ahead of time is better than doing it during 
+        // decoding.
         for (unsigned int m = 0; m < m_row_size; m++)
         {
             current_row_len = 0;
@@ -70,7 +82,8 @@ namespace wimax_ldpc_lib{
             }
            
             // if we just want to know if there are errors or
-            // not, then return when the first error is found
+            // not, then return when the first error is found.
+            // This saves time during decoding
             if (xorsum != 0){
                 if (early_exit){
                     num_errors = 1;
@@ -124,7 +137,7 @@ namespace wimax_ldpc_lib{
         {
             for (unsigned int m = 0; m < m_row_size; m++)
             {
-                
+                // declaring this local to the loop helps
                 float LNM[m_row_lens[m]];
                     
                 bool sign = true;
@@ -149,8 +162,12 @@ namespace wimax_ldpc_lib{
                     LNM[n] = rx_codeword[m_checknode_array[cn_offset + n]] 
                             - m_LMN[n + lmn_offset];
                     
+                    // calculate the sign bit here so that
+                    // the operation in the next loop is simpler
                     sign ^= !std::signbit(LNM[n]);
-                            
+                       
+                    // calculate the first minimum here so that
+                    // we can calculate the minimum fewer times
                     lnm_abs = fabs(LNM[n]);
                     if (lnm_abs < first_minimum){
                         first_minimum = lnm_abs;
@@ -168,6 +185,8 @@ namespace wimax_ldpc_lib{
                     
                     iter_sign = (sign ^ !std::signbit(LNM[n])) * -2 + 1;
                     
+                    // because we find the first min in the loop above,
+                    // this loop only runs one time per iteration.
                     if (n == first_min_index)
                     {
                         // Compute and apply LNM message for min index
@@ -188,10 +207,30 @@ namespace wimax_ldpc_lib{
                         minimum = first_minimum;
                     }
                     
-                    m_LMN[n + lmn_offset] = iter_sign * minimum;
+                    // The option to perform NMS (Normalized Min Sum)
+                    // OMS(Offset Min Sum) or just Min Sum is given below.
+                    #if defined(NMS) || defined(OMS)
+                    #ifdef NMS
                     
-                    rx_codeword[m_checknode_array[cn_offset + n]] = LNM[n] + iter_sign * minimum ;
+                    m_LMN[n + lmn_offset] = iter_sign * (minimum*NMS_OFFSET);
                     
+                    rx_codeword[m_checknode_array[cn_offset + n]] = 
+                        LNM[n] + iter_sign * (minimum*NMS_OFFSET);
+                    
+                    #else
+                    
+                    m_LMN[n + lmn_offset] = iter_sign * std::max(minimum-OMS_OFFSET, 0.0);
+                    
+                    rx_codeword[m_checknode_array[cn_offset + n]] = 
+                        LNM[n] + iter_sign *                                                
+                        std::max(minimum-OMS_OFFSET, 0.0);
+                    #endif
+                    
+                    #else
+                     
+                    m_LMN[n + lmn_offset] = iter_sign * (minimum);
+                    rx_codeword[m_checknode_array[cn_offset + n]] = LNM[n] + iter_sign * (minimum);
+                    #endif
                 }
                 
             }
