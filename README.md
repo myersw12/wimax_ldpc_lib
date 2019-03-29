@@ -86,7 +86,7 @@ An example plot is show below:
 
 ## Capacity Curve
 
-The Capacity Curve example creates an encoder/decoder pair and calculates the Eb/No value where the Bit Error Rate (BER) is 1e-5 for all code rates.  The user specifies the Z factor.  The resulting plot is a saved as a PNG file in to the directory where the tool is running.  The plot also shows the Shannon limit and BPSK-AWGN bound for reference purposes.
+The Capacity Curve example creates a BPSK encoder/decoder pair and calculates the Eb/No value where the Bit Error Rate (BER) is 1e-5 for all code rates.  The user specifies the Z factor.  The resulting plot is a saved as a PNG file in to the directory where the tool is running.  The plot also shows the Shannon limit and BPSK-AWGN bound for reference purposes.
 
 ```
 Usage: ./Capacity_example <num_threads> <z>
