@@ -170,7 +170,8 @@ int main(int argc, char *argv[])
     volk_free(file_buffer);
     volk_free(temp_codeword);
     
-    for (unsigned int i = 0; i < num_threads; i++){
+    for (unsigned int i = 0; i < num_threads; i++)
+    {
         delete decoders[i];
     }
     
