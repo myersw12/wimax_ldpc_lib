@@ -5,44 +5,44 @@
 //#define DEBUG_INITIALIZATION
 
 namespace wimax_ldpc_lib {
-    
+
     ldpc::ldpc() {}
-    
+
     ldpc::ldpc(coderate rate, unsigned int z_factor, unsigned int num_threads)
     {
         m_num_threads = num_threads;
-        
+
         m_z = z_factor;
         m_N = (m_z / 96.0) * BASE_LDPC_BLOCK_LEN;
-        
+
         switch(rate) {
-            
+
             case (HALFRATE):
             {
                 m_M = m_N / 2;
                 break;
             }
-            
+
             case (TWOTHIRDSA):
             case (TWOTHIRDSB):
             {
                 m_M = m_N - ((m_N * 2) / 3);
                 break;
             }
-            
+
             case (THREEQUARTERSA):
             case (THREEQUARTERSB):
             {
                 m_M = m_N - ((m_N * 3) / 4);
                 break;
             }
-            
+
             case (FIVESIXTHS):
             {
                 m_M = m_N - ((m_N * 5) / 6);
                 break;
             }
-            
+
             default:
             {
                 printf("[!]ldpc_encoder - Invalid Coderate: %d\n", rate);
@@ -50,27 +50,28 @@ namespace wimax_ldpc_lib {
                 break;
             }
         }
-    
+
         if(set_checknode_array(rate, z_factor) == 0)
+        {
             throw std::exception();
- 
+        }
+
         #ifdef DEBUG_INITIALIZATION
         printf("m_N: %d\nm_M: %d\nm_z: %d\n", m_N, m_M, m_z);
         printf("m_row_size: %d\nm_col_size: %d\nm_D: %d\nm_X: %d\n", m_row_size, m_col_size, m_D, m_X);
-        #endif       
+        #endif
     }
 
     ldpc::~ldpc()
     {
-        
     }
 
     unsigned int ldpc::set_checknode_array(coderate rate, unsigned int z_factor)
     {
-        
         // get the correct check node array
-        switch(z_factor) {
-            
+        switch(z_factor) 
+        {
+
             #ifdef Z_24
             case 24:
             {
@@ -1209,7 +1210,7 @@ namespace wimax_ldpc_lib {
         uint64_t nanoseconds =
         std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::
                     now().time_since_epoch()).count();
-            
+
         return nanoseconds;
     }
 

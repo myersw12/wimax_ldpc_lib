@@ -73,7 +73,8 @@ int main(int argc, char *argv[])
     unsigned int codeword_len = (z / 96.0) * BASE_LDPC_BLOCK_LEN;
     unsigned int dataword_len = 0;
     
-    if(num_errors >= codeword_len){
+    if(num_errors >= codeword_len)
+    {
         printf("[!] Error: Num_errors greater than codeword length\n");
         return 0;
     }
@@ -139,13 +140,19 @@ int main(int argc, char *argv[])
         printf("Round[%d] Rate (Mbits/Sec): %f\n", i,(codeword_len * 1000.0) / (elapsed_time)); 
         
         if(elapsed_time > max_time)
+        {
             max_time = elapsed_time;
+        }
         
         if(elapsed_time < min_time)
+        {
             min_time = elapsed_time;
+        }
         
         if(num_errors > 0)
+        {
             add_errors(temp_codeword, codeword_len, num_errors);
+        }
         
         fwrite(temp_codeword, 1, codeword_len, encoded_file);
     }

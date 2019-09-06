@@ -30,7 +30,7 @@ namespace wimax_ldpc_lib {
     {
         int16_t temp_index = 0;
         uint8_t value = 0;
-        
+
         #pragma omp parallel for private(temp_index, value) num_threads(m_num_threads)
         for (unsigned int m = 0; m < m_row_size; m++)
         {
@@ -46,29 +46,29 @@ namespace wimax_ldpc_lib {
             m_V[m] = value;
         }
     }
-    
+
     void ldpc_encoder::encode_data(uint8_t* infoword, uint8_t* codeword)
     {
         unsigned int i;
-        
+
         uint8_t Y[m_z];
         memset(m_P, 0, m_z); 
         memset(m_V, 0, m_M);
-        
+
         compute_v(infoword);
-        
+
         // calculate the last subblock
         for (i = m_M-1; i > m_M-1-m_z; i--)
         {
             m_P[i] = m_V[i] ^ m_P[m_M-1-i];
         }
-        
+
         // forward subsitution
         for (i = m_z; i < (m_X+1)*m_z; i++)
         {
             m_P[i] = m_V[i-m_z] ^ m_P[i-m_z];
         }
-        
+
         // backwards substitution
         for (i = m_M-1-m_z; i > (((m_X+1)*m_z)-1); i--)
         {
@@ -80,15 +80,15 @@ namespace wimax_ldpc_lib {
         {
             Y[i-(m_X*m_z)] = m_V[i] ^ m_P[m_z+i];
         }
-        
+
         // calculate the first block
         for (i = 0; i < m_z; i++)
         {
             m_P[i] = Y[i] ^ m_P[(m_z*m_X)+i];
         }
-        
+
         memcpy(codeword, infoword, m_N - m_M);
-        
+
         // apply F to the rest of the parity bits
         for (i = 0; i < m_M; i++)
         {
@@ -101,9 +101,6 @@ namespace wimax_ldpc_lib {
                 codeword[(m_N - m_M) + i] = m_P[i] ^ m_P[(i+m_D)%m_z];
             }
         }
-        
+
     }
-    
 }// end namespace wimax_ldpc_lib
-    
-    

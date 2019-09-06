@@ -60,10 +60,10 @@ int main(int argc, char *argv[])
     encoded_data = fopen(argv[5], "rb");
     decoded_data = fopen(argv[6], "wb");
     
-    if(encoded_data)
+    if (encoded_data)
     {
         unsigned int n = fread(file_buffer, 1, num_codewords*codeword_len, encoded_data);
-        if(n != num_codewords*codeword_len)
+        if (n != num_codewords*codeword_len)
         {
             printf("[!] Error: File does not contain enough data.\n");
             return 0;
@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
     
     int8_t* temp_codeword = (int8_t*)volk_malloc(codeword_len * num_threads, volk_get_alignment());
 
-    switch(rate)
+    switch (rate)
     {
         case (HALFRATE):
         {
@@ -119,8 +119,10 @@ int main(int argc, char *argv[])
     {
         
         for (unsigned int k = 0; k < num_threads; k++)
+        {
             initial_errors[k] = decoders[k]->compute_syndrome(file_buffer + (i+k)*codeword_len, false);
-        
+        }
+
         start_time = decoders[0]->get_nanoseconds();
         
         #pragma omp parallel for num_threads(num_threads)
@@ -142,11 +144,14 @@ int main(int argc, char *argv[])
             min_time = elapsed_time;
         
         for (unsigned int j = 0; j < num_threads; j++)
+        {
             fwrite(temp_codeword + j*codeword_len, 1, dataword_len, decoded_data);
-        
+        }
+
         printf("Rate (Mbits/Sec): %f\n", (num_threads*codeword_len * 1000.0) / (elapsed_time) ); 
         
-        for (unsigned int n = 0; n < num_threads; n++){
+        for (unsigned int n = 0; n < num_threads; n++)
+        {
             printf("Initial Number of Errors (%d): %d\n", n, initial_errors[n]);
             printf("Final Number of Errors (%d): %d\n", n, num_errors[n]);
         }

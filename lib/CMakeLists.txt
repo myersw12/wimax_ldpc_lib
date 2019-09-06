@@ -135,8 +135,7 @@ add_executable(BER_example ${SOURCES} BER_example.cc ldpc_encoder.cc ldpc_decode
 
 add_executable(Capacity_example ${SOURCES} Capacity_plot_example.cc ldpc_encoder.cc ldpc_decoder.cc BER_runner.cc)
 
-
-add_library(wimax_ldpc_lib SHARED ${SOURCES})
+add_library(wimax_ldpc_lib SHARED ${SOURCES} ldpc_encoder.cc ldpc_decoder.cc)
 
 set_target_properties(test_encoder PROPERTIES LINKER_LANGUAGE CXX)
 
