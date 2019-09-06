@@ -84,6 +84,20 @@ An example plot is show below:
 
 ![alt text](https://github.com/myersw12/wimax_ldpc_lib/blob/master/example_plots/BER_LDPC_RATE5_N576_K480.png)
 
+## Capacity Curve
+
+The Capacity Curve example creates a BPSK encoder/decoder pair and calculates the Eb/No value where the Bit Error Rate (BER) is 1e-5 for all code rates.  The user specifies the Z factor.  The resulting plot is a saved as a PNG file in to the directory where the tool is running.  The plot also shows the Shannon limit and BPSK-AWGN bound for reference purposes.
+
+```
+Usage: ./Capacity_example <num_threads> <z>
+Argument Description:
+num_threads: Number of threads to use.
+z: Z Factor (please refer to section 8.4.9.2.5 of the 802.16-2012 standard for more information)
+```
+An example plot is show below:
+
+![alt text](https://github.com/myersw12/wimax_ldpc_lib/blob/master/example_plots/CAP_LDPC_N2304.png)
+
 ## Tools
 
 To build the tools, perform the following steps:

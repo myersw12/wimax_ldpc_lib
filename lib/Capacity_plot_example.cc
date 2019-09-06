@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
         printf("\nError: Incorrect number of arguments\n");
         printf("Usage: ./Capacity_example <num_threads> <z>\n");
         printf("Argument Description:\n");
-        printf("num_threads: Number of threads to use.  num_codewords modulo num_threads == 0.\n");
+        printf("num_threads: Number of threads to use.\n");
         printf("z: Z Factor (please refer to section 8.4.9.2.5 of the 802.16-2012 standard for more information)\n");
         return 0;
     }
