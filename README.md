@@ -106,6 +106,10 @@ To build the tools, perform the following steps:
    * run cmake: `cmake ../`
    * run make: `make -j4`
    
+To install the library after the build is complete, run the following:
+   * `sudo make install`
+   * `sudo ldconfig`
+   
 The executables listed below are found in the `wimax_ldpc_lib/build/lib/` directory.
 
 ### test_encoder
