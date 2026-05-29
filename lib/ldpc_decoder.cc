@@ -71,32 +71,19 @@ namespace wimax_ldpc_lib{
         for (unsigned int i = 0; i < m_row_size; i++)
         {
             int8_t xorsum = 0;
-            int16_t temp_index;
             unsigned int offset = i*m_col_size;
+            unsigned int row_len = m_row_lens[i];
 
-            for (unsigned int k = 0; k < m_col_size; k++)
+            for (unsigned int k = 0; k < row_len; k++)
             {
-                temp_index = m_checknode_array[offset + k];
-                if (temp_index != -1)
-                {
-                    xorsum ^= rx_codeword[temp_index];
-                }
+                xorsum ^= rx_codeword[m_checknode_array[offset + k]];
             }
 
-            // if we just want to know if there are errors or
-            // not, then return when the first error is found.
-            // This saves time during decoding
             if (xorsum != 0)
             {
                 if (early_exit)
-                {
-                    num_errors = 1;
-                    i = m_row_size;
-                }
-                else
-                {
-                    num_errors += 1;
-                }
+                    return 1;
+                num_errors++;
             }
         }
 
@@ -173,7 +160,7 @@ namespace wimax_ldpc_lib{
 
                     // calculate the first minimum here so that
                     // we can calculate the minimum fewer times
-                    lnm_abs = fabs(LNM[n]);
+                    lnm_abs = fabsf(LNM[n]);
                     if (lnm_abs < first_minimum)
                     {
                         first_minimum = lnm_abs;
@@ -201,7 +188,7 @@ namespace wimax_ldpc_lib{
                         {
                             if (d != first_min_index)
                             {
-                                lnm_abs = fabs(LNM[d]);
+                                lnm_abs = fabsf(LNM[d]);
                                 if (lnm_abs < minimum)
                                     minimum = lnm_abs;
                             }
@@ -217,25 +204,22 @@ namespace wimax_ldpc_lib{
                     #if defined(NMS) || defined(OMS)
                     #ifdef NMS
 
-                    m_LMN[n + lmn_offset] = iter_sign * (minimum*NMS_OFFSET);
-
-                    rx_codeword[m_checknode_array[cn_offset + n]] = 
-                        LNM[n] + iter_sign * (minimum*NMS_OFFSET);
+                    float scaled = iter_sign * (minimum*NMS_OFFSET);
 
                     #else
 
-                    m_LMN[n + lmn_offset] = iter_sign * std::max(minimum-OMS_OFFSET, 0.0);
+                    float scaled = iter_sign * std::max(minimum-(float)OMS_OFFSET, 0.0f);
 
-                    rx_codeword[m_checknode_array[cn_offset + n]] = 
-                        LNM[n] + iter_sign *
-                        std::max(minimum-OMS_OFFSET, 0.0);
                     #endif
 
                     #else
 
-                    m_LMN[n + lmn_offset] = iter_sign * (minimum);
-                    rx_codeword[m_checknode_array[cn_offset + n]] = LNM[n] + iter_sign * (minimum);
+                    float scaled = iter_sign * minimum;
+
                     #endif
+
+                    m_LMN[n + lmn_offset] = scaled;
+                    rx_codeword[m_checknode_array[cn_offset + n]] = LNM[n] + scaled;
                 }
             }
 
