@@ -2,3 +2,6 @@
 *.swp
 *.ipython-checkpoints
 /build
+*.png
+*.bin
+*.so

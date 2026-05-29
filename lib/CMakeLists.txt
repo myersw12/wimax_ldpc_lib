@@ -3,7 +3,7 @@
 ########################################################################
 project(lib)
 
-set(CMAKE_CXX_FLAGS " -Wall -O3 -std=gnu++11 -fopenmp -ffast-math")
+set(CMAKE_CXX_FLAGS " -Wall -O3 -std=gnu++11 -fopenmp -ffast-math -march=native -funroll-loops")
 
  
 set(SOURCES 
@@ -135,6 +135,8 @@ add_executable(BER_example ${SOURCES} BER_example.cc ldpc_encoder.cc ldpc_decode
 
 add_executable(Capacity_example ${SOURCES} Capacity_plot_example.cc ldpc_encoder.cc ldpc_decoder.cc BER_runner.cc)
 
+add_executable(benchmark ${SOURCES} benchmark.cc ldpc_encoder.cc ldpc_decoder.cc BER_runner.cc)
+
 add_library(wimax_ldpc_lib SHARED ${SOURCES} ldpc_encoder.cc ldpc_decoder.cc)
 
 set_target_properties(test_encoder PROPERTIES LINKER_LANGUAGE CXX)
@@ -155,5 +157,6 @@ target_link_libraries(test_decoder ${test_decoder_libs})
 target_link_libraries(wimax_ldpc_lib ${test_decoder_libs})
 target_link_libraries(BER_example ${test_BER_libs})
 target_link_libraries(Capacity_example ${test_BER_libs})
+target_link_libraries(benchmark ${test_decoder_libs})
 
 install(TARGETS wimax_ldpc_lib DESTINATION lib)

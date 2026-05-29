@@ -14,13 +14,25 @@ namespace wimax_ldpc_lib {
     {
         m_P = (uint8_t*)calloc(m_M, sizeof(uint8_t));
         m_V = (uint8_t*)calloc(m_M, sizeof(uint8_t));
+
+        m_row_lens = (unsigned int*)malloc(sizeof(unsigned int) * m_row_size);
+        for (unsigned int m = 0; m < m_row_size; m++)
+        {
+            unsigned int len = 0;
+            for (unsigned int n = 0; n < m_col_size; n++)
+            {
+                if (m_checknode_array[m*m_col_size + n] != -1)
+                    len++;
+            }
+            m_row_lens[m] = len;
+        }
     }
 
-    // Destructor
     ldpc_encoder::~ldpc_encoder()
     {
         free(m_P);
         free(m_V);
+        free(m_row_lens);
     }
 
     // For information on the LDPC encoding algorithm used here
@@ -35,10 +47,11 @@ namespace wimax_ldpc_lib {
         for (unsigned int m = 0; m < m_row_size; m++)
         {
             value = 0;
-            for (unsigned int n = 0; n < m_col_size; n++)
+            unsigned int offset = m * m_col_size;
+            for (unsigned int n = 0; n < m_row_lens[m]; n++)
             {
-                temp_index = m_checknode_array[m*m_col_size + n];
-                if (temp_index != -1 && (uint16_t)temp_index < (m_N - m_M))
+                temp_index = m_checknode_array[offset + n];
+                if ((unsigned int)temp_index < (m_N - m_M))
                 {
                     value ^= 1 && infoword[temp_index];
                 }

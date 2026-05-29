@@ -14,7 +14,8 @@ namespace wimax_ldpc_lib {
             
             uint8_t*        m_P;
             uint8_t*        m_V;
-            
+            unsigned int*   m_row_lens;
+
             void compute_v(uint8_t* infoword);
             
         public:
