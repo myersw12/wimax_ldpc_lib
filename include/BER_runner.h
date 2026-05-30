@@ -51,7 +51,8 @@ namespace wimax_ldpc_lib {
             BER_runner();
             BER_runner(coderate rate, unsigned int z_factor,
                        unsigned int num_threads,
-                       unsigned int max_iter
+                       unsigned int max_iter,
+                       float nms_offset = 0.815f
                       );
             ~BER_runner();
             

@@ -151,52 +151,73 @@ int main(int argc, char* argv[])
         volk_free(decoded);
     }
 
-    double ebno_points[] = {0.5, 1.0, 1.5, 2.0, 2.25, 2.5, 2.75, 3.0, 3.25, 3.5, 4.0, 5.0};
+    double ebno_points[] = {1.5, 1.75, 2.0, 2.25, 2.5, 3.0, 3.5, 4.0};
     unsigned int num_ebno = sizeof(ebno_points) / sizeof(ebno_points[0]);
 
-    printf("\n\nBER Test — z=%u, N=%u, %d frames per point, max_iter=%d\n\n",
-           z, codeword_len, BER_ROUNDS, MAX_ITER);
+    unsigned int iter_values[] = {10, 20, 30};
+    float nms_offsets[] = {0.65f, 0.70f, 0.75f, 0.815f};
+    unsigned int num_iter = sizeof(iter_values) / sizeof(iter_values[0]);
+    unsigned int num_nms = sizeof(nms_offsets) / sizeof(nms_offsets[0]);
 
-    printf("%-6s", "Rate");
+    rate_info sweep_rates[] = {
+        {HALFRATE,   "1/2 "},
+        {FIVESIXTHS, "5/6 "},
+    };
+    unsigned int num_sweep_rates = sizeof(sweep_rates) / sizeof(sweep_rates[0]);
+
+    #define BER_SWEEP_ROUNDS 2000
+
+    printf("\n\nBER Sweep — z=%u, N=%u, %d frames per point\n", z, codeword_len, BER_SWEEP_ROUNDS);
+
+    printf("\n%-14s", "iter/nms");
     for (unsigned int p = 0; p < num_ebno; p++)
         printf(" | %8.2f", ebno_points[p]);
     printf("\n");
 
-    printf("------");
+    printf("--------------");
     for (unsigned int p = 0; p < num_ebno; p++)
         printf("-+----------");
     printf("\n");
 
-    for (unsigned int r = 0; r < num_rates; r++)
+    for (unsigned int ii = 0; ii < num_iter; ii++)
     {
-        BER_runner ber(rates[r].rate, z, NUM_THREADS, MAX_ITER);
-
-        printf("%-6s", rates[r].name);
-
-        for (unsigned int p = 0; p < num_ebno; p++)
+        for (unsigned int ni = 0; ni < num_nms; ni++)
         {
-            ber.reset_test();
+            unsigned int iters = iter_values[ii];
+            float nms = nms_offsets[ni];
 
-            for (unsigned int i = 0; i < BER_ROUNDS; i++)
-                ber.run_iteration(ebno_points[p]);
+            for (unsigned int r = 0; r < num_sweep_rates; r++)
+            {
+                BER_runner ber(sweep_rates[r].rate, z, NUM_THREADS, iters, nms);
 
-            uint64_t total_bits = ber.get_total_num_bits();
-            uint64_t total_errors = ber.get_total_num_errors();
-            double ber_val = (total_bits > 0) ? (double)total_errors / total_bits : 0.0;
+                printf("%s i%2u n%.3f", sweep_rates[r].name, iters, nms);
 
-            if (ber_val == 0.0)
-                printf(" | %8s", "0");
-            else
-                printf(" | %8.2e", ber_val);
+                for (unsigned int p = 0; p < num_ebno; p++)
+                {
+                    ber.reset_test();
+
+                    for (unsigned int i = 0; i < BER_SWEEP_ROUNDS; i++)
+                        ber.run_iteration(ebno_points[p]);
+
+                    uint64_t total_bits = ber.get_total_num_bits();
+                    uint64_t total_errors = ber.get_total_num_errors();
+                    double ber_val = (total_bits > 0) ? (double)total_errors / total_bits : 0.0;
+
+                    if (ber_val == 0.0)
+                        printf(" | %8s", "0");
+                    else
+                        printf(" | %8.2e", ber_val);
+                }
+
+                printf("\n");
+            }
+
+            printf("--------------");
+            for (unsigned int p = 0; p < num_ebno; p++)
+                printf("-+----------");
+            printf("\n");
         }
-
-        printf("\n");
     }
-
-    printf("------");
-    for (unsigned int p = 0; p < num_ebno; p++)
-        printf("-+----------");
-    printf("\n");
 
     return 0;
 }

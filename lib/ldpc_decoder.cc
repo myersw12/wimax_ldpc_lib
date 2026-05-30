@@ -2,7 +2,6 @@
 #include <cmath>
 #include <cstdlib>
 #include <cstring>
-
 #include <volk/volk.h>
 #include <volk/volk_malloc.h>
 
@@ -10,12 +9,12 @@
 
 //#define PRINT_ERRORS
 
-// Right now the flags and values 
+// Right now the flags and values
 // for the min sum algorithm modifications
 // are here.  These values were found experimentally.
 // Only select one at a time or comment both out.
 #define NMS
-#define NMS_OFFSET 0.815
+//#define NMS_OFFSET 0.815f
 
 //#define OMS
 #define OMS_OFFSET .10
@@ -27,9 +26,11 @@ namespace wimax_ldpc_lib{
     ldpc_decoder::ldpc_decoder(coderate rate,
                             unsigned int z_factor,
                             unsigned int max_iter,
-                            unsigned int num_threads) : ldpc(rate, z_factor, num_threads)
+                            unsigned int num_threads,
+                            float nms_offset) : ldpc(rate, z_factor, num_threads)
     {
         m_max_iter = max_iter;
+        m_nms_offset = nms_offset;
 
         m_alignment = volk_get_alignment();
 
@@ -67,16 +68,20 @@ namespace wimax_ldpc_lib{
     unsigned int ldpc_decoder::compute_syndrome(int8_t* rx_codeword, bool early_exit)
     {
         unsigned int num_errors = 0;
+        const unsigned int row_size = m_row_size;
+        const unsigned int col_size = m_col_size;
+        const unsigned int* row_lens = m_row_lens;
+        const int16_t* checknode_array = m_checknode_array;
 
-        for (unsigned int i = 0; i < m_row_size; i++)
+        for (unsigned int i = 0; i < row_size; i++)
         {
             int8_t xorsum = 0;
-            unsigned int offset = i*m_col_size;
-            unsigned int row_len = m_row_lens[i];
+            const int16_t* cn_row = &checknode_array[i*col_size];
+            unsigned int row_len = row_lens[i];
 
             for (unsigned int k = 0; k < row_len; k++)
             {
-                xorsum ^= rx_codeword[m_checknode_array[offset + k]];
+                xorsum ^= rx_codeword[cn_row[k]];
             }
 
             if (xorsum != 0)
@@ -111,10 +116,19 @@ namespace wimax_ldpc_lib{
         unsigned int num_errors = 0;
         unsigned int initial_errors = 0;
 
+        const unsigned int col_size = m_col_size;
+        const unsigned int row_size = m_row_size;
+        const unsigned int N = m_N;
+        const unsigned int max_iter = m_max_iter;
+        const unsigned int* row_lens = m_row_lens;
+        const int16_t* checknode_array = m_checknode_array;
+        float* LMN = m_LMN;
+        const float nms_offset = m_nms_offset;
+
         // Check for errors initially, if there are none
         // then exit.
         // Perform hard decision decode
-        volk_32f_binary_slicer_8i(decoded, rx_codeword, m_N);
+        volk_32f_binary_slicer_8i(decoded, rx_codeword, N);
 
         // compute the symdrome
         initial_errors = this->compute_syndrome(decoded, true);
@@ -125,34 +139,39 @@ namespace wimax_ldpc_lib{
             return initial_errors;
         }
 
-        for (unsigned int i = 1; i < m_max_iter+1; i++)
+        for (unsigned int i = 1; i < max_iter+1; i++)
         {
-            for (unsigned int m = 0; m < m_row_size; m++)
+            unsigned int lmn_base_prev = col_size * (i-1) * row_size;
+            unsigned int lmn_base_curr = col_size * i * row_size;
+
+            for (unsigned int m = 0; m < row_size; m++)
             {
                 // declaring this local to the loop helps
-                float LNM[m_row_lens[m]];
+                unsigned int row_len = row_lens[m];
+                float LNM[row_len];
 
                 bool sign = true;
 
-                float first_minimum = 10000.0;
+                float first_minimum = 10000.0f;
                 float minimum;
                 float iter_sign;
                 float lnm_abs;
 
-                unsigned int cn_offset = m*m_col_size;
+                unsigned int m_col = m * col_size;
+                const int16_t* cn_row = &checknode_array[m_col];
                 unsigned int lmn_offset;
 
                 unsigned int first_min_index = 0;
 
                 // Compute LNM Message
 
-                lmn_offset = m_col_size*(m + (i-1)*m_row_size);
+                lmn_offset = lmn_base_prev + m_col;
 
-                for (unsigned int n = 0; n < m_row_lens[m]; n++)
+                for (unsigned int n = 0; n < row_len; n++)
                 {
 
-                    LNM[n] = rx_codeword[m_checknode_array[cn_offset + n]] 
-                            - m_LMN[n + lmn_offset];
+                    LNM[n] = rx_codeword[cn_row[n]]
+                            - LMN[n + lmn_offset];
 
                     // calculate the sign bit here so that
                     // the operation in the next loop is simpler
@@ -168,11 +187,11 @@ namespace wimax_ldpc_lib{
                     }
                 }
 
-                lmn_offset = m_col_size*(m + i*m_row_size);
+                lmn_offset = lmn_base_curr + m_col;
 
                 // compute and apply LNM message for starting indices
 
-                for (unsigned int n = 0; n < m_row_lens[m]; n++)
+                for (unsigned int n = 0; n < row_len; n++)
                 {
 
                     iter_sign = (sign ^ !std::signbit(LNM[n])) * -2 + 1;
@@ -182,9 +201,9 @@ namespace wimax_ldpc_lib{
                     if (n == first_min_index)
                     {
                         // Compute and apply LNM message for min index
-                        minimum = 10000.0;
+                        minimum = 10000.0f;
 
-                        for (unsigned int d = 0; d < m_row_lens[m]; d++)
+                        for (unsigned int d = 0; d < row_len; d++)
                         {
                             if (d != first_min_index)
                             {
@@ -204,7 +223,7 @@ namespace wimax_ldpc_lib{
                     #if defined(NMS) || defined(OMS)
                     #ifdef NMS
 
-                    float scaled = iter_sign * (minimum*NMS_OFFSET);
+                    float scaled = iter_sign * (minimum*nms_offset);
 
                     #else
 
@@ -218,12 +237,12 @@ namespace wimax_ldpc_lib{
 
                     #endif
 
-                    m_LMN[n + lmn_offset] = scaled;
-                    rx_codeword[m_checknode_array[cn_offset + n]] = LNM[n] + scaled;
+                    LMN[n + lmn_offset] = scaled;
+                    rx_codeword[cn_row[n]] = LNM[n] + scaled;
                 }
             }
 
-            volk_32f_binary_slicer_8i(decoded, rx_codeword, m_N);
+            volk_32f_binary_slicer_8i(decoded, rx_codeword, N);
 
             // compute the symdrome
             num_errors = this->compute_syndrome(decoded, true);
@@ -240,7 +259,7 @@ namespace wimax_ldpc_lib{
         printf("Final Errors: %d\n", num_errors);
         #endif
 
-        // return the number of errors remaining after 
+        // return the number of errors remaining after
         // the maximum number of iterations is performed.
         return num_errors;
     }

@@ -13,19 +13,22 @@ namespace wimax_ldpc_lib {
 
         private:
             unsigned int m_max_iter;
-            
+
             float* m_LMN;
-            
+
             unsigned int* m_row_lens;
-            
+
             unsigned int m_alignment;
-            
+
+            float m_nms_offset;
+
         public:
             ldpc_decoder();
             ldpc_decoder(coderate rate,
                         unsigned int z_factor,
                         unsigned int max_iter,
-                        unsigned int num_threads);
+                        unsigned int num_threads,
+                        float nms_offset = 0.815f);
             ~ldpc_decoder();
             
             unsigned int compute_syndrome(int8_t* rx_codeword, bool exit_early);

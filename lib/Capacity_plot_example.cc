@@ -10,8 +10,9 @@
 #include "BER_runner.h"
 #include "capacity_curve_data.cc"
 
-#define MAX_ITER 10
+#define MAX_ITER 20
 #define EBNO_STEP 0.01
+#define NMS_OFFSET 0.815f
 
 using namespace wimax_ldpc_lib;
 
@@ -94,7 +95,7 @@ int main(int argc, char *argv[])
     {
         coderate rate = (coderate)ratelist[i];
         
-        BER_runner ber_test = BER_runner(rate, z, num_threads, MAX_ITER);
+        BER_runner ber_test = BER_runner(rate, z, num_threads, MAX_ITER, NMS_OFFSET);
         double EbNo_dB = 0.25;
         double BER = 0.0;
         

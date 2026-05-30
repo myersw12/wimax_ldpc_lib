@@ -15,14 +15,15 @@ namespace wimax_ldpc_lib {
     BER_runner::BER_runner(coderate rate,
                            unsigned int z_factor,
                            unsigned int num_threads,
-                           unsigned int max_iter
+                           unsigned int max_iter,
+                           float nms_offset
                           ) : ldpc(rate,
                                    z_factor,
                                    num_threads)
-                           
+
     {
         m_encoder = new ldpc_encoder(rate, z_factor, num_threads);
-        m_decoder = new ldpc_decoder(rate, z_factor, max_iter, num_threads);
+        m_decoder = new ldpc_decoder(rate, z_factor, max_iter, num_threads, nms_offset);
         
         m_num_bits = 0;
         m_num_errors = 0;

@@ -10,6 +10,8 @@
 #include "BER_runner.h"
 
 #define MAX_ITER 10
+#define NMS_OFFSET 0.815f
+
 
 using namespace wimax_ldpc_lib;
 
@@ -46,7 +48,7 @@ int main(int argc, char *argv[])
     
     unsigned int num_steps = 0;
     
-    BER_runner ber_test = BER_runner(rate, z, num_threads, MAX_ITER);
+    BER_runner ber_test = BER_runner(rate, z, num_threads, MAX_ITER, NMS_OFFSET);
    
     mglGraph gr;
     mglData BER_array;
