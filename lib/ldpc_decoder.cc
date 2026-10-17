@@ -34,9 +34,10 @@ namespace wimax_ldpc_lib{
 
         m_alignment = volk_get_alignment();
 
-        m_LMN = (float*)volk_malloc(sizeof(float) * (m_max_iter+1) * m_row_size * m_col_size, m_alignment);
-
-        std::memset(m_LMN, 0, sizeof(float) * m_max_iter * m_row_size * m_col_size); 
+        // A single slice of check node messages is updated in place.
+        // Each row's old messages are read into LNM before they are
+        // overwritten, so no per-iteration history is needed.
+        m_LMN = (float*)volk_malloc(sizeof(float) * m_row_size * m_col_size, m_alignment);
 
         m_row_lens = (unsigned int*)malloc(sizeof(int) * m_row_size);
 
@@ -139,11 +140,11 @@ namespace wimax_ldpc_lib{
             return initial_errors;
         }
 
-        for (unsigned int i = 1; i < max_iter+1; i++)
-        {
-            unsigned int lmn_base_prev = col_size * (i-1) * row_size;
-            unsigned int lmn_base_curr = col_size * i * row_size;
+        // check node messages start at zero for every codeword
+        std::memset(LMN, 0, sizeof(float) * row_size * col_size);
 
+        for (unsigned int i = 0; i < max_iter; i++)
+        {
             for (unsigned int m = 0; m < row_size; m++)
             {
                 // declaring this local to the loop helps
@@ -159,19 +160,17 @@ namespace wimax_ldpc_lib{
 
                 unsigned int m_col = m * col_size;
                 const int16_t* cn_row = &checknode_array[m_col];
-                unsigned int lmn_offset;
+                float* lmn_row = &LMN[m_col];
 
                 unsigned int first_min_index = 0;
 
                 // Compute LNM Message
 
-                lmn_offset = lmn_base_prev + m_col;
-
                 for (unsigned int n = 0; n < row_len; n++)
                 {
 
                     LNM[n] = rx_codeword[cn_row[n]]
-                            - LMN[n + lmn_offset];
+                            - lmn_row[n];
 
                     // calculate the sign bit here so that
                     // the operation in the next loop is simpler
@@ -186,8 +185,6 @@ namespace wimax_ldpc_lib{
                         first_min_index = n;
                     }
                 }
-
-                lmn_offset = lmn_base_curr + m_col;
 
                 // compute and apply LNM message for starting indices
 
@@ -237,7 +234,7 @@ namespace wimax_ldpc_lib{
 
                     #endif
 
-                    LMN[n + lmn_offset] = scaled;
+                    lmn_row[n] = scaled;
                     rx_codeword[cn_row[n]] = LNM[n] + scaled;
                 }
             }
