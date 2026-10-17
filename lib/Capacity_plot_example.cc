@@ -161,7 +161,7 @@ int main(int argc, char *argv[])
             // if an error occurs before this number is met, then the Eb/No
             // value being used is too low and should be incremented up.
             // The test is restarted after each increment.
-            for (unsigned int j = 0; j < (num_req / ber_test.get_codeword_len())+1; j++)
+            for (unsigned int j = 0; j < (num_req / ber_test.get_dataword_len())+1; j++)
             {
                 BER = ber_test.run_iteration(EbNo_dB);
                 if(BER != 0.0)

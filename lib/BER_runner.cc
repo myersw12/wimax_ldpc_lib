@@ -150,7 +150,9 @@ namespace wimax_ldpc_lib {
     {
         unsigned int num_errors = 0;
         
-        for(unsigned int j = 0; j < m_codeword_len; j++)
+        // BER is measured over the information bits only.  The encoder is
+        // systematic, so they are the first m_dataword_len codeword bits.
+        for(unsigned int j = 0; j < m_dataword_len; j++)
         {
             if (original_data[j] != decoded_data[j])
             {

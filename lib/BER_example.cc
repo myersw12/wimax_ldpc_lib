@@ -165,7 +165,7 @@ int main(int argc, char *argv[])
             num_req = 10 * floor(3.912 / BER);
         }
         
-        for (unsigned int j = 0; j < num_req/ber_test.get_codeword_len(); j++)
+        for (unsigned int j = 0; j < num_req/ber_test.get_dataword_len(); j++)
         {
             BER = ber_test.run_iteration(EbNo_dB);
         }
