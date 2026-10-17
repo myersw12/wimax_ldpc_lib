@@ -5,3 +5,4 @@
 *.png
 *.bin
 *.so
+/benchmark_results
