@@ -154,6 +154,7 @@ namespace wimax_ldpc_lib{
                 bool sign = true;
 
                 float first_minimum = 10000.0f;
+                float second_minimum = 10000.0f;
                 float minimum;
                 float iter_sign;
                 float lnm_abs;
@@ -176,14 +177,14 @@ namespace wimax_ldpc_lib{
                     // the operation in the next loop is simpler
                     sign ^= !std::signbit(LNM[n]);
 
-                    // calculate the first minimum here so that
-                    // we can calculate the minimum fewer times
+                    // track the two smallest magnitudes in one pass so
+                    // the row never has to be rescanned
+                    // branchless: magnitudes are unpredictable after
+                    // the first iteration, so avoid mispredictions
                     lnm_abs = fabsf(LNM[n]);
-                    if (lnm_abs < first_minimum)
-                    {
-                        first_minimum = lnm_abs;
-                        first_min_index = n;
-                    }
+                    second_minimum = fminf(second_minimum, fmaxf(first_minimum, lnm_abs));
+                    first_min_index = (lnm_abs < first_minimum) ? n : first_min_index;
+                    first_minimum = fminf(first_minimum, lnm_abs);
                 }
 
                 // compute and apply LNM message for starting indices
@@ -193,27 +194,8 @@ namespace wimax_ldpc_lib{
 
                     iter_sign = (sign ^ !std::signbit(LNM[n])) * -2 + 1;
 
-                    // because we find the first min in the loop above,
-                    // this loop only runs one time per iteration.
-                    if (n == first_min_index)
-                    {
-                        // Compute and apply LNM message for min index
-                        minimum = 10000.0f;
-
-                        for (unsigned int d = 0; d < row_len; d++)
-                        {
-                            if (d != first_min_index)
-                            {
-                                lnm_abs = fabsf(LNM[d]);
-                                if (lnm_abs < minimum)
-                                    minimum = lnm_abs;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        minimum = first_minimum;
-                    }
+                    // the min index excludes itself, so it gets the second minimum
+                    minimum = (n == first_min_index) ? second_minimum : first_minimum;
 
                     // The option to perform NMS (Normalized Min Sum)
                     // OMS(Offset Min Sum) or just Min Sum is given below.
