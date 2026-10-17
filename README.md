@@ -59,7 +59,9 @@ num_codewords: How many LDPC codewords are in the file.
 encoded_data_file: File to read the encoded data from.
 decoded_data_file: File to write decoded data to.
 ```
-The throughput of the decoder is increased using openmp threading.  Parallelization is performed at the LDPC frame level making this ideal for bursts that contain multiple LDPC frames.  This approach eliminates the concurrency issues found when parallelization is performed at the Check Node level.  If this decoder is used on streaming LDPC frames, there will be latency added by the aggregation of frames.
+Within a single frame, the decoder takes advantage of the quasi-cyclic structure of the WiMAX matrices.  Each group of z consecutive check node rows (a layer) touches disjoint variable nodes, so all z rows of a layer are processed together in SIMD lanes.  The syndrome check used for early termination is computed the same way.  This produces exactly the same results as processing the rows one at a time.  The compiler auto-vectorizes these loops (AVX2 with `-march=native`).
+
+The throughput of the decoder is further increased using openmp threading.  Parallelization is performed at the LDPC frame level making this ideal for bursts that contain multiple LDPC frames.  This approach eliminates the concurrency issues found when parallelization is performed at the Check Node level.  If this decoder is used on streaming LDPC frames, there will be latency added by the aggregation of frames.
 
 ## BER_runner
 
@@ -116,19 +118,37 @@ The executables listed below are found in the `wimax_ldpc_lib/build/lib/` direct
 
 Example Usage: `./lib/test_encoder 0 96 500 100 data.bin encoded.bin`
 
-Stats from running on a i7-4771 @ 3.50GHz (running the example above, 4 threads):
-  * Average Rate (Mbits/Sec): 171.904706
-  * Fastest Iteration (Mbits/Sec): 252.659283
-  * Slowest Iteration (Mbits/Sec): 16.031953
+Stats from running on a i7-10700K @ 3.80GHz (running the example above):
+  * Average Rate (Mbits/Sec): 415.406532
+  * Fastest Iteration (Mbits/Sec): 462.464874
+  * Slowest Iteration (Mbits/Sec): 20.850867
 
 ### test_decoder
 
 Example Usage: `./lib/test_decoder 4 0 96 500 encoded.bin decoded.bin`
 
-Stats from running on a i7-4771 @ 3.50GHz (decoding the output from the above example, 4 threads):
-  * Average Rate (Mbits/Sec): 31.755333
-  * Fastest Iteration (Mbits/Sec): 35.466888
-  * Slowest Iteration (Mbits/Sec): 11.636364
+Stats from running on a i7-10700K @ 3.80GHz (decoding the output from the above example, 4 threads):
+  * Average Rate (Mbits/Sec): 477.660240
+  * Fastest Iteration (Mbits/Sec): 537.752363
+  * Slowest Iteration (Mbits/Sec): 48.119798
+
+### benchmark
+
+Example Usage: `./lib/benchmark 96`
+
+Runs single-threaded encode/decode throughput for every supported rate at a range of injected bit error counts (500 frames each, max 10 iterations).  It then runs a BER sweep over iteration counts and NMS scaling factors.  The only argument is the Z factor (default 96).
+
+Decoder throughput (Mbits/Sec) on a i7-10700K @ 3.80GHz, z=96, single thread:
+
+| Rate | 0 errors | 1 error | 10 errors | 30 errors | 150 errors |
+|------|----------|---------|-----------|-----------|------------|
+| 1/2  | 2026 | 361 | 283 | 205 | 81 |
+| 2/3A | 2218 | 359 | 254 | 177 | 44* |
+| 2/3B | 2149 | 342 | 254 | 189 | 46* |
+| 3/4A | 2100 | 333 | 236 | 149 | 44* |
+| 5/6  | 2318 | 362 | 212 | 77* | 44* |
+
+\* some or all frames exceed the code's correction capability and run the full 10 iterations.
 
 
 ### macOS
