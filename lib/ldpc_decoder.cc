@@ -19,6 +19,10 @@
 //#define OMS
 #define OMS_OFFSET .10
 
+// lanes per layer are padded to a multiple of the SIMD width (8 floats
+// for AVX2) so the vectorized loops never fall back to scalar cleanup
+#define LANE_MULTIPLE 8
+
 namespace wimax_ldpc_lib{
     
     ldpc_decoder::ldpc_decoder() {}
@@ -33,11 +37,6 @@ namespace wimax_ldpc_lib{
         m_nms_offset = nms_offset;
 
         m_alignment = volk_get_alignment();
-
-        // A single slice of check node messages is updated in place.
-        // Each row's old messages are read into LNM before they are
-        // overwritten, so no per-iteration history is needed.
-        m_LMN = (float*)volk_malloc(sizeof(float) * m_row_size * m_col_size, m_alignment);
 
         m_row_lens = (unsigned int*)malloc(sizeof(int) * m_row_size);
 
@@ -58,12 +57,84 @@ namespace wimax_ldpc_lib{
             }
             m_row_lens[m] = current_row_len;
         }
+
+        // Describe each layer of z rows by its column blocks and the
+        // circulant shift of each block.  Row r of a layer connects to
+        // variable node base + (shift + r) % z, so rows in a layer never
+        // share a variable node and can be processed together.
+        m_num_layers = m_row_size / m_z;
+        m_lanes = ((m_z + LANE_MULTIPLE - 1) / LANE_MULTIPLE) * LANE_MULTIPLE;
+        m_layer_degs = (unsigned int*)malloc(sizeof(unsigned int) * m_num_layers);
+        m_layer_base = (unsigned int*)malloc(sizeof(unsigned int) * m_num_layers * m_col_size);
+        m_layer_shift = (unsigned int*)malloc(sizeof(unsigned int) * m_num_layers * m_col_size);
+
+        for (unsigned int b = 0; b < m_num_layers; b++)
+        {
+            unsigned int first_row = b * m_z;
+            m_layer_degs[b] = m_row_lens[first_row];
+
+            for (unsigned int n = 0; n < m_layer_degs[b]; n++)
+            {
+                unsigned int v = m_checknode_array[first_row*m_col_size + n];
+                m_layer_base[b*m_col_size + n] = (v / m_z) * m_z;
+                m_layer_shift[b*m_col_size + n] = v % m_z;
+            }
+
+            // the layered decode relies on this structure, so verify it
+            for (unsigned int r = 0; r < m_z; r++)
+            {
+                unsigned int m = first_row + r;
+                bool ok = (m_row_lens[m] == m_layer_degs[b]);
+                for (unsigned int n = 0; ok && n < m_layer_degs[b]; n++)
+                {
+                    unsigned int expected = m_layer_base[b*m_col_size + n]
+                        + (m_layer_shift[b*m_col_size + n] + r) % m_z;
+                    ok = ((unsigned int)m_checknode_array[m*m_col_size + n] == expected);
+                }
+                if (!ok)
+                {
+                    printf("[!]ldpc_decoder - row %u is not quasi-cyclic\n", m);
+                    throw std::exception();
+                }
+            }
+        }
+
+        // A single slice of check node messages is updated in place.
+        // Each row's old messages are read into LNM before they are
+        // overwritten, so no per-iteration history is needed.
+        m_LMN = (float*)volk_malloc(sizeof(float) * m_num_layers * m_col_size * m_lanes, m_alignment);
+
+        // Padding lanes (z..m_lanes) are never copied to or from the
+        // codeword. Zeroing them once keeps them at zero for good.
+        m_LNM = (float*)volk_malloc(sizeof(float) * m_col_size * m_lanes, m_alignment);
+        std::memset(m_LNM, 0, sizeof(float) * m_col_size * m_lanes);
+        m_min1 = (float*)volk_malloc(sizeof(float) * m_lanes, m_alignment);
+        m_min2 = (float*)volk_malloc(sizeof(float) * m_lanes, m_alignment);
+        m_min_idx = (int32_t*)volk_malloc(sizeof(int32_t) * m_lanes, m_alignment);
+        m_sign = (int32_t*)volk_malloc(sizeof(int32_t) * m_lanes, m_alignment);
     }
 
     ldpc_decoder::~ldpc_decoder()
     {
         volk_free(m_LMN);
         free(m_row_lens);
+        free(m_layer_degs);
+        free(m_layer_base);
+        free(m_layer_shift);
+        volk_free(m_LNM);
+        volk_free(m_min1);
+        volk_free(m_min2);
+        volk_free(m_min_idx);
+        volk_free(m_sign);
+    }
+
+    // 1 if x is positive (sign bit clear), matching !std::signbit(x),
+    // written with integer ops so the compiler can vectorize it
+    static inline int32_t is_positive(float x)
+    {
+        uint32_t bits;
+        std::memcpy(&bits, &x, sizeof(bits));
+        return (int32_t)((bits >> 31) ^ 1);
     }
 
     unsigned int ldpc_decoder::compute_syndrome(int8_t* rx_codeword, bool early_exit)
@@ -118,12 +189,20 @@ namespace wimax_ldpc_lib{
         unsigned int initial_errors = 0;
 
         const unsigned int col_size = m_col_size;
-        const unsigned int row_size = m_row_size;
+        const unsigned int z = m_z;
+        const unsigned int lanes = m_lanes;
         const unsigned int N = m_N;
         const unsigned int max_iter = m_max_iter;
-        const unsigned int* row_lens = m_row_lens;
-        const int16_t* checknode_array = m_checknode_array;
-        float* LMN = m_LMN;
+        const unsigned int num_layers = m_num_layers;
+        const unsigned int* layer_degs = m_layer_degs;
+        const unsigned int* layer_base = m_layer_base;
+        const unsigned int* layer_shift = m_layer_shift;
+        float* __restrict LMN = m_LMN;
+        float* __restrict LNM = m_LNM;
+        float* __restrict min1 = m_min1;
+        float* __restrict min2 = m_min2;
+        int32_t* __restrict min_idx = m_min_idx;
+        int32_t* __restrict sign = m_sign;
         const float nms_offset = m_nms_offset;
 
         // Check for errors initially, if there are none
@@ -141,83 +220,101 @@ namespace wimax_ldpc_lib{
         }
 
         // check node messages start at zero for every codeword
-        std::memset(LMN, 0, sizeof(float) * row_size * col_size);
+        std::memset(LMN, 0, sizeof(float) * num_layers * col_size * lanes);
 
         for (unsigned int i = 0; i < max_iter; i++)
         {
-            for (unsigned int m = 0; m < row_size; m++)
+            // Each layer is z check node rows that touch disjoint variable
+            // nodes, so the rows are processed together with one SIMD lane
+            // per row.  This gives the same result as row-by-row TDMP.
+            for (unsigned int b = 0; b < num_layers; b++)
             {
-                // declaring this local to the loop helps
-                unsigned int row_len = row_lens[m];
-                float LNM[row_len];
+                const unsigned int deg = layer_degs[b];
+                const unsigned int* base = &layer_base[b*col_size];
+                const unsigned int* shift = &layer_shift[b*col_size];
+                float* __restrict lmn_layer = &LMN[b*col_size*lanes];
 
-                bool sign = true;
-
-                float first_minimum = 10000.0f;
-                float second_minimum = 10000.0f;
-                float minimum;
-                float iter_sign;
-                float lnm_abs;
-
-                unsigned int m_col = m * col_size;
-                const int16_t* cn_row = &checknode_array[m_col];
-                float* lmn_row = &LMN[m_col];
-
-                unsigned int first_min_index = 0;
-
-                // Compute LNM Message
-
-                for (unsigned int n = 0; n < row_len; n++)
+                for (unsigned int r = 0; r < lanes; r++)
                 {
-
-                    LNM[n] = rx_codeword[cn_row[n]]
-                            - lmn_row[n];
-
-                    // calculate the sign bit here so that
-                    // the operation in the next loop is simpler
-                    sign ^= !std::signbit(LNM[n]);
-
-                    // track the two smallest magnitudes in one pass so
-                    // the row never has to be rescanned
-                    // branchless: magnitudes are unpredictable after
-                    // the first iteration, so avoid mispredictions
-                    lnm_abs = fabsf(LNM[n]);
-                    second_minimum = fminf(second_minimum, fmaxf(first_minimum, lnm_abs));
-                    first_min_index = (lnm_abs < first_minimum) ? n : first_min_index;
-                    first_minimum = fminf(first_minimum, lnm_abs);
+                    min1[r] = 10000.0f;
+                    min2[r] = 10000.0f;
+                    min_idx[r] = 0;
+                    sign[r] = 1;
                 }
 
-                // compute and apply LNM message for starting indices
-
-                for (unsigned int n = 0; n < row_len; n++)
+                // Compute LNM messages, the sign, and both minimums
+                for (unsigned int n = 0; n < deg; n++)
                 {
+                    float* __restrict lnm = &LNM[n*lanes];
+                    const float* __restrict lmn = &lmn_layer[n*lanes];
+                    const float* __restrict rx = &rx_codeword[base[n]];
+                    const size_t s = shift[n];
+                    const size_t head = z - s;
+                    const int32_t n_idx = (int32_t)n;
 
-                    iter_sign = (sign ^ !std::signbit(LNM[n])) * -2 + 1;
+                    // lane r reads variable node (s + r) % z of the
+                    // column block, which is a rotation of contiguous data
+                    for (size_t r = 0; r < head; r++)
+                        lnm[r] = rx[s + r] - lmn[r];
+                    for (size_t r = 0; r < s; r++)
+                        lnm[head + r] = rx[r] - lmn[head + r];
 
-                    // the min index excludes itself, so it gets the second minimum
-                    minimum = (n == first_min_index) ? second_minimum : first_minimum;
+                    // branchless: magnitudes are unpredictable after
+                    // the first iteration, so avoid mispredictions
+                    for (unsigned int r = 0; r < lanes; r++)
+                    {
+                        float lnm_abs = fabsf(lnm[r]);
+                        sign[r] ^= is_positive(lnm[r]);
+                        min2[r] = fminf(min2[r], fmaxf(min1[r], lnm_abs));
+                        min_idx[r] = (lnm_abs < min1[r]) ? n_idx : min_idx[r];
+                        min1[r] = fminf(min1[r], lnm_abs);
+                    }
+                }
 
-                    // The option to perform NMS (Normalized Min Sum)
-                    // OMS(Offset Min Sum) or just Min Sum is given below.
-                    #if defined(NMS) || defined(OMS)
-                    #ifdef NMS
+                // compute and apply LMN messages
+                for (unsigned int n = 0; n < deg; n++)
+                {
+                    float* __restrict lnm = &LNM[n*lanes];
+                    float* __restrict lmn = &lmn_layer[n*lanes];
+                    float* __restrict rx = &rx_codeword[base[n]];
+                    const size_t s = shift[n];
+                    const size_t head = z - s;
+                    const int32_t n_idx = (int32_t)n;
 
-                    float scaled = iter_sign * (minimum*nms_offset);
+                    for (unsigned int r = 0; r < lanes; r++)
+                    {
+                        // the min index excludes itself, so it gets the second minimum
+                        float minimum = (min_idx[r] == n_idx) ? min2[r] : min1[r];
 
-                    #else
+                        // The option to perform NMS (Normalized Min Sum)
+                        // OMS(Offset Min Sum) or just Min Sum is given below.
+                        #if defined(NMS) || defined(OMS)
+                        #ifdef NMS
 
-                    float scaled = iter_sign * std::max(minimum-(float)OMS_OFFSET, 0.0f);
+                        float scaled = minimum*nms_offset;
 
-                    #endif
+                        #else
 
-                    #else
+                        float scaled = std::max(minimum-(float)OMS_OFFSET, 0.0f);
 
-                    float scaled = iter_sign * minimum;
+                        #endif
 
-                    #endif
+                        #else
 
-                    lmn_row[n] = scaled;
-                    rx_codeword[cn_row[n]] = LNM[n] + scaled;
+                        float scaled = minimum;
+
+                        #endif
+
+                        scaled = (sign[r] ^ is_positive(lnm[r])) ? -scaled : scaled;
+
+                        lmn[r] = scaled;
+                        lnm[r] += scaled;
+                    }
+
+                    for (size_t r = 0; r < head; r++)
+                        rx[s + r] = lnm[r];
+                    for (size_t r = 0; r < s; r++)
+                        rx[r] = lnm[head + r];
                 }
             }
 

@@ -18,6 +18,21 @@ namespace wimax_ldpc_lib {
 
             unsigned int* m_row_lens;
 
+            // QC layer description: each layer is z consecutive rows that
+            // share a column-block pattern, so all z rows run in SIMD lanes
+            unsigned int m_num_layers;
+            unsigned int m_lanes;
+            unsigned int* m_layer_degs;
+            unsigned int* m_layer_base;
+            unsigned int* m_layer_shift;
+
+            // per-layer scratch, one entry per lane (row in the layer)
+            float* m_LNM;
+            float* m_min1;
+            float* m_min2;
+            int32_t* m_min_idx;
+            int32_t* m_sign;
+
             unsigned int m_alignment;
 
             float m_nms_offset;
