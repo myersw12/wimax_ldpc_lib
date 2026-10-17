@@ -33,6 +33,13 @@ namespace wimax_ldpc_lib {
             int32_t* m_min_idx;
             int32_t* m_sign;
 
+            // syndrome scratch: byte lanes padded to the SIMD width, and
+            // hard decisions with each column block stored twice in a row
+            unsigned int m_syn_lanes;
+            int8_t* m_parity;
+            int8_t* m_lane_mask;
+            int8_t* m_doubled;
+
             unsigned int m_alignment;
 
             float m_nms_offset;

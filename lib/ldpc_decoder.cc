@@ -23,6 +23,9 @@
 // for AVX2) so the vectorized loops never fall back to scalar cleanup
 #define LANE_MULTIPLE 8
 
+// same idea for the syndrome, which works on bytes (32 per AVX2 vector)
+#define SYN_LANE_MULTIPLE 32
+
 namespace wimax_ldpc_lib{
     
     ldpc_decoder::ldpc_decoder() {}
@@ -112,6 +115,17 @@ namespace wimax_ldpc_lib{
         m_min2 = (float*)volk_malloc(sizeof(float) * m_lanes, m_alignment);
         m_min_idx = (int32_t*)volk_malloc(sizeof(int32_t) * m_lanes, m_alignment);
         m_sign = (int32_t*)volk_malloc(sizeof(int32_t) * m_lanes, m_alignment);
+
+        m_syn_lanes = ((m_z + SYN_LANE_MULTIPLE - 1) / SYN_LANE_MULTIPLE) * SYN_LANE_MULTIPLE;
+        m_parity = (int8_t*)volk_malloc(m_syn_lanes, m_alignment);
+        m_lane_mask = (int8_t*)volk_malloc(m_syn_lanes, m_alignment);
+        for (unsigned int r = 0; r < m_syn_lanes; r++)
+            m_lane_mask[r] = (r < m_z) ? -1 : 0;
+
+        // a padded read can run up to m_syn_lanes bytes past the last
+        // block; zero it once so those padding lanes never read garbage
+        m_doubled = (int8_t*)volk_malloc(2 * m_N + m_syn_lanes, m_alignment);
+        std::memset(m_doubled, 0, 2 * m_N + m_syn_lanes);
     }
 
     ldpc_decoder::~ldpc_decoder()
@@ -126,6 +140,9 @@ namespace wimax_ldpc_lib{
         volk_free(m_min2);
         volk_free(m_min_idx);
         volk_free(m_sign);
+        volk_free(m_parity);
+        volk_free(m_lane_mask);
+        volk_free(m_doubled);
     }
 
     // 1 if x is positive (sign bit clear), matching !std::signbit(x),
@@ -140,27 +157,54 @@ namespace wimax_ldpc_lib{
     unsigned int ldpc_decoder::compute_syndrome(int8_t* rx_codeword, bool early_exit)
     {
         unsigned int num_errors = 0;
-        const unsigned int row_size = m_row_size;
         const unsigned int col_size = m_col_size;
-        const unsigned int* row_lens = m_row_lens;
-        const int16_t* checknode_array = m_checknode_array;
+        const unsigned int z = m_z;
+        const unsigned int N = m_N;
+        const unsigned int syn_lanes = m_syn_lanes;
+        const unsigned int num_layers = m_num_layers;
+        const unsigned int* layer_degs = m_layer_degs;
+        const unsigned int* layer_base = m_layer_base;
+        const unsigned int* layer_shift = m_layer_shift;
+        int8_t* __restrict parity = m_parity;
+        const int8_t* __restrict lane_mask = m_lane_mask;
+        int8_t* __restrict doubled = m_doubled;
 
-        for (unsigned int i = 0; i < row_size; i++)
+        // Store each column block twice in a row so the rotated read
+        // (s + r) % z for lane r becomes one contiguous span at offset s.
+        for (unsigned int c = 0; c < N; c += z)
         {
-            int8_t xorsum = 0;
-            const int16_t* cn_row = &checknode_array[i*col_size];
-            unsigned int row_len = row_lens[i];
+            std::memcpy(&doubled[2*c], &rx_codeword[c], z);
+            std::memcpy(&doubled[2*c + z], &rx_codeword[c], z);
+        }
 
-            for (unsigned int k = 0; k < row_len; k++)
+        // Check all z rows of a layer at once, one lane per row.  Padding
+        // lanes (z..syn_lanes) are masked out of the count.
+        for (unsigned int b = 0; b < num_layers; b++)
+        {
+            const unsigned int deg = layer_degs[b];
+            const unsigned int* base = &layer_base[b*col_size];
+            const unsigned int* shift = &layer_shift[b*col_size];
+
+            for (unsigned int r = 0; r < syn_lanes; r++)
+                parity[r] = 0;
+
+            for (unsigned int n = 0; n < deg; n++)
             {
-                xorsum ^= rx_codeword[cn_row[k]];
+                const int8_t* __restrict cw = &doubled[2*base[n] + shift[n]];
+
+                for (unsigned int r = 0; r < syn_lanes; r++)
+                    parity[r] ^= cw[r];
             }
 
-            if (xorsum != 0)
+            unsigned int layer_errors = 0;
+            for (unsigned int r = 0; r < syn_lanes; r++)
+                layer_errors += ((parity[r] & lane_mask[r]) != 0);
+
+            if (layer_errors != 0)
             {
                 if (early_exit)
                     return 1;
-                num_errors++;
+                num_errors += layer_errors;
             }
         }
 
