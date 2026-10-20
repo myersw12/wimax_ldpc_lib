@@ -15,8 +15,11 @@ namespace wimax_ldpc_lib {
             uint8_t*        m_P;
             uint8_t*        m_V;
             unsigned int*   m_row_lens;
+            unsigned int    m_outer_shift;
+            unsigned int    m_middle_shift;
 
             void compute_v(uint8_t* infoword);
+            unsigned int first_parity_shift(unsigned int row);
             
         public:
             ldpc_encoder(coderate rate, unsigned int z_factor, unsigned int num_threads);

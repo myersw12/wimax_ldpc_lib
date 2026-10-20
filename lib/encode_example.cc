@@ -99,13 +99,8 @@ int main(int argc, char *argv[])
             break;
         }
         
-        case (THREEQUARTERSB):
-        {
-            printf("[!]test_encoder - 34B is not yet supported: %d\n", rate);
-            throw std::exception();
-            break;
-        }
         case (THREEQUARTERSA):
+        case (THREEQUARTERSB):
         {
             dataword_len = (codeword_len * 3) / 4;
             break;

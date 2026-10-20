@@ -59,15 +59,10 @@ namespace wimax_ldpc_lib {
             }
             
             case (THREEQUARTERSA):
+            case (THREEQUARTERSB):
             {
                 m_dataword_len = (m_codeword_len * 3) / 4;
                 m_float_rate = 3.0/4.0;
-                break;
-            }
-            case (THREEQUARTERSB):
-            {
-                printf("[!]ber_runner - 3/4B Not Implemented\n");
-                throw std::exception();
                 break;
             }
             case (FIVESIXTHS):

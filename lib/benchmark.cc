@@ -46,7 +46,8 @@ static unsigned int dataword_len_for_rate(coderate rate, unsigned int codeword_l
         case HALFRATE:       return codeword_len / 2;
         case TWOTHIRDSA:
         case TWOTHIRDSB:     return (codeword_len * 2) / 3;
-        case THREEQUARTERSA: return (codeword_len * 3) / 4;
+        case THREEQUARTERSA:
+        case THREEQUARTERSB: return (codeword_len * 3) / 4;
         case FIVESIXTHS:     return (codeword_len * 5) / 6;
         default:             return 0;
     }
@@ -65,6 +66,7 @@ int main(int argc, char* argv[])
         {TWOTHIRDSA,     "2/3A"},
         {TWOTHIRDSB,     "2/3B"},
         {THREEQUARTERSA, "3/4A"},
+        {THREEQUARTERSB, "3/4B"},
         {FIVESIXTHS,     "5/6 "},
     };
     unsigned int num_rates = sizeof(rates) / sizeof(rates[0]);

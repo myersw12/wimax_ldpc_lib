@@ -22,6 +22,7 @@ Eb/No needed for an information bit error rate of 1e-5 (BPSK, AWGN, 20 iteration
 | 2/3A | 2.49 dB  | 2.25 dB  | 2.09 dB  |
 | 2/3B | 2.60 dB  | 2.35 dB  | 2.19 dB  |
 | 3/4A | 3.05 dB  | 2.84 dB  | 2.68 dB  |
+| 3/4B | 2.99 dB  | 2.76 dB  | 2.60 dB  |
 | 5/6  | 3.67 dB  | 3.44 dB  | 3.27 dB  |
 
 BER curves for rate 1/2 (`./BER_example 1 0 <z> 1 3 0.25`, 10 iterations):
@@ -41,7 +42,7 @@ BER curves for rate 1/2 (`./BER_example 1 0 <z> 1 3 0.25`, 10 iterations):
 
 The encoder is based on the algorithm found in [[1](#footnote1)].  It takes advantage of the dual-diagonal structure found in the LDPC codes used by WiMax.  With minor modifications, this encoder will also work the the LDPC codes found in 802.11n.
 
-The encoder currently supports the 1/2, 2/3A, 2/3B, 3/4A, and 5/6 code rates.  The base matrix for the 3/4B matrix is structured a little differently than the others and is not implemented.  The encoder supports all of the block sizes available in the 802.16e standard, plus the extended N = 4608 (z = 192) and N = 9216 (z = 384) sizes.
+The encoder supports the 1/2, 2/3A, 2/3B, 3/4A, 3/4B, and 5/6 code rates.  In the first parity column, most rates have shift D in the first and last rows and shift 0 in the middle row, while 3/4B has the reverse.  The encoder reads both shifts from the matrix, so it handles either layout.  The encoder supports all of the block sizes available in the 802.16e standard, plus the extended N = 4608 (z = 192) and N = 9216 (z = 384) sizes.
 
 ```
 Usage: ./test_encoder <rate> <z> <num_rounds> <errors_to_add> <unencoded_data_file> <encoded_data_file>
