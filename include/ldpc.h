@@ -30,6 +30,8 @@
 #define Z_88
 #define Z_92
 #define Z_96
+#define Z_192
+#define Z_384
 
 namespace wimax_ldpc_lib{
     class ldpc

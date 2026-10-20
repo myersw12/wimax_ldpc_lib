@@ -22,6 +22,8 @@
 #define Z_88
 #define Z_92
 #define Z_96
+#define Z_192
+#define Z_384
 
 #ifdef Z_24
 extern unsigned int wimax_576_0_5_D;
@@ -819,6 +821,90 @@ extern unsigned int wimax_2304_0_83_D;
 extern unsigned int wimax_2304_0_83_X;
 
 extern int16_t wimax_2304_0_83[384][20];
+#endif
+
+#ifdef Z_192
+extern unsigned int wimax_4608_0_5_D;
+extern unsigned int wimax_4608_0_5_X;
+
+extern int16_t wimax_4608_0_5[2304][7];
+#endif
+
+#ifdef Z_192
+extern unsigned int wimax_4608_0_66A_D;
+extern unsigned int wimax_4608_0_66A_X;
+
+extern int16_t wimax_4608_0_66A[1536][10];
+#endif
+
+#ifdef Z_192
+extern unsigned int wimax_4608_0_66B_D;
+extern unsigned int wimax_4608_0_66B_X;
+
+extern int16_t wimax_4608_0_66B[1536][11];
+#endif
+
+#ifdef Z_192
+extern unsigned int wimax_4608_0_75A_D;
+extern unsigned int wimax_4608_0_75A_X;
+
+extern int16_t wimax_4608_0_75A[1152][15];
+#endif
+
+#ifdef Z_192
+extern unsigned int wimax_4608_0_75B_D;
+extern unsigned int wimax_4608_0_75B_X;
+
+extern int16_t wimax_4608_0_75B[1152][15];
+#endif
+
+#ifdef Z_192
+extern unsigned int wimax_4608_0_83_D;
+extern unsigned int wimax_4608_0_83_X;
+
+extern int16_t wimax_4608_0_83[768][20];
+#endif
+
+#ifdef Z_384
+extern unsigned int wimax_9216_0_5_D;
+extern unsigned int wimax_9216_0_5_X;
+
+extern int16_t wimax_9216_0_5[4608][7];
+#endif
+
+#ifdef Z_384
+extern unsigned int wimax_9216_0_66A_D;
+extern unsigned int wimax_9216_0_66A_X;
+
+extern int16_t wimax_9216_0_66A[3072][10];
+#endif
+
+#ifdef Z_384
+extern unsigned int wimax_9216_0_66B_D;
+extern unsigned int wimax_9216_0_66B_X;
+
+extern int16_t wimax_9216_0_66B[3072][11];
+#endif
+
+#ifdef Z_384
+extern unsigned int wimax_9216_0_75A_D;
+extern unsigned int wimax_9216_0_75A_X;
+
+extern int16_t wimax_9216_0_75A[2304][15];
+#endif
+
+#ifdef Z_384
+extern unsigned int wimax_9216_0_75B_D;
+extern unsigned int wimax_9216_0_75B_X;
+
+extern int16_t wimax_9216_0_75B[2304][15];
+#endif
+
+#ifdef Z_384
+extern unsigned int wimax_9216_0_83_D;
+extern unsigned int wimax_9216_0_83_X;
+
+extern int16_t wimax_9216_0_83[1536][20];
 #endif
 
 #endif // MATRICES_H

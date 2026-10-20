@@ -1195,6 +1195,124 @@ namespace wimax_ldpc_lib {
             }
             #endif
             
+            #ifdef Z_192
+            case 192:
+            {
+                if (rate == HALFRATE)
+                {
+                    m_checknode_array = (int16_t*) &wimax_4608_0_5;
+                    m_row_size = sizeof(wimax_4608_0_5) / sizeof(wimax_4608_0_5[0]);
+                    m_col_size = sizeof(wimax_4608_0_5[0]) / sizeof(int16_t);
+                    m_D = wimax_4608_0_5_D;
+                    m_X = wimax_4608_0_5_X;
+                }
+                else if (rate == TWOTHIRDSA)
+                {
+                    m_checknode_array = (int16_t*) &wimax_4608_0_66A;
+                    m_row_size = sizeof(wimax_4608_0_66A) / sizeof(wimax_4608_0_66A[0]);
+                    m_col_size = sizeof(wimax_4608_0_66A[0]) / sizeof(int16_t);
+                    m_D = wimax_4608_0_66A_D;
+                    m_X = wimax_4608_0_66A_X;
+                }
+                else if (rate == TWOTHIRDSB){
+                    m_checknode_array = (int16_t*) &wimax_4608_0_66B;
+                    m_row_size = sizeof(wimax_4608_0_66B) / sizeof(wimax_4608_0_66B[0]);
+                    m_col_size = sizeof(wimax_4608_0_66B[0]) / sizeof(int16_t);
+                    m_D = wimax_4608_0_66B_D;
+                    m_X = wimax_4608_0_66B_X;
+                }
+                else if (rate == THREEQUARTERSA)
+                {
+                    m_checknode_array = (int16_t*) &wimax_4608_0_75A;
+                    m_row_size = sizeof(wimax_4608_0_75A) / sizeof(wimax_4608_0_75A[0]);
+                    m_col_size = sizeof(wimax_4608_0_75A[0]) / sizeof(int16_t);
+                    m_D = wimax_4608_0_75A_D;
+                    m_X = wimax_4608_0_75A_X;
+                }
+                else if (rate == THREEQUARTERSB)
+                {
+                    m_checknode_array = (int16_t*) &wimax_4608_0_75B;
+                    m_row_size = sizeof(wimax_4608_0_75B) / sizeof(wimax_4608_0_75B[0]);
+                    m_col_size = sizeof(wimax_4608_0_75B[0]) / sizeof(int16_t);
+                    m_D = wimax_4608_0_75B_D;
+                    m_X = wimax_4608_0_75B_X;
+                }
+                else if (rate == FIVESIXTHS)
+                {
+                    m_checknode_array = (int16_t*) &wimax_4608_0_83;
+                    m_row_size = sizeof(wimax_4608_0_83) / sizeof(wimax_4608_0_83[0]);
+                    m_col_size = sizeof(wimax_4608_0_83[0]) / sizeof(int16_t);
+                    m_D = wimax_4608_0_83_D;
+                    m_X = wimax_4608_0_83_X;
+                }
+                else
+                {
+                    printf("[!]ldpc_encoder - Invalid Coderate: %d\n", rate);
+                    return 0;
+                }
+                break;
+            }
+            #endif
+            
+            #ifdef Z_384
+            case 384:
+            {
+                if (rate == HALFRATE)
+                {
+                    m_checknode_array = (int16_t*) &wimax_9216_0_5;
+                    m_row_size = sizeof(wimax_9216_0_5) / sizeof(wimax_9216_0_5[0]);
+                    m_col_size = sizeof(wimax_9216_0_5[0]) / sizeof(int16_t);
+                    m_D = wimax_9216_0_5_D;
+                    m_X = wimax_9216_0_5_X;
+                }
+                else if (rate == TWOTHIRDSA)
+                {
+                    m_checknode_array = (int16_t*) &wimax_9216_0_66A;
+                    m_row_size = sizeof(wimax_9216_0_66A) / sizeof(wimax_9216_0_66A[0]);
+                    m_col_size = sizeof(wimax_9216_0_66A[0]) / sizeof(int16_t);
+                    m_D = wimax_9216_0_66A_D;
+                    m_X = wimax_9216_0_66A_X;
+                }
+                else if (rate == TWOTHIRDSB){
+                    m_checknode_array = (int16_t*) &wimax_9216_0_66B;
+                    m_row_size = sizeof(wimax_9216_0_66B) / sizeof(wimax_9216_0_66B[0]);
+                    m_col_size = sizeof(wimax_9216_0_66B[0]) / sizeof(int16_t);
+                    m_D = wimax_9216_0_66B_D;
+                    m_X = wimax_9216_0_66B_X;
+                }
+                else if (rate == THREEQUARTERSA)
+                {
+                    m_checknode_array = (int16_t*) &wimax_9216_0_75A;
+                    m_row_size = sizeof(wimax_9216_0_75A) / sizeof(wimax_9216_0_75A[0]);
+                    m_col_size = sizeof(wimax_9216_0_75A[0]) / sizeof(int16_t);
+                    m_D = wimax_9216_0_75A_D;
+                    m_X = wimax_9216_0_75A_X;
+                }
+                else if (rate == THREEQUARTERSB)
+                {
+                    m_checknode_array = (int16_t*) &wimax_9216_0_75B;
+                    m_row_size = sizeof(wimax_9216_0_75B) / sizeof(wimax_9216_0_75B[0]);
+                    m_col_size = sizeof(wimax_9216_0_75B[0]) / sizeof(int16_t);
+                    m_D = wimax_9216_0_75B_D;
+                    m_X = wimax_9216_0_75B_X;
+                }
+                else if (rate == FIVESIXTHS)
+                {
+                    m_checknode_array = (int16_t*) &wimax_9216_0_83;
+                    m_row_size = sizeof(wimax_9216_0_83) / sizeof(wimax_9216_0_83[0]);
+                    m_col_size = sizeof(wimax_9216_0_83[0]) / sizeof(int16_t);
+                    m_D = wimax_9216_0_83_D;
+                    m_X = wimax_9216_0_83_X;
+                }
+                else
+                {
+                    printf("[!]ldpc_encoder - Invalid Coderate: %d\n", rate);
+                    return 0;
+                }
+                break;
+            }
+            #endif
+            
             default:
             {
                 printf("[!]ldpc_encoder - Invalid Z factor: %d\n", z_factor);

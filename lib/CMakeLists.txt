@@ -122,6 +122,18 @@ set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/matrices/wimax_2304_0_75A.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/matrices/wimax_2304_0_75B.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/matrices/wimax_2304_0_83.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/matrices/wimax_4608_0_5.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/matrices/wimax_4608_0_66A.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/matrices/wimax_4608_0_66B.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/matrices/wimax_4608_0_75A.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/matrices/wimax_4608_0_75B.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/matrices/wimax_4608_0_83.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/matrices/wimax_9216_0_5.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/matrices/wimax_9216_0_66A.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/matrices/wimax_9216_0_66B.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/matrices/wimax_9216_0_75A.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/matrices/wimax_9216_0_75B.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/matrices/wimax_9216_0_83.cc
     )
     
     

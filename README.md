@@ -10,6 +10,25 @@ This repository contains an LDPC encoder and decoder implemented in Python and C
 
 The LDPC codes used in this project are from the IEEE 802.16E standard (Mobile WIMAX).  These matrices are used because they are a special form of LDPC codes known as Quasi-Cyclic (QC) LDPC codes.  QC-LDPC codes are faster to encode and decode.  All of the LDPC matrices and coderates from the 802.16e-2012 standard are available for use.
 
+### Extended block sizes: N = 4608 (z = 192) and N = 9216 (z = 384)
+
+The library also provides 4608-bit and 9216-bit block sizes for every code rate.  These sizes are not part of the 802.16e standard.  The standard derives the smaller sizes by scaling the z = 96 shift values, but scaling up to z = 192 or 384 multiplies every shift by 2 or 4, which splits the code into independent copies of the 2304-bit code and gives no gain.  Instead, the extended matrices keep the standard base matrices and parity structure (so the same encoder works) and use information part shifts chosen to avoid short cycles in the expanded graph.  These shifts are listed in `python_ldpc/ldpc_utils.py`, which generates the matrix files.
+
+Eb/No needed for an information bit error rate of 1e-5 (BPSK, AWGN, 20 iterations, NMS 0.815):
+
+| Rate | N = 2304 | N = 4608 | N = 9216 |
+|------|----------|----------|----------|
+| 1/2  | 1.86 dB  | 1.60 dB  | 1.42 dB  |
+| 2/3A | 2.49 dB  | 2.25 dB  | 2.09 dB  |
+| 2/3B | 2.60 dB  | 2.35 dB  | 2.19 dB  |
+| 3/4A | 3.05 dB  | 2.84 dB  | 2.68 dB  |
+| 5/6  | 3.67 dB  | 3.44 dB  | 3.27 dB  |
+
+BER curves for rate 1/2 (`./BER_example 1 0 <z> 1 3 0.25`, 10 iterations):
+
+![N = 4608 rate 1/2 BER curve](example_plots/BER_LDPC_RATE0_N4608_K2304.png)
+![N = 9216 rate 1/2 BER curve](example_plots/BER_LDPC_RATE0_N9216_K4608.png)
+
 ## Requirements
 
   * CMake
@@ -22,7 +41,7 @@ The LDPC codes used in this project are from the IEEE 802.16E standard (Mobile W
 
 The encoder is based on the algorithm found in [[1](#footnote1)].  It takes advantage of the dual-diagonal structure found in the LDPC codes used by WiMax.  With minor modifications, this encoder will also work the the LDPC codes found in 802.11n.
 
-The encoder currently supports the 1/2, 2/3A, 2/3B, 3/4A, and 5/6 code rates.  The base matrix for the 3/4B matrix is structured a little differently than the others and is not implemented.  The encoder supports all of the block sizes available in the 802.16e standard.
+The encoder currently supports the 1/2, 2/3A, 2/3B, 3/4A, and 5/6 code rates.  The base matrix for the 3/4B matrix is structured a little differently than the others and is not implemented.  The encoder supports all of the block sizes available in the 802.16e standard, plus the extended N = 4608 (z = 192) and N = 9216 (z = 384) sizes.
 
 ```
 Usage: ./test_encoder <rate> <z> <num_rounds> <errors_to_add> <unencoded_data_file> <encoded_data_file>
@@ -42,7 +61,7 @@ encoded_data_file: File to write LDPC encoded data to.
 
 ## Decoder
 
-The decoder uses the Turbo-Decoding Message-Passing Algorithm [[2](#footnote2)].  The decoder currently supports the 1/2, 2/3A, 2/3B, 3/4A, 3/4B, and 5/6 code rates.  The decoder supports all of the block sizes available in the 802.16e standard.
+The decoder uses the Turbo-Decoding Message-Passing Algorithm [[2](#footnote2)].  The decoder currently supports the 1/2, 2/3A, 2/3B, 3/4A, 3/4B, and 5/6 code rates.  The decoder supports all of the block sizes available in the 802.16e standard, plus the extended N = 4608 (z = 192) and N = 9216 (z = 384) sizes.
 
 ```
 Usage: ./test_decoder <num_threads> <rate> <z> <num_codewords> <encoded_data_file> <decoded_data_file>
